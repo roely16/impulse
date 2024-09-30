@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.impulse"
+      "bundleIdentifier": "com.impulse.es"
     },
     "android": {
       "adaptiveIcon": {
