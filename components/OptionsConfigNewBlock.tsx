@@ -1,12 +1,19 @@
 import { View, StyleSheet, TouchableHighlight } from "react-native";
 import { Text, Icon } from "react-native-paper";
 
-export const OptionsConfigNewBlock = () => {
+interface OptionsConfigNewBlockProps {
+  changeForm: (form: string) => void;
+}
+
+export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
+
+  const { changeForm } = props;
+
   return (
     <View>
       <Text style={styles.title}>Configurar nuevo bloqueo</Text>
       <View style={{ flexDirection: 'column', gap: 20, marginTop: 20 }}>
-        <TouchableHighlight style={styles.button}>
+        <TouchableHighlight onPress={() => changeForm('new-block')} style={styles.button}>
           <View style={styles.contentButton}>
             <View style={styles.buttonLabelContainer}>
               <Icon source="timelapse" size={25} />

@@ -1,13 +1,15 @@
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
-import { Text, StyleSheet, View } from 'react-native';
-import BottomSheet, { BottomSheetView, BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import React, { forwardRef, useCallback, useMemo, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { OptionsConfigNewBlock } from './OptionsConfigNewBlock';
+import { FormNewBlock } from './FormNewBlock';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
-
 
 export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => {
 
-  const snapPoints = useMemo(() => ['25%', '50%'], []);
+  const [bottomSheetForm, setBottomSheetForm] = useState<string>('');
+
+  const snapPoints = useMemo(() => ['25%', '50%', '85%'], []);
   
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
@@ -20,6 +22,15 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => 
 		[]
 	);
 
+  const renderBottomSheetContent = () => {
+    console.log(bottomSheetForm);
+    if (bottomSheetForm === 'new-block') {
+      return <FormNewBlock changeForm={setBottomSheetForm} />;
+    }
+
+    return <OptionsConfigNewBlock changeForm={setBottomSheetForm} />;
+  };
+
   return (
     <BottomSheet
       ref={ref}
@@ -29,7 +40,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => 
       enablePanDownToClose={true}
     >
       <BottomSheetView style={styles.contentContainer}>
-        <OptionsConfigNewBlock />
+        {renderBottomSheetContent()}
       </BottomSheetView>
     </BottomSheet>
   );
