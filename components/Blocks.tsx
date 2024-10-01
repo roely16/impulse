@@ -1,15 +1,22 @@
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, TouchableHighlight } from "react-native";
 import { Text, Icon } from "react-native-paper";
 
-export const Blocks = () => {
+interface BlocksProps {
+  showBottomShet: () => void;
+}
+
+export const Blocks = (props: BlocksProps) => {
+  const { showBottomShet } = props;
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>Bloqueos</Text>
-        <Pressable style={styles.addButton}>
-          <Icon source="plus-circle-outline" size={15} />
-          <Text>Añadir</Text>
-        </Pressable>
+          <TouchableHighlight onPress={showBottomShet} style={styles.addButton}>
+            <View style={{flexDirection:'row', gap: 5}}>
+              <Icon source="plus-circle-outline" size={15} />
+              <Text>Añadir</Text>
+            </View>
+          </TouchableHighlight>
       </View>
     </View>
   );
