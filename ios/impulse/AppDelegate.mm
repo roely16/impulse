@@ -2,6 +2,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import <React/RCTBridgeModule.h>
 
 @implementation AppDelegate
 
@@ -58,5 +59,16 @@
 {
   return [super application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
+
+@end
+
+@interface RCT_EXTERN_MODULE(CalendarModule, NSObject)
+
+RCT_EXTERN_METHOD(addEvent:(NSString *)title
+                  location:(NSString *)location
+                  startDate:(nonnull NSNumber *)startDate
+                  endDate:(nonnull NSNumber *)endDate
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 
 @end

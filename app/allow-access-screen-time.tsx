@@ -1,10 +1,25 @@
-import { View, SafeAreaView, StyleSheet } from 'react-native';
+import { View, SafeAreaView, StyleSheet, NativeModules } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { PermissionImage } from '@/components/PermissionImage';
 import { Link } from 'expo-router';
 
 export default function HomeScreen() {
 
+  const { CalendarModule } = NativeModules;
+
+  const handleScreenTimeAccess = async () => {
+    try {
+      await CalendarModule.addEvent(
+        "Meeting", 
+        "Office", 
+        new Date().getTime(), 
+        new Date().getTime() + 60 * 60 * 1000
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
   return (
     <SafeAreaView style={styles.safeareaContainer}>
       <View style={styles.container}>
@@ -17,9 +32,10 @@ export default function HomeScreen() {
             Tu información está protegida por Apple y estará almacenada 100% en tu movil.
           </Text>
           <View style={styles.buttonContainer}>
-            <Link href="/(tabs)/">
-              <Button icon="arrow-right" labelStyle={styles.labelStartButton} contentStyle={styles.containerStartButton} style={styles.startButton} mode="contained">Empezar</Button>
-            </Link>
+            {/* <Link href="/(tabs)/">
+              
+            </Link> */}
+            <Button onPress={handleScreenTimeAccess} icon="arrow-right" labelStyle={styles.labelStartButton} contentStyle={styles.containerStartButton} style={styles.startButton} mode="contained">Empezar</Button>
           </View>
         </View>
       </View>
