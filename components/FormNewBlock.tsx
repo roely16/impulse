@@ -58,16 +58,15 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   };
 
   const handleSelectApps = () => {
-    console.log('select apps');
     try {
       ScreenTimeModule.showAppPicker();
     } catch (error) {
-      console.log('error', error);
+      
     }
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Añadir Nombre del Bloqueo</Text>
         <Icon source="pencil" size={25} />
@@ -95,6 +94,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 30
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',

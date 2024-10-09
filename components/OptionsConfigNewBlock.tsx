@@ -10,7 +10,7 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
   const { changeForm } = props;
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.title}>Configurar nuevo bloqueo</Text>
       <View style={{ flexDirection: 'column', gap: 20, marginTop: 20 }}>
         <TouchableHighlight onPress={() => changeForm('new-block')} style={styles.button}>
@@ -37,6 +37,9 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 30
+  },
   title: {
     fontSize: 22,
     fontWeight: 700,

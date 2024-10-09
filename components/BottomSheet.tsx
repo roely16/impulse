@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { OptionsConfigNewBlock } from './OptionsConfigNewBlock';
 import { FormNewBlock } from './FormNewBlock';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
@@ -23,7 +23,6 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => 
 	);
 
   const renderBottomSheetContent = () => {
-    console.log(bottomSheetForm);
     if (bottomSheetForm === 'new-block') {
       return <FormNewBlock changeForm={setBottomSheetForm} />;
     }
@@ -34,14 +33,14 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => 
   return (
     <BottomSheet
       ref={ref}
-      snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       index={-1}
       enablePanDownToClose={true}
+      enableDynamicSizing={true}
     >
-      <BottomSheetView style={styles.contentContainer}>
+      <BottomSheetScrollView style={styles.contentContainer}>
         {renderBottomSheetContent()}
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheet>
   );
 });
@@ -54,7 +53,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
   },
   contentContainer: {
-    flex: 1,
     paddingHorizontal: 20,
     marginTop: 10
   },

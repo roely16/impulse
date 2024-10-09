@@ -1,6 +1,5 @@
 import { View, SafeAreaView, StyleSheet } from 'react-native';
 import { Text, IconButton } from 'react-native-paper';
-import { router } from 'expo-router';
 
 export const Header = () => {
   return (
@@ -12,7 +11,6 @@ export const Header = () => {
           iconColor={'black'}
           size={20}
           mode="contained"
-          onPress={() => router.push('/allow-access-screen-time')}
         />
       </View>
     </SafeAreaView>
