@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableHighlight, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 
 interface FormNewBlockProps {
@@ -8,6 +8,8 @@ interface FormNewBlockProps {
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const { changeForm } = props;
+
+  const { ScreenTimeModule } = NativeModules;
 
   const Frequency = (): React.ReactElement => {
 
@@ -55,13 +57,22 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     )
   };
 
+  const handleSelectApps = () => {
+    console.log('select apps');
+    try {
+      ScreenTimeModule.showAppPicker();
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   return (
     <View>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Añadir Nombre del Bloqueo</Text>
         <Icon source="pencil" size={25} />
       </View>
-      <TouchableHighlight style={styles.formOption}>
+      <TouchableHighlight onPress={handleSelectApps} style={styles.formOption}>
         <View style={styles.formOptionContent}>
           <View style={styles.labelOptionContainer}>
             <Icon source="shield" size={25} />

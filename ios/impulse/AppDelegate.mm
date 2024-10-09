@@ -62,13 +62,12 @@
 
 @end
 
-@interface RCT_EXTERN_MODULE(CalendarModule, NSObject)
+@interface RCT_EXTERN_MODULE(ScreenTimeModule, NSObject)
 
-RCT_EXTERN_METHOD(addEvent:(NSString *)title
-                  location:(NSString *)location
-                  startDate:(nonnull NSNumber *)startDate
-                  endDate:(nonnull NSNumber *)endDate
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(requestAuthorization:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(showAppPicker:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

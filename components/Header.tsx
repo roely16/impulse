@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 10,
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: 'white'
   },
   appName: {
     fontSize: 24,

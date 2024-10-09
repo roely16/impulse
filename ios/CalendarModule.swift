@@ -7,11 +7,18 @@ class CalendarModule: NSObject {
     private let eventStore = EKEventStore()
 
     @objc
+    func testFamilyControls(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+      let message = "Hello from swift"
+      resolve(message)
+    }
+
+    @objc
     func addEvent(_ title: String, location: String, startDate: Double, endDate: Double, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         // Solicitar acceso al calendario
+        
         eventStore.requestAccess(to: .event) { (granted, error) in
             if let error = error {
-                reject("error", "Error requesting calendar access", error)
+                reject("error", "Error requesting calendar access kjhkjhk", error)
                 return
             }
             

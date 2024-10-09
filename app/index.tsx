@@ -1,20 +1,18 @@
 import { View, SafeAreaView, StyleSheet, NativeModules } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { PermissionImage } from '@/components/PermissionImage';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
 
-  const { CalendarModule } = NativeModules;
+  const { ScreenTimeModule } = NativeModules;
 
   const handleScreenTimeAccess = async () => {
     try {
-      await CalendarModule.addEvent(
-        "Meeting", 
-        "Office", 
-        new Date().getTime(), 
-        new Date().getTime() + 60 * 60 * 1000
-      );
+      const response = await ScreenTimeModule.requestAuthorization();
+      if (response?.status === 'success') {
+        router.replace('/(tabs)')
+      }
     } catch (error) {
       console.error(error);
     }
@@ -32,9 +30,6 @@ export default function HomeScreen() {
             Tu información está protegida por Apple y estará almacenada 100% en tu movil.
           </Text>
           <View style={styles.buttonContainer}>
-            {/* <Link href="/(tabs)/">
-              
-            </Link> */}
             <Button onPress={handleScreenTimeAccess} icon="arrow-right" labelStyle={styles.labelStartButton} contentStyle={styles.containerStartButton} style={styles.startButton} mode="contained">Empezar</Button>
           </View>
         </View>
