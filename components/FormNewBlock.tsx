@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 
@@ -8,6 +9,7 @@ interface FormNewBlockProps {
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const { changeForm } = props;
+  const [appsSelected, setAppsSelected] = useState(0);
 
   const { ScreenTimeModule } = NativeModules;
 
@@ -57,11 +59,35 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     )
   };
 
-  const handleSelectApps = () => {
+  const handleSelectApps = async () => {
     try {
-      ScreenTimeModule.showAppPicker();
+      const result = await ScreenTimeModule.showAppPicker();
+      console.log('apps selected', result);
+      if (result.status === 'success') {
+        setAppsSelected(result.totalSelected);
+      }
     } catch (error) {
-      
+      console.error(error);
+    }
+  };
+
+  const TextAppsSelected = (): React.ReactElement => {
+    if (appsSelected === 0) {
+      return (
+        <Text style={styles.selectLabel}>Seleccionar</Text>
+      )
+    }
+    return (
+      <Text style={styles.selectLabel}>{appsSelected} apps seleccionadas</Text>
+    )
+  };
+
+  const handleSaveBlock = async () => {
+    try {
+      const result = await ScreenTimeModule.createBlock();
+      console.log('block created', result);
+    } catch (error) {
+      console.log('error', error);
     }
   };
 
@@ -78,7 +104,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
             <Text style={styles.label}>Apps</Text>
           </View>
           <View style={styles.selectOptionContainer}>
-            <Text style={styles.selectLabel}>Seleccionar</Text>
+            <TextAppsSelected />
             <Icon source="chevron-right" size={25} />
           </View>
         </View>
@@ -87,7 +113,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <Frequency />
       <View style={styles.buttonContainer}>
         <Button icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained" onPress={() => changeForm('')}>Cancelar</Button>
-        <Button icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#FDE047' }]} mode="contained">Guardar</Button>
+        <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#FDE047' }]} mode="contained">Guardar</Button>
       </View>
     </View>
   )

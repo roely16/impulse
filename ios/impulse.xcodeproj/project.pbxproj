@@ -13,6 +13,13 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4009EBC42CB605E5002A0FB4 /* FamilyActivityPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EBC32CB605E5002A0FB4 /* FamilyActivityPicker.swift */; };
+		4009EC142CB6E7D7002A0FB4 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */; };
+		4009EC152CB6E7D7002A0FB4 /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4009EBCC2CB65644002A0FB4 /* ManagedSettingsUI.framework */; };
+		4009EC182CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EC172CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift */; };
+		4009EC1D2CB6E7D7002A0FB4 /* shieldConfigurator.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4009EC132CB6E7D7002A0FB4 /* shieldConfigurator.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4009EC482CB7019D002A0FB4 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */; };
+		4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */; };
+		4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4030B76A2CACB2C00042EBF5 /* CalendarModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4030B7692CACB2C00042EBF5 /* CalendarModule.swift */; };
 		40FC05062CB4966F00FC9C61 /* ScreenTimeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-impulse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */; };
@@ -20,6 +27,38 @@
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		BB5F4B02AD71D0F583B6C28E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 27034B40ECF547B3F03FBFD4 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4009EC1B2CB6E7D7002A0FB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4009EC122CB6E7D7002A0FB4;
+			remoteInfo = shieldConfigurator;
+		};
+		4009EC4E2CB7019D002A0FB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4009EC462CB7019D002A0FB4;
+			remoteInfo = shieldAction;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4009EBD92CB65644002A0FB4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4009EC1D2CB6E7D7002A0FB4 /* shieldConfigurator.appex in Embed Foundation Extensions */,
+				4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* impulse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = impulse.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,6 +70,19 @@
 		2323F06B3CC247B2A1CD89FB /* impulse-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "impulse-Bridging-Header.h"; path = "impulse/impulse-Bridging-Header.h"; sourceTree = "<group>"; };
 		27034B40ECF547B3F03FBFD4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = impulse/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4009EBC32CB605E5002A0FB4 /* FamilyActivityPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyActivityPicker.swift; sourceTree = "<group>"; };
+		4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
+		4009EBCC2CB65644002A0FB4 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = SDKROOT; };
+		4009EC132CB6E7D7002A0FB4 /* shieldConfigurator.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = shieldConfigurator.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4009EC172CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
+		4009EC192CB6E7D7002A0FB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4009EC1A2CB6E7D7002A0FB4 /* shieldConfigurator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldConfigurator.entitlements; sourceTree = "<group>"; };
+		4009EC392CB6F6DB002A0FB4 /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
+		4009EC3B2CB6F6DB002A0FB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4009EC3C2CB6F6DB002A0FB4 /* shieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldAction.entitlements; sourceTree = "<group>"; };
+		4009EC472CB7019D002A0FB4 /* shieldAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = shieldAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
+		4009EC4C2CB7019D002A0FB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4009EC4D2CB7019D002A0FB4 /* shieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldAction.entitlements; sourceTree = "<group>"; };
 		4030B7652CACADFB0042EBF5 /* Impulse-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Impulse-Bridging-Header.h"; sourceTree = "<group>"; };
 		4030B7692CACB2C00042EBF5 /* CalendarModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarModule.swift; sourceTree = "<group>"; };
 		40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeModule.swift; sourceTree = "<group>"; };
@@ -50,6 +102,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				96905EF65AED1B983A6B3ABC /* libPods-impulse.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4009EC102CB6E7D7002A0FB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4009EC142CB6E7D7002A0FB4 /* ManagedSettings.framework in Frameworks */,
+				4009EC152CB6E7D7002A0FB4 /* ManagedSettingsUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4009EC442CB7019D002A0FB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4009EC482CB7019D002A0FB4 /* ManagedSettings.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,8 +151,40 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */,
+				4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */,
+				4009EBCC2CB65644002A0FB4 /* ManagedSettingsUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4009EC162CB6E7D7002A0FB4 /* shieldConfigurator */ = {
+			isa = PBXGroup;
+			children = (
+				4009EC172CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift */,
+				4009EC192CB6E7D7002A0FB4 /* Info.plist */,
+				4009EC1A2CB6E7D7002A0FB4 /* shieldConfigurator.entitlements */,
+			);
+			path = shieldConfigurator;
+			sourceTree = "<group>";
+		};
+		4009EC382CB6F6DB002A0FB4 /* shieldAction */ = {
+			isa = PBXGroup;
+			children = (
+				4009EC392CB6F6DB002A0FB4 /* ShieldActionExtension.swift */,
+				4009EC3B2CB6F6DB002A0FB4 /* Info.plist */,
+				4009EC3C2CB6F6DB002A0FB4 /* shieldAction.entitlements */,
+			);
+			path = shieldAction;
+			sourceTree = "<group>";
+		};
+		4009EC492CB7019D002A0FB4 /* shieldAction */ = {
+			isa = PBXGroup;
+			children = (
+				4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */,
+				4009EC4C2CB7019D002A0FB4 /* Info.plist */,
+				4009EC4D2CB7019D002A0FB4 /* shieldAction.entitlements */,
+			);
+			path = shieldAction;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -98,6 +199,9 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* impulse */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				4009EC162CB6E7D7002A0FB4 /* shieldConfigurator */,
+				4009EC382CB6F6DB002A0FB4 /* shieldAction */,
+				4009EC492CB7019D002A0FB4 /* shieldAction */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -112,6 +216,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* impulse.app */,
+				4009EC132CB6E7D7002A0FB4 /* shieldConfigurator.appex */,
+				4009EC472CB7019D002A0FB4 /* shieldAction.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,15 +271,52 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				06726CE61F06CAB89618FBD9 /* [CP] Embed Pods Frameworks */,
+				4009EBD92CB65644002A0FB4 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4009EC1C2CB6E7D7002A0FB4 /* PBXTargetDependency */,
+				4009EC4F2CB7019D002A0FB4 /* PBXTargetDependency */,
 			);
 			name = impulse;
 			productName = impulse;
 			productReference = 13B07F961A680F5B00A75B9A /* impulse.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4009EC122CB6E7D7002A0FB4 /* shieldConfigurator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4009EC1E2CB6E7D7002A0FB4 /* Build configuration list for PBXNativeTarget "shieldConfigurator" */;
+			buildPhases = (
+				4009EC0F2CB6E7D7002A0FB4 /* Sources */,
+				4009EC102CB6E7D7002A0FB4 /* Frameworks */,
+				4009EC112CB6E7D7002A0FB4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = shieldConfigurator;
+			productName = shieldConfigurator;
+			productReference = 4009EC132CB6E7D7002A0FB4 /* shieldConfigurator.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		4009EC462CB7019D002A0FB4 /* shieldAction */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4009EC512CB7019D002A0FB4 /* Build configuration list for PBXNativeTarget "shieldAction" */;
+			buildPhases = (
+				4009EC432CB7019D002A0FB4 /* Sources */,
+				4009EC442CB7019D002A0FB4 /* Frameworks */,
+				4009EC452CB7019D002A0FB4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = shieldAction;
+			productName = shieldAction;
+			productReference = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -181,10 +324,17 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+					};
+					4009EC122CB6E7D7002A0FB4 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					4009EC462CB7019D002A0FB4 = {
+						CreatedOnToolsVersion = 15.0.1;
 					};
 				};
 			};
@@ -202,6 +352,8 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* impulse */,
+				4009EC122CB6E7D7002A0FB4 /* shieldConfigurator */,
+				4009EC462CB7019D002A0FB4 /* shieldAction */,
 			);
 		};
 /* End PBXProject section */
@@ -215,6 +367,20 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				BB5F4B02AD71D0F583B6C28E /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4009EC112CB6E7D7002A0FB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4009EC452CB7019D002A0FB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,13 +504,43 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4009EC0F2CB6E7D7002A0FB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4009EC182CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4009EC432CB7019D002A0FB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4009EC1C2CB6E7D7002A0FB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4009EC122CB6E7D7002A0FB4 /* shieldConfigurator */;
+			targetProxy = 4009EC1B2CB6E7D7002A0FB4 /* PBXContainerItemProxy */;
+		};
+		4009EC4F2CB7019D002A0FB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4009EC462CB7019D002A0FB4 /* shieldAction */;
+			targetProxy = 4009EC4E2CB7019D002A0FB4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-impulse.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = impulse/impulse.entitlements;
@@ -358,7 +554,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = impulse/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -373,7 +569,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse;
 				PRODUCT_NAME = impulse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Herson Chur";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Herson;
 				SWIFT_OBJC_BRIDGING_HEADER = "impulse/Impulse-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -386,6 +582,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-impulse.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = impulse/impulse.entitlements;
@@ -394,7 +591,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
 				INFOPLIST_FILE = impulse/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -409,11 +606,193 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse;
 				PRODUCT_NAME = impulse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Herson Chur";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Herson;
 				SWIFT_OBJC_BRIDGING_HEADER = "impulse/Impulse-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		4009EC1F2CB6E7D7002A0FB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = shieldConfigurator/shieldConfigurator.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = shieldConfigurator/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = shieldConfigurator;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldConfigurator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Herson - shieldConfigurator";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4009EC202CB6E7D7002A0FB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = shieldConfigurator/shieldConfigurator.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = shieldConfigurator/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = shieldConfigurator;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldConfigurator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Herson - shieldConfigurator";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4009EC522CB7019D002A0FB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = shieldAction/shieldAction.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = shieldAction/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = shieldAction;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "shieldAction Herson";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4009EC532CB7019D002A0FB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = shieldAction/shieldAction.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = shieldAction/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = shieldAction;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "shieldAction Herson";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -466,7 +845,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD = "";
 				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -529,7 +908,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD = "";
 				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -558,6 +937,24 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4009EC1E2CB6E7D7002A0FB4 /* Build configuration list for PBXNativeTarget "shieldConfigurator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4009EC1F2CB6E7D7002A0FB4 /* Debug */,
+				4009EC202CB6E7D7002A0FB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4009EC512CB7019D002A0FB4 /* Build configuration list for PBXNativeTarget "shieldAction" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4009EC522CB7019D002A0FB4 /* Debug */,
+				4009EC532CB7019D002A0FB4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

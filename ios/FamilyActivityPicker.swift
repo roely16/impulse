@@ -1,17 +1,23 @@
 import SwiftUI
 import FamilyControls
+import ManagedSettingsUI
 
 struct ActivityPickerView: View {
-    @Binding var selectedActivity: FamilyActivitySelection
+    @State var selection = FamilyActivitySelection()
+    var onSelectionChanged: (FamilyActivitySelection) -> Void
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
         VStack {
-            FamilyActivityPicker(selection: $selectedActivity)
-            .padding()
-            
+            FamilyActivityPicker(selection: $selection)
+
+            Text("Aplicaciones seleccionadas: \(selection.applications.count).")
+                .padding()
+                .font(.headline)
+
             Button(action: {
-                // Acción para guardar la actividad seleccionada
-                saveActivitySelection(selectedActivity)
+                onSelectionChanged(selection)
+                presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Guardar")
                     .fontWeight(.bold)
@@ -22,12 +28,6 @@ struct ActivityPickerView: View {
             }
             .padding()
         }
-    }
-
-    private func saveActivitySelection(_ selection: FamilyActivitySelection) {
-        // Lógica para guardar la actividad seleccionada
-        print("Actividad guardada: ")
-        // Puedes agregar más lógica para manejar el guardado de datos
     }
 }
 
