@@ -5,12 +5,16 @@ import { OptionsConfigNewBlock } from './OptionsConfigNewBlock';
 import { FormNewBlock } from './FormNewBlock';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 
-export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => {
+interface BottomSheetNewBlockProps {
+  refreshBlocks: () => void;
+}
+
+export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
+
+  const { refreshBlocks } = _props
 
   const [bottomSheetForm, setBottomSheetForm] = useState<string>('');
 
-  const snapPoints = useMemo(() => ['25%', '50%', '85%'], []);
-  
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
 			<BottomSheetBackdrop
@@ -24,12 +28,17 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, {}>((_props, ref) => 
 
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
-      return <FormNewBlock changeForm={setBottomSheetForm} />;
+      return <FormNewBlock closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock changeForm={setBottomSheetForm} />;
   };
 
+  const closeBottomSheet = () => {
+    if (ref && 'current' in ref && ref.current) {
+      ref.current.close();
+    }
+  };
   return (
     <BottomSheet
       ref={ref}

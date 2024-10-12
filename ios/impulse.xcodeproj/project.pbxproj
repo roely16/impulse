@@ -21,6 +21,11 @@
 		4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */; };
 		4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4030B76A2CACB2C00042EBF5 /* CalendarModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4030B7692CACB2C00042EBF5 /* CalendarModule.swift */; };
+		4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */; };
+		4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */; };
+		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
+		4096DDB22CBA42140070F6D3 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDB12CBA42140070F6D3 /* BlockModel.swift */; };
 		40FC05062CB4966F00FC9C61 /* ScreenTimeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-impulse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
@@ -43,6 +48,13 @@
 			remoteGlobalIDString = 4009EC462CB7019D002A0FB4;
 			remoteInfo = shieldAction;
 		};
+		4096DDA32CB91D040070F6D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4096DD9B2CB91D040070F6D3;
+			remoteInfo = monitorExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,6 +64,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */,
 				4009EC1D2CB6E7D7002A0FB4 /* shieldConfigurator.appex in Embed Foundation Extensions */,
 				4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */,
 			);
@@ -85,6 +98,13 @@
 		4009EC4D2CB7019D002A0FB4 /* shieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldAction.entitlements; sourceTree = "<group>"; };
 		4030B7652CACADFB0042EBF5 /* Impulse-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Impulse-Bridging-Header.h"; sourceTree = "<group>"; };
 		4030B7692CACB2C00042EBF5 /* CalendarModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarModule.swift; sourceTree = "<group>"; };
+		4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
+		4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = monitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		4096DDA12CB91D040070F6D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4096DDA22CB91D040070F6D3 /* monitorExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = monitorExtension.entitlements; sourceTree = "<group>"; };
+		4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
+		4096DDB12CBA42140070F6D3 /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
 		40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeModule.swift; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-impulse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-impulse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-impulse.debug.xcconfig"; path = "Target Support Files/Pods-impulse/Pods-impulse.debug.xcconfig"; sourceTree = "<group>"; };
@@ -122,6 +142,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4096DD992CB91D040070F6D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -142,6 +170,7 @@
 				4030B7692CACB2C00042EBF5 /* CalendarModule.swift */,
 				40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */,
 				4009EBC32CB605E5002A0FB4 /* FamilyActivityPicker.swift */,
+				4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */,
 			);
 			name = impulse;
 			sourceTree = "<group>";
@@ -153,6 +182,7 @@
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */,
 				4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */,
 				4009EBCC2CB65644002A0FB4 /* ManagedSettingsUI.framework */,
+				4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -187,6 +217,17 @@
 			path = shieldAction;
 			sourceTree = "<group>";
 		};
+		4096DD9E2CB91D040070F6D3 /* monitorExtension */ = {
+			isa = PBXGroup;
+			children = (
+				4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */,
+				4096DDA12CB91D040070F6D3 /* Info.plist */,
+				4096DDA22CB91D040070F6D3 /* monitorExtension.entitlements */,
+				4096DDB12CBA42140070F6D3 /* BlockModel.swift */,
+			);
+			path = monitorExtension;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +243,7 @@
 				4009EC162CB6E7D7002A0FB4 /* shieldConfigurator */,
 				4009EC382CB6F6DB002A0FB4 /* shieldAction */,
 				4009EC492CB7019D002A0FB4 /* shieldAction */,
+				4096DD9E2CB91D040070F6D3 /* monitorExtension */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -218,6 +260,7 @@
 				13B07F961A680F5B00A75B9A /* impulse.app */,
 				4009EC132CB6E7D7002A0FB4 /* shieldConfigurator.appex */,
 				4009EC472CB7019D002A0FB4 /* shieldAction.appex */,
+				4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -278,6 +321,7 @@
 			dependencies = (
 				4009EC1C2CB6E7D7002A0FB4 /* PBXTargetDependency */,
 				4009EC4F2CB7019D002A0FB4 /* PBXTargetDependency */,
+				4096DDA42CB91D040070F6D3 /* PBXTargetDependency */,
 			);
 			name = impulse;
 			productName = impulse;
@@ -318,6 +362,23 @@
 			productReference = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		4096DD9B2CB91D040070F6D3 /* monitorExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4096DDA82CB91D040070F6D3 /* Build configuration list for PBXNativeTarget "monitorExtension" */;
+			buildPhases = (
+				4096DD982CB91D040070F6D3 /* Sources */,
+				4096DD992CB91D040070F6D3 /* Frameworks */,
+				4096DD9A2CB91D040070F6D3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = monitorExtension;
+			productName = monitorExtension;
+			productReference = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -334,6 +395,9 @@
 						CreatedOnToolsVersion = 15.0.1;
 					};
 					4009EC462CB7019D002A0FB4 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+					4096DD9B2CB91D040070F6D3 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
 				};
@@ -354,6 +418,7 @@
 				13B07F861A680F5B00A75B9A /* impulse */,
 				4009EC122CB6E7D7002A0FB4 /* shieldConfigurator */,
 				4009EC462CB7019D002A0FB4 /* shieldAction */,
+				4096DD9B2CB91D040070F6D3 /* monitorExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -378,6 +443,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4009EC452CB7019D002A0FB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4096DD9A2CB91D040070F6D3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -454,6 +526,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.swift.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
@@ -462,6 +535,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCTI18nStrings.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SQLite.swift.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -501,6 +575,7 @@
 				4030B76A2CACB2C00042EBF5 /* CalendarModule.swift in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				0B2E44F56B0D41F58B2A671D /* noop-file.swift in Sources */,
+				4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,6 +595,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4096DD982CB91D040070F6D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */,
+				4096DDB22CBA42140070F6D3 /* BlockModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -532,6 +616,11 @@
 			isa = PBXTargetDependency;
 			target = 4009EC462CB7019D002A0FB4 /* shieldAction */;
 			targetProxy = 4009EC4E2CB7019D002A0FB4 /* PBXContainerItemProxy */;
+		};
+		4096DDA42CB91D040070F6D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4096DD9B2CB91D040070F6D3 /* monitorExtension */;
+			targetProxy = 4096DDA32CB91D040070F6D3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -647,6 +736,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldConfigurator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -693,6 +783,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldConfigurator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -738,6 +829,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldAction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -784,10 +876,100 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.shieldAction;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "shieldAction Herson";
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4096DDA62CB91D040070F6D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = monitorExtension/monitorExtension.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = monitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = monitorExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.monitorExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Monitorextension;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4096DDA72CB91D040070F6D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = monitorExtension/monitorExtension.entitlements;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = LMC3KCU7BZ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = monitorExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = monitorExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.impulsecontrolapp.impulse.monitorExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Monitorextension;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -955,6 +1137,15 @@
 			buildConfigurations = (
 				4009EC522CB7019D002A0FB4 /* Debug */,
 				4009EC532CB7019D002A0FB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4096DDA82CB91D040070F6D3 /* Build configuration list for PBXNativeTarget "monitorExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4096DDA62CB91D040070F6D3 /* Debug */,
+				4096DDA72CB91D040070F6D3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

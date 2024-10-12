@@ -1,15 +1,24 @@
 import { useState } from "react";
 import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
-
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 interface FormNewBlockProps {
   changeForm: (form: string) => void;
+  refreshBlocks: () => void;
+  closeBottomSheet: () => void;
 }
 
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
-  const { changeForm } = props;
+  const { changeForm, refreshBlocks, closeBottomSheet } = props;
   const [appsSelected, setAppsSelected] = useState(0);
+  const [date, setDate] = useState(new Date());
+  const [tempDate, setTempDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  let fromTime = '';
+  let toTime = '';
 
   const { ScreenTimeModule } = NativeModules;
 
@@ -33,6 +42,27 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     )
   };
 
+  const convertDate = (date: Date | undefined): string => {
+    if (!date) return '';
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours}:${minutes}`;
+  }
+
+  const onChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+    const dateConverted = convertDate(selectedDate);
+    if (event.type === 'set') {
+      fromTime = dateConverted;
+    }
+  };
+
+  const onChangeTo = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+    const dateConverted = convertDate(selectedDate);
+    if (event.type === 'set') {
+      toTime = dateConverted;
+    }
+  }
+
   const TimeConfigurationForm = (): React.ReactElement => {
     return (
       <View style={styles.timeFormContainer}>
@@ -40,19 +70,23 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         <TouchableHighlight style={styles.formOption}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>Desde</Text>
-            <View style={styles.selectOptionContainer}>
-              <Text style={styles.selectLabel}>Seleccionar</Text>
-              <Icon source="chevron-right" size={25} />
-            </View>
+            <DateTimePicker
+              value={date}
+              mode="time"
+              onChange={onChange}
+              display="default"
+            />
           </View>
         </TouchableHighlight>
         <TouchableHighlight style={styles.formOption}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>Hasta</Text>
-            <View style={styles.selectOptionContainer}>
-              <Text style={styles.selectLabel}>Seleccionar</Text>
-              <Icon source="chevron-right" size={25} />
-            </View>
+            <DateTimePicker
+              value={date}
+              mode="time"
+              onChange={onChangeTo}
+              display="default"
+            />
           </View>
         </TouchableHighlight>
       </View>
@@ -84,12 +118,28 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSaveBlock = async () => {
     try {
-      const result = await ScreenTimeModule.createBlock();
-      console.log('block created', result);
+      const data = {
+        name: 'Bloqueo de prueba',
+        startTime: fromTime,
+        endTime: toTime
+      }
+      await ScreenTimeModule.createBlock(data.name, data.startTime, data.endTime);
+      refreshBlocks();
+      closeBottomSheet()
+      changeForm('')
     } catch (error) {
       console.log('error', error);
     }
   };
+
+  const readLastLog = async () => {
+    try {
+      const result = await ScreenTimeModule.readLastLog();
+      console.log('last log', result);
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -112,7 +162,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <TimeConfigurationForm />
       <Frequency />
       <View style={styles.buttonContainer}>
-        <Button icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained" onPress={() => changeForm('')}>Cancelar</Button>
+        <Button onPress={readLastLog} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
         <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#FDE047' }]} mode="contained">Guardar</Button>
       </View>
     </View>
