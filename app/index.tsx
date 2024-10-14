@@ -1,23 +1,53 @@
+import { useState } from 'react';
 import { View, SafeAreaView, StyleSheet, NativeModules } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { PermissionImage } from '@/components/PermissionImage';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 
 export default function HomeScreen() {
 
   const { ScreenTimeModule } = NativeModules;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleScreenTimeAccess = async () => {
     try {
       const response = await ScreenTimeModule.requestAuthorization();
       if (response?.status === 'success') {
         router.replace('/(tabs)')
+        await saveScreenTimeAccess();
       }
     } catch (error) {
       console.error(error);
     }
   }
   
+  const saveScreenTimeAccess = async () => {
+    try {
+      await AsyncStorage.setItem('screenTimeAccess', 'true');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    const validateScreenTimeAccess = async () => {
+      setIsLoading(true);
+      const screenTimeAccess = await AsyncStorage.getItem('screenTimeAccess');
+      if (screenTimeAccess) {
+        router.replace('/(tabs)')
+      }
+      setIsLoading(false);
+    }
+    validateScreenTimeAccess();
+  }, []);
+
+  if (isLoading) {
+    return <></>
+  }
+
   return (
     <SafeAreaView style={styles.safeareaContainer}>
       <View style={styles.container}>

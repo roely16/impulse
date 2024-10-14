@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { BlockCard } from "./BlockCard";
 
 export interface BlockType {
@@ -18,20 +18,14 @@ export const ListBlocks = (_props: ListBlocksProps) => {
   const { blocks, refreshBlocks } = _props;
 
   return (
-    <View style={styles.container}>
-      {
-        blocks.map(block => (
-          <BlockCard refreshBlocks={refreshBlocks} {...block} key={block.id} />
-        ))
-      }
-    </View>
+    <FlatList style={styles.container} data={blocks} renderItem={({item}) => <BlockCard refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
   )
 };
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    marginTop: 20,
+    paddingTop: 20,
     gap: 15
   }
 });

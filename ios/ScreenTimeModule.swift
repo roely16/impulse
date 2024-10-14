@@ -100,13 +100,6 @@ class ScreenTimeModule: NSObject {
     } catch {
       print("Error saving")
     }
-    
-//    do {
-//
-//      print("Monitoring started")
-//    } catch {
-//      print("Failed to start monitoring: \(error.localizedDescription)")
-//    }
   }
   
   @objc

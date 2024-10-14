@@ -96,7 +96,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const handleSelectApps = async () => {
     try {
       const result = await ScreenTimeModule.showAppPicker();
-      console.log('apps selected', result);
       if (result.status === 'success') {
         setAppsSelected(result.totalSelected);
       }
@@ -132,15 +131,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     }
   };
 
-  const readLastLog = async () => {
-    try {
-      const result = await ScreenTimeModule.readLastLog();
-      console.log('last log', result);
-    } catch (error) {
-      console.log('error', error);
-    }
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -162,7 +152,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <TimeConfigurationForm />
       <Frequency />
       <View style={styles.buttonContainer}>
-        <Button onPress={readLastLog} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
+        <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
         <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#FDE047' }]} mode="contained">Guardar</Button>
       </View>
     </View>
