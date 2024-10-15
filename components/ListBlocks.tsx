@@ -1,4 +1,4 @@
-import { View, StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import { BlockCard } from "./BlockCard";
 
 export interface BlockType {
@@ -6,6 +6,7 @@ export interface BlockType {
   title: string;
   subtitle: string;
   apps: number;
+  enable: boolean;
 }
 
 interface ListBlocksProps {

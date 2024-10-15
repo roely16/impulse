@@ -7,11 +7,12 @@ interface BlockCardProps {
   title: string;
   subtitle: string;
   apps: number;
+  enable: boolean;
   refreshBlocks: () => void;
 }
 
 export const BlockCard = (props: BlockCardProps) => {
-  const { id, title, subtitle, apps, refreshBlocks } = props;
+  const { id, title, subtitle, apps, enable, refreshBlocks } = props;
   const [isEnabled, setIsEnabled] = useState(false);
 
   const { ScreenTimeModule } = NativeModules;
@@ -20,9 +21,18 @@ export const BlockCard = (props: BlockCardProps) => {
     try {
       const response = await ScreenTimeModule.deleteBlock(id);
       refreshBlocks();
-      console.log('response', response);
     } catch (error) {
       console.log('error deleting block', error)
+    }
+  }
+
+  const updateBlockStatus = async (status: boolean) => {
+    try {
+      const response = await ScreenTimeModule.updateBlockStatus(id, status);
+      console.log('update block status response', response)
+      refreshBlocks();
+    } catch (error) {
+      console.log('error updating block status', error)
     }
   }
 
@@ -60,7 +70,7 @@ export const BlockCard = (props: BlockCardProps) => {
         <Text style={styles.subtitle}>{subtitle}</Text>
         <View style={styles.rowContainer}>
           <Text style={styles.subtitle}>Aplicaciones: {apps}</Text>
-          <Switch onValueChange={setIsEnabled} value={isEnabled} thumbColor={isEnabled ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
+          <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={isEnabled ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>
       </Card.Content>
     </Card>

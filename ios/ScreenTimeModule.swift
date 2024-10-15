@@ -81,7 +81,8 @@ class ScreenTimeModule: NSObject {
         name: name,
         appsTokens: self.appsSelected,
         startTime: startTime,
-        endTime: endTime
+        endTime: endTime,
+        enable: true
       )
       context.insert(block)
       try context.save()
@@ -132,7 +133,8 @@ class ScreenTimeModule: NSObject {
             "id": block.id.uuidString, // Asegúrate de que 'id' sea un UUID
             "title": block.name, // Reemplaza con los campos de tu modelo
             "subtitle": "\(block.startTime) • \(block.endTime)",
-            "apps": block.appsTokens.count
+            "apps": block.appsTokens.count,
+            "enable": block.enable
         ]
       }
       resolve(["status": "success", "blocks" : blocksArray])
@@ -164,6 +166,42 @@ class ScreenTimeModule: NSObject {
       resolve("Block deleted")
     } catch {
       reject("Error", "Could not delete block", nil)
+    }
+  }
+  
+  @MainActor @objc
+  func updateBlockStatus(_ blockId: String, isEnable: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+    do {
+      guard let uuid = UUID(uuidString: blockId) else {
+        reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
+        return
+      }
+      
+      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
+      let container = try ModelContainer(
+        for: Block.self,
+        configurations: configuration
+      )
+      let context = container.mainContext
+      
+      let fetchDescriptor = FetchDescriptor<Block>(
+        predicate: #Predicate { $0.id == uuid }
+      )
+      let result = try context.fetch(fetchDescriptor)
+      let block = result.first
+
+      block?.enable = isEnable
+      
+      if !isEnable {
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
+        store.shield.applications = nil
+      }
+      
+      try context.save()
+
+      resolve(["status": "success", "blockId" : blockId, "isEnable": isEnable, "blockName": block?.name])
+    } catch {
+      print("Error updating block status")
     }
   }
   

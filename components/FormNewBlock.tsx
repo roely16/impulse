@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules } from "react-native";
+import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules, TextInput } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 interface FormNewBlockProps {
@@ -12,6 +12,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const { changeForm, refreshBlocks, closeBottomSheet } = props;
   const [appsSelected, setAppsSelected] = useState(0);
+  const [blockTitle, setBlockTitle] = useState('');
   const [date, setDate] = useState(new Date());
   const [tempDate, setTempDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -118,7 +119,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const handleSaveBlock = async () => {
     try {
       const data = {
-        name: 'Bloqueo de prueba',
+        name: blockTitle,
         startTime: fromTime,
         endTime: toTime
       }
@@ -134,7 +135,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Añadir Nombre del Bloqueo</Text>
+        <TextInput value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder="Añadir Nombre del Bloqueo" />
         <Icon source="pencil" size={25} />
       </View>
       <TouchableHighlight onPress={handleSelectApps} style={styles.formOption}>
@@ -172,7 +173,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 700,
-    lineHeight: 28.6
+    lineHeight: 28.6,
+    borderBottomWidth: 1
   },
   buttonContainer: {
     flexDirection: 'row',

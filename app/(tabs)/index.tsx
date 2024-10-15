@@ -5,12 +5,13 @@ import { BottomSheetNewBlock } from '@/components/BottomSheet';
 import { ListBlocks, BlockType } from '@/components/ListBlocks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { Text, Button } from 'react-native-paper';
+import { Text, Button, Snackbar } from 'react-native-paper';
 
 export default function HomeScreen() {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [blocks, setBlocks] = useState<BlockType[]>([]);
+  const [blockAdded, setBlockAdded] = useState(false);
 
   const { ScreenTimeModule } = NativeModules;
   const openBottonSheet = () => {
@@ -21,6 +22,7 @@ export default function HomeScreen() {
     const init = async () => {
       const blocks = await ScreenTimeModule.getBlocks();
       setBlocks(blocks.blocks);
+      setBlockAdded(true);
     }
     return init;
   }, []);
@@ -57,6 +59,11 @@ export default function HomeScreen() {
         <BlockSection />
         <BottomSheetNewBlock refreshBlocks={getBlocks} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
+      <View style={{ alignItems: 'center' }}>
+        <Snackbar duration={3000} style={{ backgroundColor: '#FDE047' }} icon="check" wrapperStyle={{ width: '50%', justifyContent: 'center' }} onDismiss={() => setBlockAdded(false)} visible={blockAdded}>
+          <Text>Bloqueo agregado</Text>
+        </Snackbar>
+      </View>
     </GestureHandlerRootView>
   );
 }
