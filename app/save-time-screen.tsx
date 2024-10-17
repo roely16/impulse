@@ -1,29 +1,40 @@
 import { View, StyleSheet, SafeAreaView, Image, ScrollView } from "react-native";
 import { Text, Button } from "react-native-paper";
-import { router } from 'expo-router';
-import { MixpanelService } from '@/SDK/Mixpanel';
+import { router, useLocalSearchParams } from 'expo-router';
 
-export default function WelcomeScreen() {
+export default function SaveTime() {
+
+  const local = useLocalSearchParams();
 
   const redirectToHowMuchTimeScreen = () => {
-    router.push('/how-much-time')
-    MixpanelService.trackEvent("onboarding_step_1", {
-      onboarding_step: 1,   
-      device_type: "iOS",    
-      timestamp: new Date().toISOString()
-    });
+    router.push('/impulse-functionalities')
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>
-          Ayudate a controlar los impulsos y gana horas en tu día a día
-        </Text>
-        <Image source={require('../assets/images/welcome.png')} style={styles.image} />
-        <Text style={styles.subtitle}>
-          Los usuarios ya han conseguido ahorrar más de 5000 horas controlando el uso del móvil
-        </Text>
+        <View>
+          <Text style={styles.title}>
+            { local.days } días
+          </Text>
+          <Text style={styles.subtitle}>
+            al año perdidos frente a la pantalla...
+          </Text>
+          <Text style={styles.subtitle}>
+            Piensa lo que podrías hacer con ese tiempo si cambias tus hábitos hoy.
+          </Text>
+        </View>
+        <View>
+          <Text style={styles.subtitle}>
+            En una vida, eso suma
+          </Text>
+          <Text style={styles.title}>
+            { local.years } años
+          </Text>
+          <Text style={[styles.subtitle, { fontWeight: '700' }]}>
+            ¿Estás listo para aprovechar tu tiempo al máximo?
+          </Text>
+        </View>
       </ScrollView>
       <View style={styles.buttonContainer}>
         <Button
@@ -35,7 +46,7 @@ export default function WelcomeScreen() {
           contentStyle={{ flexDirection: 'row-reverse' }}
           icon="arrow-right"
         >
-          Empezar
+          Continuar
         </Button>
       </View>
     </SafeAreaView>
@@ -49,7 +60,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 30,
-    paddingVertical: 10
+    paddingVertical: 50,
+    gap: 50
   },
   title: {
     fontSize: 36,

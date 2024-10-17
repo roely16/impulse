@@ -15,13 +15,6 @@ export const PermissionImage = () => {
           <Text style={styles.buttonText}>Don't allow</Text>
         </View>
       </View>
-      <View style={styles.iconContainer}>
-        <Icon
-          source="arrow-up-left"
-          color='black'
-          size={100}
-        />
-      </View>
     </View>
   )
 

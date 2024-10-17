@@ -59,11 +59,6 @@ export default function HomeScreen() {
         <BlockSection />
         <BottomSheetNewBlock refreshBlocks={getBlocks} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
-      <View style={{ alignItems: 'center' }}>
-        <Snackbar duration={3000} style={{ backgroundColor: '#FDE047' }} icon="check" wrapperStyle={{ width: '50%', justifyContent: 'center' }} onDismiss={() => setBlockAdded(false)} visible={blockAdded}>
-          <Text>Bloqueo agregado</Text>
-        </Snackbar>
-      </View>
     </GestureHandlerRootView>
   );
 }
