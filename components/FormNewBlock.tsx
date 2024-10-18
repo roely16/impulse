@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules, TextInput } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -10,16 +10,12 @@ interface FormNewBlockProps {
 
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
-  const { changeForm, refreshBlocks, closeBottomSheet } = props;
+  const { refreshBlocks, changeForm, closeBottomSheet } = props;
   const [appsSelected, setAppsSelected] = useState(0);
   const [blockTitle, setBlockTitle] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [tempDate, setTempDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-
-  let fromTime = '';
-  let toTime = '';
+  const currentTime = new Date();
+  const startTimeRef = useRef(currentTime);
+  const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
 
   const { ScreenTimeModule } = NativeModules;
 
@@ -51,16 +47,14 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   }
 
   const onChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
-    const dateConverted = convertDate(selectedDate);
     if (event.type === 'set') {
-      fromTime = dateConverted;
+      startTimeRef.current = selectedDate || startTimeRef.current;
     }
   };
 
   const onChangeTo = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
-    const dateConverted = convertDate(selectedDate);
     if (event.type === 'set') {
-      toTime = dateConverted;
+      endTimeRef.current = selectedDate || endTimeRef.current;
     }
   }
 
@@ -72,7 +66,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
           <View style={styles.timeOption}>
             <Text style={styles.label}>Desde</Text>
             <DateTimePicker
-              value={date}
+              value={startTimeRef.current}
               mode="time"
               onChange={onChange}
               display="default"
@@ -83,7 +77,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
           <View style={styles.timeOption}>
             <Text style={styles.label}>Hasta</Text>
             <DateTimePicker
-              value={date}
+              value={endTimeRef.current}
               mode="time"
               onChange={onChangeTo}
               display="default"
@@ -118,10 +112,14 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSaveBlock = async () => {
     try {
+
+      const startTime = convertDate(startTimeRef.current);
+      const endTime = convertDate(endTimeRef.current);
       const data = {
         name: blockTitle,
-        startTime: fromTime,
-        endTime: toTime
+        startTime,
+        endTime,
+        appsSelected
       }
       await ScreenTimeModule.createBlock(data.name, data.startTime, data.endTime);
       refreshBlocks();
@@ -131,6 +129,10 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       console.log('error', error);
     }
   };
+
+  const formFilled = blockTitle && appsSelected > 0 && startTimeRef && endTimeRef;
+
+  const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
   return (
     <View style={styles.container}>
@@ -154,7 +156,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <Frequency />
       <View style={styles.buttonContainer}>
         <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
-        <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#FDE047' }]} mode="contained">Guardar</Button>
+        <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">Guardar</Button>
       </View>
     </View>
   )

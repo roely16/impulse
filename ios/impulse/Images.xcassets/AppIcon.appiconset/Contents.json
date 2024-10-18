@@ -67,13 +67,8 @@
       "size" : "60x60"
     },
     {
-      "idiom" : "ios-marketing",
-      "scale" : "1x",
-      "size" : "1024x1024"
-    },
-    {
       "filename" : "1024.png",
-      "idiom" : "iphone",
+      "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"
     }

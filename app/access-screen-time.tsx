@@ -31,18 +31,6 @@ export default function HomeScreen() {
     }
   }
 
-  useEffect(() => {
-    const validateScreenTimeAccess = async () => {
-      setIsLoading(true);
-      const screenTimeAccess = await AsyncStorage.getItem('screenTimeAccess');
-      if (screenTimeAccess) {
-        router.replace('/(tabs)')
-      }
-      setIsLoading(false);
-    }
-    validateScreenTimeAccess();
-  }, []);
-
   if (isLoading) {
     return <></>
   }
