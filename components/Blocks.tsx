@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableHighlight } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Icon } from "react-native-paper";
 
 interface BlocksProps {
@@ -10,13 +10,13 @@ export const Blocks = (props: BlocksProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Bloqueos</Text>
-          <TouchableHighlight onPress={showBottomShet} style={styles.addButton}>
+        <Text style={styles.headerTitle}>Períodos de Bloqueo</Text>
+          <TouchableOpacity onPress={showBottomShet} style={styles.addButton}>
             <View style={{flexDirection:'row', gap: 5}}>
               <Icon source="plus-circle-outline" size={15} />
-              <Text>Añadir</Text>
+              <Text style={styles.addLabel}>Añadir</Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
       </View>
     </View>
   );
@@ -35,14 +35,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 700,
-    lineHeight: 26
+    fontFamily: 'Catamaran'
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 0.2,
     padding: 5,
-    borderRadius: 10,
+    borderRadius: 30,
+    paddingHorizontal: 10,
     gap: 5
+  },
+  addLabel: {
+    fontFamily: 'Mulish',
+    fontWeight: '500',
+    fontSize: 12
   }
 });

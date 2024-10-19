@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, TouchableWithoutFeedback, Switch, NativeModules, Alert } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Switch, NativeModules } from "react-native";
 import { Card, Text } from "react-native-paper";
 
 interface BlockCardProps {
@@ -9,17 +9,17 @@ interface BlockCardProps {
   apps: number;
   enable: boolean;
   refreshBlocks: () => void;
+  editBlock: (id: string) => void;
 }
 
 export const BlockCard = (props: BlockCardProps) => {
-  const { id, title, subtitle, apps, enable, refreshBlocks } = props;
-  const [isEnabled, setIsEnabled] = useState(false);
+  const { id, title, subtitle, apps, enable, refreshBlocks, editBlock } = props;
 
   const { ScreenTimeModule } = NativeModules;
 
   const handleDeleteBlock = async () => {
     try {
-      const response = await ScreenTimeModule.deleteBlock(id);
+      await ScreenTimeModule.deleteBlock(id);
       refreshBlocks();
     } catch (error) {
       console.log('error deleting block', error)
@@ -36,41 +36,23 @@ export const BlockCard = (props: BlockCardProps) => {
     }
   }
 
-  const deleteBlock = async () => {
-    try {
-      Alert.alert(
-        "Confirmación",
-        "¿Estás seguro de que deseas eliminar el bloqueo?",
-        [
-          {
-            text: "Cancelar",
-            style: "cancel"
-          },
-          {
-            text: "OK",
-            onPress: () => {
-              handleDeleteBlock();
-            }
-          }
-        ]
-      );
-    } catch (error) {
-      console.log(error);
-    }
+  const handleEditBlock = () => {
+    editBlock(id);
   }
+
   return (
     <Card style={styles.card} mode="elevated" elevation={1}>
       <Card.Content style={styles.cardContent}>
         <View style={styles.rowContainer}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableWithoutFeedback onPress={deleteBlock}>
-            <Text style={styles.subtitle}>Eliminar</Text>
-          </TouchableWithoutFeedback>
+          <TouchableOpacity onPress={handleEditBlock}>
+            <Text style={styles.subtitle}>Editar</Text>
+          </TouchableOpacity>
         </View>
         <Text style={styles.subtitle}>{subtitle}</Text>
         <View style={styles.rowContainer}>
           <Text style={styles.subtitle}>Aplicaciones: {apps}</Text>
-          <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={isEnabled ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
+          <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>
       </Card.Content>
     </Card>
@@ -79,7 +61,8 @@ export const BlockCard = (props: BlockCardProps) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    marginBottom: 20
   },
   cardContent: {
     gap: 5
@@ -91,14 +74,15 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 19,
-    lineHeight: 24.7,
-    fontWeight: 700,
-    color: '#3A3A3C'
+    fontWeight: '700',
+    color: '#3A3A3C',
+    fontFamily: 'Catamaran'
   },
   subtitle: {
     fontSize: 12,
-    fontWeight: 400,
+    fontWeight: '400',
     lineHeight: 20.4,
-    color: '#C6D3DF'
+    color: '#C6D3DF',
+    fontFamily: 'Mulish'
   }
 });

@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableHighlight } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Icon } from "react-native-paper";
 
 interface OptionsConfigNewBlockProps {
@@ -13,7 +13,7 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
     <View style={styles.container}>
       <Text style={styles.title}>Configurar nuevo bloqueo</Text>
       <View style={{ flexDirection: 'column', gap: 20, marginTop: 20 }}>
-        <TouchableHighlight onPress={() => changeForm('new-block')} style={styles.button}>
+        <TouchableOpacity onPress={() => changeForm('new-block')} style={styles.button}>
           <View style={styles.contentButton}>
             <View style={styles.buttonLabelContainer}>
               <Icon source="timelapse" size={25} />
@@ -21,8 +21,8 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
             </View>
             <Icon source="chevron-right" size={25} />
           </View>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.button}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
           <View style={styles.contentButton}>
             <View style={styles.buttonLabelContainer}>
               <Icon source="timer-sand" size={25} />
@@ -30,7 +30,7 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
             </View>
             <Icon source="chevron-right" size={25} />
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -43,7 +43,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 700,
-    lineHeight: 28.6
+    lineHeight: 28.6,
+    fontFamily: 'Catamaran'
   },
   button: {
     backgroundColor: '#FDE047',
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   buttonLabel: {
     fontSize: 20,
     fontWeight: 700,
-    lineHeight: 26
+    fontFamily: 'Catamaran'
   },
   contentButton: {
     flexDirection: 'row',

@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, RefreshControl } from "react-native";
 import { BlockCard } from "./BlockCard";
 
 export interface BlockType {
@@ -12,14 +12,21 @@ export interface BlockType {
 interface ListBlocksProps {
   blocks: Array<BlockType>;
   refreshBlocks: () => void;
+  isLoading: boolean;
+  editBlock: (id: string) => void;
 }
 
 export const ListBlocks = (_props: ListBlocksProps) => {
 
-  const { blocks, refreshBlocks } = _props;
+  const { blocks, refreshBlocks, isLoading, editBlock } = _props;
 
   return (
-    <FlatList style={styles.container} data={blocks} renderItem={({item}) => <BlockCard refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
+    <FlatList refreshControl={
+      <RefreshControl
+        refreshing={isLoading}
+        onRefresh={refreshBlocks}
+      />
+    } style={styles.container} data={blocks} renderItem={({item}) => <BlockCard editBlock={(key) => editBlock(key)} refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
   )
 };
 

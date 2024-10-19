@@ -1,27 +1,50 @@
 import { useState, useRef } from "react";
-import { View, StyleSheet, TouchableHighlight, TouchableOpacity, NativeModules, TextInput } from "react-native";
+import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 interface FormNewBlockProps {
   changeForm: (form: string) => void;
   refreshBlocks: () => void;
   closeBottomSheet: () => void;
+  isEdit?: boolean;
+}
+
+interface DayType {
+  day: string;
+  selected: boolean;
 }
 
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
-  const { refreshBlocks, changeForm, closeBottomSheet } = props;
+  const { refreshBlocks, changeForm, closeBottomSheet, isEdit } = props;
   const [appsSelected, setAppsSelected] = useState(0);
   const [blockTitle, setBlockTitle] = useState('');
   const currentTime = new Date();
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
 
+  const initialDays = [
+    { day: 'L', selected: false },
+    { day: 'M', selected: false },
+    { day: 'X', selected: false },
+    { day: 'J', selected: false },
+    { day: 'V', selected: false },
+    { day: 'S', selected: false },
+    { day: 'D', selected: false },
+  ];
+
+  const [days, setDays] = useState(initialDays);
+
   const { ScreenTimeModule } = NativeModules;
 
   const Frequency = (): React.ReactElement => {
 
-    const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    const toggleSelected = (selectedDay: DayType) => {
+      const updatedDays = days.map((day) =>
+        day.day === selectedDay.day ? { ...day, selected: !day.selected } : day
+      );
+      setDays(updatedDays);
+    };
 
     return (
       <View>
@@ -29,8 +52,8 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         <View style={styles.daysContainer}>
           {
             days.map((day, index) => (
-              <TouchableOpacity key={index} style={styles.dayButton}>
-                <Text>{day}</Text>
+              <TouchableOpacity onPress={() => toggleSelected(day)} key={day.day} style={day.selected ? styles.daySelected : styles.dayButton}>
+                <Text style={{ color: day.selected ? 'white' : 'black' }}>{day.day}</Text>
               </TouchableOpacity>
             ))
           }
@@ -62,7 +85,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     return (
       <View style={styles.timeFormContainer}>
         <Text style={styles.timeLabel}>Seleccionar hora</Text>
-        <TouchableHighlight style={styles.formOption}>
+        <View style={styles.formOption}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>Desde</Text>
             <DateTimePicker
@@ -72,8 +95,8 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
               display="default"
             />
           </View>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.formOption}>
+        </View>
+        <View style={styles.formOption}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>Hasta</Text>
             <DateTimePicker
@@ -83,7 +106,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
               display="default"
             />
           </View>
-        </TouchableHighlight>
+        </View>
       </View>
     )
   };
@@ -134,13 +157,22 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
+  const DeleteButton = (): React.ReactElement => {
+    if (!isEdit) return <></>;
+    return (
+      <View>
+        <Text style={styles.deleteButton}>Eliminar bloqueo</Text>
+      </View>
+    )
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <TextInput value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder="Añadir Nombre del Bloqueo" />
         <Icon source="pencil" size={25} />
       </View>
-      <TouchableHighlight onPress={handleSelectApps} style={styles.formOption}>
+      <TouchableOpacity onPress={handleSelectApps} style={styles.formOption}>
         <View style={styles.formOptionContent}>
           <View style={styles.labelOptionContainer}>
             <Icon source="shield" size={25} />
@@ -151,13 +183,14 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
             <Icon source="chevron-right" size={25} />
           </View>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
       <TimeConfigurationForm />
       <Frequency />
       <View style={styles.buttonContainer}>
         <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
         <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">Guardar</Button>
       </View>
+      <DeleteButton />
     </View>
   )
 };
@@ -174,9 +207,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 700,
-    lineHeight: 28.6,
-    borderBottomWidth: 1
+    fontWeight: '700',
+    borderBottomWidth: 1,
+    fontFamily: 'Catamaran'
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -217,24 +250,24 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 20,
-    fontWeight: 700,
-    lineHeight: 26
+    fontWeight: '700',
+    fontFamily: 'Catamaran'
   },
   timeLabel: {
     fontSize: 19,
-    fontWeight: 700,
-    lineHeight: 24.7
+    fontWeight: '700',
+    fontFamily: 'Catamaran'
   },
   selectLabel: {
     color: 'rgba(0, 0, 0, 0.32)',
     fontSize: 20,
-    fontWeight: 500,
-    lineHeight: 26
+    fontWeight: '500',
+    fontFamily: 'Catamaran'
   },
   buttonLabel: {
     color: '#203B52',
     fontSize: 16,
-    fontWeight: 600 
+    fontWeight: '600' 
   },
   daysContainer: {
     flexDirection: 'row',
@@ -245,6 +278,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F2F5',
     paddingVertical: 10,
     paddingHorizontal: 15,
-    borderRadius: 24
+    borderRadius: 24,
+    fontFamily: 'Mulish'
+  },
+  daySelected: {
+    backgroundColor: '#3F5B74',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 24,
+    fontFamily: 'Mulish'
+  },
+  deleteButton: {
+    fontFamily: 'Catamaran',
+    color: '#FF3B3B',
+    fontSize: 18,
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+    marginTop: 20
   }
 });

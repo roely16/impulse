@@ -1,35 +1,41 @@
 import { Tabs } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { Feather, Fontisto } from '@expo/vector-icons';
 
 export default function TabLayout() {
 
   return (
-    <>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarShowLabel: false
-        }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'lock-open' : 'lock-open-outline'} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="explore"
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'trending-up' : 'trending-up-sharp'} color={color} />
-            ),
-          }}
-        />
-      </Tabs>
-    </>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: '#95a5a6'
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Feather name="unlock" size={30} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="impulse"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Fontisto name="heartbeat-alt" size={30} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Feather name="trending-up" size={30} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { OptionsConfigNewBlock } from './OptionsConfigNewBlock';
@@ -7,13 +7,15 @@ import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typesc
 
 interface BottomSheetNewBlockProps {
   refreshBlocks: () => void;
+  onBottomSheetClosed: () => void;
+  bottomSheetForm?: string;
+  setBottomSheetForm: (form: string) => void;
+  isEdit?: boolean;
 }
 
 export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
 
-  const { refreshBlocks } = _props
-
-  const [bottomSheetForm, setBottomSheetForm] = useState<string>('');
+  const { refreshBlocks, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit } = _props
 
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
@@ -28,7 +30,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
 
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
-      return <FormNewBlock closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+      return <FormNewBlock isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock changeForm={setBottomSheetForm} />;
@@ -39,6 +41,13 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
       ref.current.close();
     }
   };
+
+  const handleOnChange = (index: number) => {
+    if (index === -1) {
+      onBottomSheetClosed();
+    }
+  };
+
   return (
     <BottomSheet
       ref={ref}
@@ -46,6 +55,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
       index={-1}
       enablePanDownToClose={true}
       enableDynamicSizing={true}
+      onChange={handleOnChange}
     >
       <BottomSheetScrollView style={styles.contentContainer}>
         {renderBottomSheetContent()}

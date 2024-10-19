@@ -1,31 +1,52 @@
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { StyleSheet, NativeModules, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { Blocks } from '@/components/Blocks';
 import { BottomSheetNewBlock } from '@/components/BottomSheet';
 import { ListBlocks, BlockType } from '@/components/ListBlocks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { Text, Button, Snackbar } from 'react-native-paper';
 
 export default function HomeScreen() {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [blocks, setBlocks] = useState<BlockType[]>([]);
-  const [blockAdded, setBlockAdded] = useState(false);
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [bottomSheetForm, setBottomSheetForm] = useState<string>('config-block');
+  const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const { ScreenTimeModule } = NativeModules;
   const openBottonSheet = () => {
     bottomSheetRef.current?.expand();
+    setBottomSheetForm('config-block');
+    setBottomSheetVisible(true);
   };
 
-  const getBlocks = useMemo(() => {
-    const init = async () => {
-      const blocks = await ScreenTimeModule.getBlocks();
-      setBlocks(blocks.blocks);
-      setBlockAdded(true);
-    }
-    return init;
-  }, []);
+  const openNewBlockForm = () => {
+    setBottomSheetForm('new-block');
+    bottomSheetRef.current?.expand();
+    setBottomSheetVisible(true);
+  };
+
+  const closedBottomSheet = () => {
+    setBottomSheetVisible(false);
+  };
+
+  const openEditBlockForm = () => {
+    setIsEditing(true);
+    setBottomSheetForm('new-block');
+    bottomSheetRef.current?.expand();
+    setBottomSheetVisible(true);
+  };
+
+  const getBlocks = async (isRefreshing: boolean = false) => {
+    setLoading(true);
+    const blocks = await ScreenTimeModule.getBlocks();
+    console.log('blocks', blocks)
+    setBlocks(blocks.blocks);
+    setLoading(false);
+  };
 
   useEffect(() => {
     getBlocks();
@@ -37,28 +58,45 @@ export default function HomeScreen() {
     if (existsBlocks) {
       return (
         <>
-          <Blocks showBottomShet={openBottonSheet} />
-          <ListBlocks refreshBlocks={getBlocks} blocks={blocks} />
+          <Blocks showBottomShet={openNewBlockForm} />
+          <ListBlocks editBlock={openEditBlockForm} isLoading={loading} refreshBlocks={getBlocks} blocks={blocks} />
         </>
       );
     }
 
     return (
-      <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 20, flexDirection: 'column', gap: 10, alignItems: 'center' }}>
-        <Text style={{ textAlign: 'center' }} variant="headlineSmall">No hay bloqueos configurados</Text>
-        <View style={{ flexDirection: 'row' }}>
-          <Button onPress={openBottonSheet} labelStyle={{ color: 'black' }} style={styles.button} contentStyle={{ flexDirection: 'row-reverse' }} icon="plus" mode="contained">Agregar</Button>
-        </View>
-      </View>
+      <></>
     )
   }
+
+  const AddButton = () => {
+    if (bottomSheetVisible) {
+      return <></>
+    }
+
+    return (
+      <View style={styles.buttonContainer}>
+        <Button
+          style={styles.addButton}
+          labelStyle={{ color: 'black' }}
+          buttonColor="#FDE047"
+          mode="contained"
+          icon="check"
+          onPress={openBottonSheet}
+        >
+          Añadir bloqueo
+        </Button>
+      </View>
+    )
+  };
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <BottomSheetModalProvider>
         <BlockSection />
-        <BottomSheetNewBlock refreshBlocks={getBlocks} ref={bottomSheetRef} />
+        <BottomSheetNewBlock isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
+      <AddButton />
     </GestureHandlerRootView>
   );
 }
@@ -83,5 +121,19 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 6,
     backgroundColor: '#FDE047'
-  }
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  addButton: {
+    paddingHorizontal: 18,
+    paddingVertical: 7,
+    borderRadius: 6
+  },
 });
