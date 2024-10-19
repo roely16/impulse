@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, SafeAreaView, StyleSheet, NativeModules, ScrollView, Image } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { PermissionImage } from '@/components/PermissionImage';
@@ -42,13 +42,13 @@ export default function HomeScreen() {
           <Text style={styles.title}>Permite el acceso al Tiempo de Uso</Text>
         </View>
         <View style={{ gap: 20, marginTop: 20, marginBottom: 40 }}>
-          <View style={{ flexDirection: 'row', gap: 20 }}>
+          <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
             <Image source={require('../assets/images/smartphone.png')} />
             <Text style={styles.information}>Para bloquear apps & webs, necesitamos permiso.</Text>
           </View>
-          <View style={{ flexDirection: 'row', gap: 20 }}>
+          <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
             <Image source={require('../assets/images/password-hide.png')} />
-            <Text style={styles.information}>La informacón del Tiempo de Uso está <Text style={{ fontWeight: '700' }}>protegida por Apple</Text> y estará <Text style={{ fontWeight: '700' }}>almacenada 100% en tu movil</Text>.</Text>
+            <Text style={styles.information}>La información del Tiempo de Uso está <Text style={{ fontWeight: '700' }}>protegida por Apple</Text> y estará <Text style={{ fontWeight: '700' }}>almacenada 100% en tu movil</Text>.</Text>
           </View>
         </View>
         <View style={{ alignItems: 'center' }}>
@@ -68,22 +68,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   container: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 40,
     flex: 1,
-    paddingBottom: 20,
-    paddingTop: 20
+    paddingVertical: 40,
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     textAlign: 'center',
-    fontWeight: 700,
-    lineHeight: 46.8
+    fontWeight: '700',
+    lineHeight: 46.8,
+    fontFamily: 'Catamaran'
   },
   information: {
     flex: 1,
     fontSize: 16,
     fontWeight: '400',
-    lineHeight: 24
+    lineHeight: 24,
+    fontFamily: 'Mulish'
   },
   startButton: {
     borderRadius: 6
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 40,
     left: 0,
     right: 0,
     justifyContent: 'center',

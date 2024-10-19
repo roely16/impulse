@@ -14,6 +14,11 @@ export default function SaveTime() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <View>
+          <View>
+            <Text style={{ fontFamily: 'Mulish', fontWeight: '700', fontSize: 22, lineHeight: 33, textAlign: 'center', marginBottom: 40 }}>
+              Según tu uso diario, pasas...
+            </Text>
+          </View>
           <Text style={styles.title}>
             { local.days } días
           </Text>
@@ -25,13 +30,13 @@ export default function SaveTime() {
           </Text>
         </View>
         <View>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.subtitle, { marginBottom: 40 }]}>
             En una vida, eso suma
           </Text>
           <Text style={styles.title}>
             { local.years } años
           </Text>
-          <Text style={[styles.subtitle, { fontWeight: '700' }]}>
+          <Text style={[styles.subtitle, { fontWeight: '700', marginTop: 40 }]}>
             ¿Estás listo para aprovechar tu tiempo al máximo?
           </Text>
         </View>
@@ -46,7 +51,7 @@ export default function SaveTime() {
           contentStyle={{ flexDirection: 'row-reverse' }}
           icon="arrow-right"
         >
-          Continuar
+          Empezar el cambio
         </Button>
       </View>
     </SafeAreaView>
@@ -59,15 +64,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   contentContainer: {
-    paddingHorizontal: 30,
-    paddingVertical: 50,
+    paddingHorizontal: 55,
+    paddingVertical: 40,
     gap: 50
   },
   title: {
-    fontSize: 36,
+    fontSize: 50,
     fontWeight: '700',
-    lineHeight: 46.8,
-    textAlign: 'center'
+    lineHeight: 65,
+    textAlign: 'center',
+    fontFamily: 'Catamaran'
   },
   image: {
     alignSelf: 'center',
@@ -78,7 +84,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 33,
     textAlign: 'center',
-    marginTop: 20
+    marginTop: 20,
+    fontFamily: 'Mulish'
   },
   buttonContainer: {
     position: 'absolute',
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30
+    marginBottom: 40
   },
   button: {
     paddingHorizontal: 18,

@@ -1,7 +1,31 @@
-import { View, StyleSheet } from "react-native";
-import { Text, Icon } from "react-native-paper";
+import { View, StyleSheet, NativeModules } from "react-native";
+import { Text } from "react-native-paper";
+import { router } from 'expo-router';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const PermissionImage = () => {
+  
+  const { ScreenTimeModule } = NativeModules;
+
+  const handleScreenTimeAccess = async () => {
+    try {
+      const response = await ScreenTimeModule.requestAuthorization();
+      if (response?.status === 'success') {
+        router.replace('/(tabs)')
+        await saveScreenTimeAccess();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const saveScreenTimeAccess = async () => {
+    try {
+      await AsyncStorage.setItem('screenTimeAccess', 'true');
+    } catch (error) {
+      console.error(error);
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
@@ -10,7 +34,7 @@ export const PermissionImage = () => {
           <Text variant="bodySmall" style={styles.message}>Providing "Impulse" access to Screen Time may allow it to see your activity data, restrict content, and limit the usage of apps and websites.</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text onPress={handleScreenTimeAccess} style={styles.buttonText}>Continue</Text>
           <View style={styles.verticalDivider} />
           <Text style={styles.buttonText}>Don't allow</Text>
         </View>
@@ -59,10 +83,11 @@ const styles = StyleSheet.create({
     marginTop: 5
   },
   buttonText: {
-    color: 'blue',
+    color: '#375cb1',
     textAlign: 'center',
     fontSize: 16,
-    padding: 20
+    padding: 20,
+    width: '48%'
   },
   iconContainer: {
     marginLeft: 30

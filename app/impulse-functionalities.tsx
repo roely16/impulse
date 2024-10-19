@@ -15,14 +15,14 @@ export default function ImpulseFunctionalities() {
         <View style={{ marginTop: 40, gap: 50 }}>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <Image source={require('../assets/images/sand-timer.png')} />
-            <View style={{ flex: 1, gap: 10, flexDirection: 'column' }}>
+            <View style={{ flex: 1, gap: 5, flexDirection: 'column' }}>
               <Text style={styles.title}>Bloqueo de Apps</Text>
               <Text style={styles.subtitle}>Programa horas específicas en las que bloquear esas aplicaciones que te distraen, permitiéndote enfocarte en lo que realmente importa. </Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <Image source={require('../assets/images/pulse.png')} />
-            <View style={{ flex: 1, gap: 10, flexDirection: 'column' }}>
+            <View style={{ flex: 1, gap: 5, flexDirection: 'column' }}>
               <Text style={styles.title}>Modo Impulsos</Text>
               <Text style={styles.subtitle}>¿Sientes la tentación constante de revisar tus aplicaciones sin motivo alguno? Te ayudaremos a controlar esos impulsos.</Text>
             </View>
@@ -52,28 +52,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   contentContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 20
+    paddingHorizontal: 40,
+    paddingVertical: 40
   },
   header: {
     fontSize: 30,
     fontWeight: '700',
-    lineHeight: 39
+    lineHeight: 39,
+    fontFamily: 'Catamaran'
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
-    lineHeight: 31.2
+    lineHeight: 31.2,
+    fontFamily: 'Catamaran'
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
     lineHeight: 24,
-    flexShrink: 1
+    flexShrink: 1,
+    fontFamily: 'Mulish'
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 40,
     left: 0,
     right: 0,
     justifyContent: 'center',

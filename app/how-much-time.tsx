@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
+import { PanResponder } from "react-native";
 
 const DAYS_IN_A_YEAR = 365;
 const HOURS_IN_A_DAY = 24;
@@ -17,6 +18,18 @@ export default function HowMuchTime() {
 
   const ProgressBar = () => {
 
+    const panResponder = PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onPanResponderMove: (evt, gestureState) => {
+        // Detecta si el usuario desliza hacia arriba o hacia abajo
+        if (gestureState.dy < -10) {
+          updateHours('increase');
+        } else if (gestureState.dy > 10) {
+          updateHours('decrease');
+        }
+      },
+    });
+
     const getPercentage = () => {
       const barHeight = 100 - (hours * 100) / 10;
 
@@ -27,7 +40,7 @@ export default function HowMuchTime() {
 
     const zeroBorderRadius = hours === 0 ? { borderBottomLeftRadius: 6, borderBottomRightRadius: 6 } : {};
     return (
-      <View style={styles.progressBarContainer}>
+      <View style={styles.progressBarContainer} {...panResponder.panHandlers}>
         <View style={[styles.progressBar, barHeight, zeroBorderRadius]}></View>
       </View>
     )
@@ -58,7 +71,7 @@ export default function HowMuchTime() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={styles.contentContainer}>
         <Text style={styles.title}>
           ¿Cuanto tiempo usas el móvil al día?
         </Text>
@@ -67,7 +80,7 @@ export default function HowMuchTime() {
           <ProgressBar />
           <UpdateBarButtons />
         </View>
-      </ScrollView>
+      </View>
       <View style={styles.buttonContainer}>
         <Button
           style={styles.button}
@@ -92,7 +105,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 40,
     flexDirection: 'column',
     gap: 50,
     justifyContent: 'center',
@@ -102,11 +115,12 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '700',
     lineHeight: 46.8,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: 'Catamaran'
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 40,
     left: 0,
     right: 0,
     justifyContent: 'center',
@@ -121,12 +135,14 @@ const styles = StyleSheet.create({
   hourLetter: {
     fontSize: 40,
     fontWeight: '400',
-    lineHeight: 52
+    lineHeight: 52,
+    fontFamily: 'Catamaran'
   },
   hourNumber: {
     fontSize: 50,
     fontWeight: '700',
-    lineHeight: 65
+    lineHeight: 65,
+    fontFamily: 'Catamaran'
   },
   progressBarWrapper: {
     width: '100%',

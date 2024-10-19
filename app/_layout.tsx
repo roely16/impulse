@@ -17,6 +17,8 @@ export default function RootLayout() {
 
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Catamaran: require('../assets/fonts/Catamaran-VariableFont_wght.ttf'),
+    Mulish: require('../assets/fonts/Mulish-VariableFont_wght.ttf')
   });
 
   MixpanelService.init();

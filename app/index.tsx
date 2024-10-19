@@ -49,28 +49,30 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 30,
-    paddingVertical: 10
+    paddingVertical: 40
   },
   title: {
     fontSize: 36,
     fontWeight: '700',
     lineHeight: 46.8,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: 'Catamaran'
   },
   image: {
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 30
   },
   subtitle: {
     fontSize: 22,
     fontWeight: '400',
     lineHeight: 33,
     textAlign: 'center',
-    marginTop: 20
+    marginTop: 40,
+    fontFamily: 'Mulish'
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 40,
     left: 0,
     right: 0,
     justifyContent: 'center',
