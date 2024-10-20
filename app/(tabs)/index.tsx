@@ -15,6 +15,7 @@ export default function HomeScreen() {
   const [bottomSheetForm, setBottomSheetForm] = useState<string>('config-block');
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [blockId, setBlockId] = useState<string | null>(null);
 
   const { ScreenTimeModule } = NativeModules;
   const openBottonSheet = () => {
@@ -33,7 +34,9 @@ export default function HomeScreen() {
     setBottomSheetVisible(false);
   };
 
-  const openEditBlockForm = () => {
+  const openEditBlockForm = (blockId: string) => {
+    console.log('blockId', blockId)
+    setBlockId(blockId);
     setIsEditing(true);
     setBottomSheetForm('new-block');
     bottomSheetRef.current?.expand();
@@ -94,7 +97,7 @@ export default function HomeScreen() {
     <GestureHandlerRootView style={styles.container}>
       <BottomSheetModalProvider>
         <BlockSection />
-        <BottomSheetNewBlock isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
+        <BottomSheetNewBlock blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
       <AddButton />
     </GestureHandlerRootView>

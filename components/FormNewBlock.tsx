@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput } from "react-native";
+import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 interface FormNewBlockProps {
@@ -7,6 +7,7 @@ interface FormNewBlockProps {
   refreshBlocks: () => void;
   closeBottomSheet: () => void;
   isEdit?: boolean;
+  blockId?: string | null;
 }
 
 interface DayType {
@@ -16,7 +17,7 @@ interface DayType {
 
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
-  const { refreshBlocks, changeForm, closeBottomSheet, isEdit } = props;
+  const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId } = props;
   const [appsSelected, setAppsSelected] = useState(0);
   const [blockTitle, setBlockTitle] = useState('');
   const currentTime = new Date();
@@ -158,11 +159,44 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
   const DeleteButton = (): React.ReactElement => {
+
+    const confirmDeleteBlock = async () => {
+      try {
+        await ScreenTimeModule.deleteBlock(blockId);
+        refreshBlocks();
+        closeBottomSheet()
+      } catch (error) {
+        console.log('error deleting block', error)  
+      }
+    }
+    const handleDeleteBlock = async () => {
+      try {
+        Alert.alert(
+          "Confirmación",
+          "¿Estás seguro de que deseas eliminar el bloqueo?",
+          [
+            {
+              text: "Cancelar",
+              style: "cancel"
+            },
+            {
+              text: "OK",
+              onPress: () => {
+                confirmDeleteBlock();
+              }
+            }
+          ]
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     if (!isEdit) return <></>;
     return (
-      <View>
+      <TouchableOpacity onPress={handleDeleteBlock}>
         <Text style={styles.deleteButton}>Eliminar bloqueo</Text>
-      </View>
+      </TouchableOpacity>
     )
   };
 

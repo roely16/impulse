@@ -11,11 +11,12 @@ interface BottomSheetNewBlockProps {
   bottomSheetForm?: string;
   setBottomSheetForm: (form: string) => void;
   isEdit?: boolean;
+  blockId?: string | null;
 }
 
 export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
 
-  const { refreshBlocks, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit } = _props
+  const { refreshBlocks, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId } = _props
 
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
@@ -30,7 +31,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
 
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
-      return <FormNewBlock isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+      return <FormNewBlock blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock changeForm={setBottomSheetForm} />;
