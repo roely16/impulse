@@ -12,11 +12,13 @@ interface BottomSheetNewBlockProps {
   setBottomSheetForm: (form: string) => void;
   isEdit?: boolean;
   blockId?: string | null;
+  isEmptyBlock?: boolean;
+  updateEmptyBlock?: (isEmpty: boolean) => void;
 }
 
 export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
 
-  const { refreshBlocks, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId } = _props
+  const { refreshBlocks, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, isEmptyBlock, updateEmptyBlock } = _props
 
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
@@ -31,7 +33,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
 
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
-      return <FormNewBlock blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+      return <FormNewBlock updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock changeForm={setBottomSheetForm} />;
@@ -40,6 +42,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
   const closeBottomSheet = () => {
     if (ref && 'current' in ref && ref.current) {
       ref.current.close();
+      updateEmptyBlock && updateEmptyBlock(true);
     }
   };
 

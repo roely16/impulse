@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -8,6 +8,8 @@ interface FormNewBlockProps {
   closeBottomSheet: () => void;
   isEdit?: boolean;
   blockId?: string | null;
+  isEmptyBlock?: boolean;
+  updateEmptyBlock?: (isEmpty: boolean) => void;
 }
 
 interface DayType {
@@ -17,8 +19,10 @@ interface DayType {
 
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
-  const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId } = props;
+  const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId, isEmptyBlock, updateEmptyBlock } = props;
   const [appsSelected, setAppsSelected] = useState(0);
+  const [categoriesSelected, setCategoriesSelected] = useState(0);
+  const [sitesSelected, setSitesSelected] = useState(0);
   const [blockTitle, setBlockTitle] = useState('');
   const currentTime = new Date();
   const startTimeRef = useRef(currentTime);
@@ -114,23 +118,40 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker();
+      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock);
       if (result.status === 'success') {
-        setAppsSelected(result.totalSelected);
+        setAppsSelected(result.appsSelected);
+        setCategoriesSelected(result.categoriesSelected);
+        setSitesSelected(result.sitesSelected);
+        updateEmptyBlock && updateEmptyBlock(false);
       }
     } catch (error) {
       console.error(error);
     }
   };
 
+  const emptySelected = appsSelected === 0 && categoriesSelected === 0 && sitesSelected === 0;
+
   const TextAppsSelected = (): React.ReactElement => {
-    if (appsSelected === 0) {
+    if (emptySelected) {
       return (
         <Text style={styles.selectLabel}>Seleccionar</Text>
       )
     }
+    const selectedItems = [];
+
+    if (appsSelected > 0) {
+      selectedItems.push(`${appsSelected} apps`);
+    }
+    if (categoriesSelected > 0) {
+      selectedItems.push(`${categoriesSelected} categorías`);
+    }
+    if (sitesSelected > 0) {
+      selectedItems.push(`${sitesSelected} sitios`);
+    }
+
     return (
-      <Text style={styles.selectLabel}>{appsSelected} apps seleccionadas</Text>
+      <Text style={styles.selectLabel}>{selectedItems.join(', ')}</Text>
     )
   };
 
@@ -154,7 +175,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     }
   };
 
-  const formFilled = blockTitle && appsSelected > 0 && startTimeRef && endTimeRef;
+  const formFilled = !emptySelected && startTimeRef && endTimeRef;
 
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
@@ -200,6 +221,10 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     )
   };
 
+  useLayoutEffect(() => {
+    console.log('isEmptyBlock', isEmptyBlock);
+  }, [isEmptyBlock]);
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -222,7 +247,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <Frequency />
       <View style={styles.buttonContainer}>
         <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
-        <Button onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">Guardar</Button>
+        <Button disabled={!formFilled} onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">Guardar</Button>
       </View>
       <DeleteButton />
     </View>

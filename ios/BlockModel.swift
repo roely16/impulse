@@ -1,3 +1,4 @@
+
 //
 //  BlockModel.swift
 //  impulse
@@ -27,3 +28,4 @@ final class Block {
     self.enable = enable
   }
 }
+

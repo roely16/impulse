@@ -46,7 +46,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         await getBlock(blockId: activity.rawValue)
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activity.rawValue))
         store.shield.applications = block?.appsTokens
-        sharedDefaults?.set("Activity started: \(activity)", forKey: "lastActivityLog")
       }
     }
     

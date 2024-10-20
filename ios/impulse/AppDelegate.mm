@@ -67,7 +67,8 @@
 RCT_EXTERN_METHOD(requestAuthorization:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(showAppPicker:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(showAppPicker:(BOOL)isFirstSelection
+                  resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(createBlock:(NSString *)name

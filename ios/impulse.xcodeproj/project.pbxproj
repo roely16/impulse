@@ -20,6 +20,7 @@
 		4009EC482CB7019D002A0FB4 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */; };
 		4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */; };
 		4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		40511BE12CC5083400A1D6CA /* lock-shield-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 40511BE02CC5083400A1D6CA /* lock-shield-icon.png */; };
 		4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */; };
 		4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */; };
 		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -96,6 +97,7 @@
 		4009EC4C2CB7019D002A0FB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4009EC4D2CB7019D002A0FB4 /* shieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldAction.entitlements; sourceTree = "<group>"; };
 		4030B7652CACADFB0042EBF5 /* Impulse-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Impulse-Bridging-Header.h"; sourceTree = "<group>"; };
+		40511BE02CC5083400A1D6CA /* lock-shield-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "lock-shield-icon.png"; path = "impulse/Images.xcassets/lock-shield-icon.imageset/lock-shield-icon.png"; sourceTree = SOURCE_ROOT; };
 		4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = monitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 		4009EC162CB6E7D7002A0FB4 /* shieldConfigurator */ = {
 			isa = PBXGroup;
 			children = (
+				40511BE02CC5083400A1D6CA /* lock-shield-icon.png */,
 				4009EC172CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift */,
 				4009EC192CB6E7D7002A0FB4 /* Info.plist */,
 				4009EC1A2CB6E7D7002A0FB4 /* shieldConfigurator.entitlements */,
@@ -436,6 +439,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40511BE12CC5083400A1D6CA /* lock-shield-icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

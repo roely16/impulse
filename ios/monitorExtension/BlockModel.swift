@@ -16,13 +16,15 @@ final class Block {
   var appsTokens: Set<ApplicationToken> = []
   var startTime: String
   var endTime: String
+  var enable: Bool
   
-  init(name: String, appsTokens: Set<ApplicationToken> = [], startTime: String, endTime: String) {
+  init(name: String, appsTokens: Set<ApplicationToken> = [], startTime: String, endTime: String, enable: Bool) {
     self.id = UUID()
     self.name = name
     self.appsTokens = appsTokens
     self.startTime = startTime
     self.endTime = endTime
+    self.enable = enable
   }
 }
 

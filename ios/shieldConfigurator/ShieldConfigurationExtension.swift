@@ -39,8 +39,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       return ShieldConfiguration(
         backgroundBlurStyle: UIBlurEffect.Style.light,
         backgroundColor: UIColor(hex: "#FDE047"),  // Una instancia válida de UIColor
-        title: ShieldConfiguration.Label(text: "Bloqueo activo", color: UIColor.black),
-        subtitle: ShieldConfiguration.Label(text: "Tienes configurado bloquear app durante el modo de trabajo", color: UIColor.black),
+        icon: UIImage(named: "lock-shield-icon"),
+        title: ShieldConfiguration.Label(text: "\(application.localizedDisplayName ?? "App") esta\nbloqueada", color: UIColor.black),
+        subtitle: ShieldConfiguration.Label(text: "Tienes configurado bloquear \(application.localizedDisplayName ?? "app") durante el modo de trabajo", color: UIColor.black),
         primaryButtonLabel: ShieldConfiguration.Label(text: "Cerrar", color: UIColor.black),
         primaryButtonBackgroundColor: UIColor.white  // Instancia de UIColor
       )

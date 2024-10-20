@@ -16,16 +16,23 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [blockId, setBlockId] = useState<string | null>(null);
+  const [isEmptyBlock, setIsEmptyBlock] = useState(false);
 
   const { ScreenTimeModule } = NativeModules;
   const openBottonSheet = () => {
     bottomSheetRef.current?.expand();
     setBottomSheetForm('config-block');
     setBottomSheetVisible(true);
+    setIsEditing(false);
+    setBlockId(null);
+    setIsEmptyBlock(true);
   };
 
   const openNewBlockForm = () => {
     setBottomSheetForm('new-block');
+    setIsEditing(false);
+    setBlockId(null);
+    setIsEmptyBlock(true);
     bottomSheetRef.current?.expand();
     setBottomSheetVisible(true);
   };
@@ -35,7 +42,6 @@ export default function HomeScreen() {
   };
 
   const openEditBlockForm = (blockId: string) => {
-    console.log('blockId', blockId)
     setBlockId(blockId);
     setIsEditing(true);
     setBottomSheetForm('new-block');
@@ -46,7 +52,6 @@ export default function HomeScreen() {
   const getBlocks = async (isRefreshing: boolean = false) => {
     setLoading(true);
     const blocks = await ScreenTimeModule.getBlocks();
-    console.log('blocks', blocks)
     setBlocks(blocks.blocks);
     setLoading(false);
   };
@@ -97,7 +102,7 @@ export default function HomeScreen() {
     <GestureHandlerRootView style={styles.container}>
       <BottomSheetModalProvider>
         <BlockSection />
-        <BottomSheetNewBlock blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
+        <BottomSheetNewBlock updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
       <AddButton />
     </GestureHandlerRootView>

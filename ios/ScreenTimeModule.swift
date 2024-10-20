@@ -18,13 +18,16 @@ extension DeviceActivityName {
 class ScreenTimeModule: NSObject {
     
   var appsSelected: Set<ApplicationToken> = []
+//  var sitesSelected: Set<WebDomainToken> = []
+//  var familySelection: FamilyActivitySelection = FamilyActivitySelection()
   let store = ManagedSettingsStore(named: .daily)
   
-  func handleAuthorizationError(_ error: Error, reject: @escaping RCTPromiseRejectBlock) {
-      let errorCode = "E_AUTHORIZATION_FAILED"
+  func handleAuthorizationError(_ errorCode: String? = nil, error: Error, reject: @escaping RCTPromiseRejectBlock) {
+      let finalErrorCode = errorCode ?? "FAILED"
       let errorMessage = "Failed to request authorization: \(error.localizedDescription)"
-      reject(errorCode, errorMessage, error)
+      reject(finalErrorCode, errorMessage, error)
   }
+
 
   @objc
   func requestAuthorization(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
@@ -34,7 +37,7 @@ class ScreenTimeModule: NSObject {
                   try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
                   resolve(["status": "success", "message": "Authorization requested successfully."])
               } catch {
-                  handleAuthorizationError(error, reject: reject)
+                handleAuthorizationError(error: error, reject: reject)
               }
           }
       } else {
@@ -42,17 +45,24 @@ class ScreenTimeModule: NSObject {
       }
   }
 
-  @objc(showAppPicker:rejecter:)
-  func showAppPicker(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+  @MainActor @objc
+  func showAppPicker(_ isFirstSelection: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
       if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
        let window = scene.windows.first {
         
-        let pickerView = ActivityPickerView { updatedSelection in
+        let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection) { updatedSelection in
           let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
-          print("Aplicaciones seleccionadas: \(updatedSelection.applications.count)")
-          resolve(["status": "success", "totalSelected" : updatedSelection.applications.count])
+          print("Apps selected: \(updatedSelection.applications.count)")
+          print("Categories selected: \(updatedSelection.categories.count)")
+          print("Sites selected: \(updatedSelection.webDomains.count)")
+          resolve([
+            "status": "success",
+            "appsSelected" : updatedSelection.applications.count,
+            "categoriesSelected" : updatedSelection.categories.count,
+            "sitesSelected" : updatedSelection.webDomains.count
+          ])
         }
         
         let controller = UIHostingController(rootView: pickerView)
@@ -76,9 +86,11 @@ class ScreenTimeModule: NSObject {
       )
       
       let context = container.mainContext
-      
+
+      let blockName = !name.isEmpty ? name : "Bloqueo #"
+            
       let block = Block(
-        name: name,
+        name: blockName,
         appsTokens: self.appsSelected,
         startTime: startTime,
         endTime: endTime,
@@ -89,17 +101,20 @@ class ScreenTimeModule: NSObject {
       
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
-
-      try deviceActivityCenter.startMonitoring(DeviceActivityName(rawValue: block.id.uuidString) , during: DeviceActivitySchedule(
-        intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
-        intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
-        repeats: false
-      ))
       
+      try deviceActivityCenter.startMonitoring(
+        DeviceActivityName(rawValue: block.id.uuidString),
+        during: DeviceActivitySchedule(
+          intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
+          intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
+          repeats: false
+        )
+      )
+
       resolve(["status": "success", "appsBlocked": self.appsSelected.count])
 
     } catch {
-      print("Error saving")
+      reject("Error", "Error trying to create block: \(error.localizedDescription)", error)
     }
   }
   
