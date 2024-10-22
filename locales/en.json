@@ -1,5 +1,106 @@
 {
   "welcomeScreen": {
-    "title": "Ayudate a controlar los impulsos y gana horas en tu día a día"
+    "title": "Help yourself control impulses and gain hours in your day-to-day life",
+    "subtitle": "Users have already saved more than 5000 hours by controlling their mobile phone usage",
+    "startButton": "Start"
+  },
+  "howMuchTime": {
+    "title": "How much time do you spend on your phone each day?",
+    "continueButton": "Continue"
+  },
+  "saveTimeScreen": {
+    "firstText": "Based on your daily usage, you spend...",
+    "secondText": "per year lost in front of the screen...",
+    "thirdText": "Think about what you could do with that time if you changed your habits today.",
+    "fourthText": "In a lifetime, that adds up to",
+    "fifthText": "Are you ready to make the most of your time?",
+    "startButton": "Start the change",
+    "days": "days",
+    "years": "years"
+  },
+  "impulseFunctionalities": {
+    "title": "The two features that will help you regain your time",
+    "blockAppsTitle": "App Blocker",
+    "blockAppsSubtitle": "Schedule specific hours to block those apps that distract you, allowing you to focus on what really matters.",
+    "impulseModeTitle": "Impulse Mode",
+    "impulseModeSubtitle": "Do you constantly feel tempted to check your apps for no reason? We'll help you control those impulses.",
+    "continueButton": "Continue"
+  },
+  "screenTimeAccess": {
+    "title": "Allow access to Screen Time",
+    "infoOne": "To block apps & websites, we need permission",
+    "infoTwo": {
+      "first": "The Screen Time information is ",
+      "second": "protected by Apple",
+      "third": " and will be ",
+      "fourth": "stored 100% on your device"
+    },
+    "permissionButton": {
+      "title": "Impulse wants to access Screen Time",
+      "message": "Allowing Impulse to access Screen Time may enable it to see your activity data, restrict content, and limit the use of apps and websites.",
+      "allowButton": "Continue",
+      "denyButton": "Do not allow"
+    },
+    "startButton": "Start"
+  },
+  "blocksScreen": {
+    "addBlockButton": "Add block"
+  },
+  "optionsConfigNewBlock": {
+    "title": "Configure new block",
+    "newBlock": "Block by Hours",
+    "newLimit": "Usage limit"
+  },
+  "formNewBlock": {
+    "blockName": "Add Block Name",
+    "appsOptions": "Apps",
+    "appsPlaceholder": "Select",
+    "sitesLabel": "sites",
+    "selectTime": "Select time",
+    "from": "From",
+    "to": "To",
+    "frequency": "Frequency",
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "deleteButton": "Delete block period",
+    "deleteAlert": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete the block period?",
+      "cancelButton": "Cancel",
+      "confirmButton": "Delete"
+    },
+    "defaultBlockName": "Block"
+  },
+  "formNewLimit": {
+    "blockName": "Add Limit Name",
+    "appsOptions": "Apps",
+    "appsPlaceholder": "Select",
+    "sitesLabel": "sites",
+    "selectTime": "Daily time limit",
+    "selectTimeLabel": "Select",
+    "maxOpenDailyTitle": "Daily opening limit",
+    "maxOpenDaily": "Opening Limit",
+    "maxOpenDailyLabel": "Select",
+    "frequency": "Frequency",
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "deleteButton": "Delete block",
+    "deleteAlert": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete the limit?",
+      "cancelButton": "Cancel",
+      "confirmButton": "Delete"
+    }
+  },
+  "blocksSection": {
+    "title": "Blocking Periods",
+    "addButton": "Add"
+  },
+  "cardBlock": {
+    "editButton": "Edit",
+    "appsLabel": "Apps"
+  },
+  "cardTime": {
+    "title": "Screen Time"
   }
 }

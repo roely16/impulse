@@ -29,7 +29,7 @@ export const BlockCard = (props: BlockCardProps) => {
     }
   }
 
-  const handleEditBlock = () => {
+  const handleEditBlock = async () => {
     editBlock(id);
   }
 

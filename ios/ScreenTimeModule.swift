@@ -18,8 +18,7 @@ extension DeviceActivityName {
 class ScreenTimeModule: NSObject {
     
   var appsSelected: Set<ApplicationToken> = []
-//  var sitesSelected: Set<WebDomainToken> = []
-//  var familySelection: FamilyActivitySelection = FamilyActivitySelection()
+  var familySelection: FamilyActivitySelection = FamilyActivitySelection()
   let store = ManagedSettingsStore(named: .daily)
   
   func handleAuthorizationError(_ errorCode: String? = nil, error: Error, reject: @escaping RCTPromiseRejectBlock) {
@@ -54,6 +53,7 @@ class ScreenTimeModule: NSObject {
         let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection) { updatedSelection in
           let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
+          self.familySelection = updatedSelection
           print("Apps selected: \(updatedSelection.applications.count)")
           print("Categories selected: \(updatedSelection.categories.count)")
           print("Sites selected: \(updatedSelection.webDomains.count)")
@@ -86,13 +86,16 @@ class ScreenTimeModule: NSObject {
       )
       
       let context = container.mainContext
-            
+      
+      debugPrint(weekdays)
       let block = Block(
         name: name,
         appsTokens: self.appsSelected,
+        familySelection: self.familySelection,
         startTime: startTime,
         endTime: endTime,
-        enable: true
+        enable: true,
+        weekdays: weekdays
       )
       context.insert(block)
       try context.save()
@@ -192,6 +195,41 @@ class ScreenTimeModule: NSObject {
       // Delete from store
       try context.delete(model: Block.self, where: #Predicate { $0.id == uuid })
       resolve("Block deleted")
+    } catch {
+      reject("Error", "Could not delete block", nil)
+    }
+  }
+  
+  @MainActor @objc
+  func getBlock(_ blockId: String, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+    do {
+      guard let uuid = UUID(uuidString: blockId) else {
+        reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
+        return
+      }
+      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
+      let container = try ModelContainer(
+        for: Block.self,
+        configurations: configuration
+      )
+      let context = container.mainContext
+      var fetchDescriptor = FetchDescriptor<Block>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      fetchDescriptor.fetchLimit = 1
+      let result = try context.fetch(fetchDescriptor)
+      let block = result.first
+      
+      let blockData = [
+        "id": block?.id.uuidString,
+        "name": block?.name,
+        "startTime": block?.startTime,
+        "endTime": block?.endTime,
+        "apps": block?.appsTokens.count,
+        "weekdays": block?.weekdays
+      ] as [String : Any]
+      print(block?.weekdays)
+      resolve(["status": "success", "block" : blockData])
     } catch {
       reject("Error", "Could not delete block", nil)
     }

@@ -88,6 +88,10 @@ RCT_EXTERN_METHOD(deleteBlock:(NSString *)blockId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getBlock:(NSString *)blockId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(updateBlockStatus:(NSString *)blockId
                   isEnable:(BOOL)isEnable
                   resolve:(RCTPromiseResolveBlock)resolve

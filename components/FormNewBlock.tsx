@@ -185,6 +185,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         appsSelected,
         weekDays
       }
+      console.log('save data', data);
       const response = await ScreenTimeModule.createBlock(data.name, data.startTime, data.endTime, data.weekDays);
       console.log('response', response);
       refreshBlocks();
@@ -243,9 +244,57 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     )
   };
 
+  function timeStringToDate(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    
+    // Crea un objeto Date con la fecha actual
+    const now = new Date();
+    
+    // Establece las horas y minutos
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+    
+    return date;
+  }
+  const setBlockData = (block) => {
+    console.log('block', block);
+    setBlockTitle(block.name);
+    const startTime = timeStringToDate(block.startTime);
+    startTimeRef.current = startTime;
+    const endTime = timeStringToDate(block.endTime);
+    endTimeRef.current = endTime;
+    setAppsSelected(block.apps);
+
+    const updatedDays = initialDays.map(day => {
+        if (block.weekdays.includes(day.value)) {
+            return { ...day, selected: true };
+        }
+        return day;
+    });
+    setDays(updatedDays);
+  }
+
+  const clearData = () => {
+    setBlockTitle('');
+    startTimeRef.current = currentTime;
+    endTimeRef.current = new Date(currentTime.getTime() + 15 * 60000);
+    setAppsSelected(0);
+    setSitesSelected(0);
+    setDays(initialDays);
+  }
+
   useLayoutEffect(() => {
-    console.log('isEmptyBlock', isEmptyBlock);
-  }, [isEmptyBlock]);
+    const loadBlockData = async () => {
+      const result = await ScreenTimeModule.getBlock(blockId);
+      if (result.status === 'success') {
+        setBlockData(result.block);
+      }
+    };
+    if (isEdit) {
+      loadBlockData();
+    } else {
+      clearData();
+    }
+  }, [isEdit]);
 
   return (
     <View style={styles.container}>

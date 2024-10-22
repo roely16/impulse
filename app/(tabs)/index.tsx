@@ -43,6 +43,8 @@ export default function HomeScreen() {
 
   const closedBottomSheet = () => {
     setBottomSheetVisible(false);
+    setIsEditing(false);
+    setBlockId(null);
   };
 
   const openEditBlockForm = (blockId: string) => {
