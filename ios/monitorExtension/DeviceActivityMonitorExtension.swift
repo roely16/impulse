@@ -40,42 +40,57 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
   }
   
-    override func intervalDidStart(for activity: DeviceActivityName) {
-      super.intervalDidStart(for: activity)
-      Task {
-        await getBlock(blockId: activity.rawValue)
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activity.rawValue))
-        store.shield.applications = block?.appsTokens
+  func extractId(from activityRawValue: String) -> String {
+      let dayIdentifier = "-day-"
+
+      // Verifica si el string contiene el identificador
+      if let range = activityRawValue.range(of: dayIdentifier) {
+          // Si se encuentra, extrae la parte anterior
+          return String(activityRawValue[..<range.lowerBound])
       }
+      
+      // Si no se encuentra, devolver el string original
+      return activityRawValue
+  }
+  
+  override func intervalDidStart(for activity: DeviceActivityName) {
+    super.intervalDidStart(for: activity)
+    Task {
+      let activityId = extractId(from: activity.rawValue)
+      await getBlock(blockId: activityId)
+      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
+      store.shield.applications = block?.appsTokens
+      sharedDefaults?.set("Activity started: \(activityId) \(activity.rawValue)", forKey: "lastActivityLog")
     }
+  }
+  
+  override func intervalDidEnd(for activity: DeviceActivityName) {
+      super.intervalDidEnd(for: activity)
+      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activity.rawValue))
+      store.shield.applications = nil
+  }
     
-    override func intervalDidEnd(for activity: DeviceActivityName) {
-        super.intervalDidEnd(for: activity)
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activity.rawValue))
-        store.shield.applications = nil
-    }
-    
-    override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
-        super.eventDidReachThreshold(event, activity: activity)
-        
-        // Handle the event reaching its threshold.
-    }
-    
-    override func intervalWillStartWarning(for activity: DeviceActivityName) {
-        super.intervalWillStartWarning(for: activity)
-        
-        // Handle the warning before the interval starts.
-    }
-    
-    override func intervalWillEndWarning(for activity: DeviceActivityName) {
-        super.intervalWillEndWarning(for: activity)
-        
-        // Handle the warning before the interval ends.
-    }
-    
-    override func eventWillReachThresholdWarning(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
-        super.eventWillReachThresholdWarning(event, activity: activity)
-        
-        // Handle the warning before the event reaches its threshold.
-    }
+  override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
+      super.eventDidReachThreshold(event, activity: activity)
+      
+      // Handle the event reaching its threshold.
+  }
+  
+  override func intervalWillStartWarning(for activity: DeviceActivityName) {
+      super.intervalWillStartWarning(for: activity)
+      
+      // Handle the warning before the interval starts.
+  }
+  
+  override func intervalWillEndWarning(for activity: DeviceActivityName) {
+      super.intervalWillEndWarning(for: activity)
+      
+      // Handle the warning before the interval ends.
+  }
+  
+  override func eventWillReachThresholdWarning(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
+      super.eventWillReachThresholdWarning(event, activity: activity)
+      
+      // Handle the warning before the event reaches its threshold.
+  }
 }

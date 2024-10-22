@@ -11,6 +11,7 @@ interface FormNewBlockProps {
   blockId?: string | null;
   isEmptyBlock?: boolean;
   updateEmptyBlock?: (isEmpty: boolean) => void;
+  totalBlocks?: number;
 }
 
 interface DayType {
@@ -20,9 +21,8 @@ interface DayType {
 
 export const FormNewBlock = (props: FormNewBlockProps) => {
 
-  const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId, isEmptyBlock, updateEmptyBlock } = props;
+  const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = props;
   const [appsSelected, setAppsSelected] = useState(0);
-  const [categoriesSelected, setCategoriesSelected] = useState(0);
   const [sitesSelected, setSitesSelected] = useState(0);
   const [blockTitle, setBlockTitle] = useState('');
   const currentTime = new Date();
@@ -32,18 +32,26 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const { t } = useTranslation();
 
   const initialDays = [
-    { day: 'L', selected: false },
-    { day: 'M', selected: false },
-    { day: 'X', selected: false },
-    { day: 'J', selected: false },
-    { day: 'V', selected: false },
-    { day: 'S', selected: false },
-    { day: 'D', selected: false },
+    { day: 'L', value: 2, selected: false },
+    { day: 'M', value: 3, selected: false },
+    { day: 'X', value: 4, selected: false },
+    { day: 'J', value: 5, selected: false },
+    { day: 'V', value: 6, selected: false },
+    { day: 'S', value: 7, selected: false },
+    { day: 'D', value: 1, selected: false },
   ];
 
   const [days, setDays] = useState(initialDays);
 
   const { ScreenTimeModule } = NativeModules;
+
+  const readLastLog = () => {
+    try {
+      const response = ScreenTimeModule.readLastLog();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const Frequency = (): React.ReactElement => {
 
@@ -132,7 +140,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       const result = await ScreenTimeModule.showAppPicker(isEmptyBlock);
       if (result.status === 'success') {
         setAppsSelected(result.appsSelected);
-        setCategoriesSelected(result.categoriesSelected);
         setSitesSelected(result.sitesSelected);
         updateEmptyBlock && updateEmptyBlock(false);
       }
@@ -157,10 +164,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       selectedItems.push(`${appsSelected} apps`);
     }
 
-    if (sitesSelected > 0) {
-      selectedItems.push(`${sitesSelected} ${t('formNewBlock.sitesLabel')}`);
-    }
-
     return (
       <Text style={styles.selectLabel}>{selectedItems.join(', ')}</Text>
     )
@@ -171,13 +174,19 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
       const startTime = convertDate(startTimeRef.current);
       const endTime = convertDate(endTimeRef.current);
+      const haveBlockTitle = blockTitle.length > 0;
+      const newBlockTitle = haveBlockTitle ? blockTitle : `${t('formNewBlock.defaultBlockName')} #${totalBlocks + 1}`;
+
+      const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
       const data = {
-        name: blockTitle,
+        name: newBlockTitle,
         startTime,
         endTime,
-        appsSelected
+        appsSelected,
+        weekDays
       }
-      await ScreenTimeModule.createBlock(data.name, data.startTime, data.endTime);
+      const response = await ScreenTimeModule.createBlock(data.name, data.startTime, data.endTime, data.weekDays);
+      console.log('response', response);
       refreshBlocks();
       closeBottomSheet()
       changeForm('')

@@ -107,7 +107,7 @@ export default function HomeScreen() {
       <CardTimeHome />
       <BottomSheetModalProvider>
         <BlockSection />
-        <BottomSheetNewBlock updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
+        <BottomSheetNewBlock totalBlocks={blocks.length} updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
       <AddButton />
     </GestureHandlerRootView>

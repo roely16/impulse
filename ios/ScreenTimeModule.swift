@@ -75,7 +75,7 @@ class ScreenTimeModule: NSObject {
   }
 
   @MainActor @objc
-  func createBlock(_ name: String, startTime: String, endTime: String, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+  func createBlock(_ name: String, startTime: String, endTime: String, weekdays: [Int], resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     let deviceActivityCenter = DeviceActivityCenter();
     
     do {
@@ -86,11 +86,9 @@ class ScreenTimeModule: NSObject {
       )
       
       let context = container.mainContext
-
-      let blockName = !name.isEmpty ? name : "Bloqueo #"
             
       let block = Block(
-        name: blockName,
+        name: name,
         appsTokens: self.appsSelected,
         startTime: startTime,
         endTime: endTime,
@@ -102,15 +100,30 @@ class ScreenTimeModule: NSObject {
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
       
-      try deviceActivityCenter.startMonitoring(
-        DeviceActivityName(rawValue: block.id.uuidString),
-        during: DeviceActivitySchedule(
-          intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
-          intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
-          repeats: false
+      if weekdays.count == 0 {
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: block.id.uuidString),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
+            intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
+            repeats: false
+          )
         )
-      )
-
+        print("Only one time \(block.id.uuidString)")
+      } else {
+        for weekday in weekdays {
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: "\(block.id.uuidString)-day-\(weekday)"),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1]), weekday: weekday),
+              intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1]), weekday: weekday),
+              repeats: true
+            )
+          )
+          print("Repeat on \(weekday) \(block.id.uuidString)")
+        }
+      }
+      
       resolve(["status": "success", "appsBlocked": self.appsSelected.count])
 
     } catch {
@@ -147,7 +160,7 @@ class ScreenTimeModule: NSObject {
         return [
             "id": block.id.uuidString, // Asegúrate de que 'id' sea un UUID
             "title": block.name, // Reemplaza con los campos de tu modelo
-            "subtitle": "\(block.startTime) • \(block.endTime)",
+            "subtitle": "\(block.startTime)-\(block.endTime)",
             "apps": block.appsTokens.count,
             "enable": block.enable
         ]

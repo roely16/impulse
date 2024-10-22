@@ -68,7 +68,8 @@
       "message": "¿Estás seguro de que deseas eliminar el bloqueo?",
       "cancelButton": "Cancelar",
       "confirmButton": "Eliminar"
-    }
+    },
+    "defaultBlockName": "Bloqueo"
   },
   "formNewLimit": {
     "blockName": "Añadir Nombre del límite",

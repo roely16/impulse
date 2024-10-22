@@ -74,6 +74,7 @@ RCT_EXTERN_METHOD(showAppPicker:(BOOL)isFirstSelection
 RCT_EXTERN_METHOD(createBlock:(NSString *)name
                   startTime:(NSString *)startTime
                   endTime:(NSString *)endTime
+                  weekdays:(NSArray<NSNumber *> *)weekdays
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
