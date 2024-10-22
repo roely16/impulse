@@ -1,9 +1,11 @@
 import { View, StyleSheet, SafeAreaView, Image, ScrollView } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { router } from 'expo-router';
+import { useTranslation } from "react-i18next";
 
 export default function ImpulseFunctionalities() {
 
+  const { t } = useTranslation();
   const redirectToHowMuchTimeScreen = () => {
     router.push('/access-screen-time')
   };
@@ -11,20 +13,28 @@ export default function ImpulseFunctionalities() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.header}>Las dos funcionalidades que harán que recuperes tu tiempo</Text>
+        <Text style={styles.header}>{t('impulseFunctionalities.title')}</Text>
         <View style={{ marginTop: 40, gap: 50 }}>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <Image source={require('../assets/images/sand-timer.png')} />
             <View style={{ flex: 1, gap: 5, flexDirection: 'column' }}>
-              <Text style={styles.title}>Bloqueo de Apps</Text>
-              <Text style={styles.subtitle}>Programa horas específicas en las que bloquear esas aplicaciones que te distraen, permitiéndote enfocarte en lo que realmente importa. </Text>
+              <Text style={styles.title}>
+                {t('impulseFunctionalities.blockAppsTitle')}
+              </Text>
+              <Text style={styles.subtitle}>
+                {t('impulseFunctionalities.blockAppsSubtitle')}
+              </Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             <Image source={require('../assets/images/pulse.png')} />
             <View style={{ flex: 1, gap: 5, flexDirection: 'column' }}>
-              <Text style={styles.title}>Modo Impulsos</Text>
-              <Text style={styles.subtitle}>¿Sientes la tentación constante de revisar tus aplicaciones sin motivo alguno? Te ayudaremos a controlar esos impulsos.</Text>
+              <Text style={styles.title}>
+                {t('impulseFunctionalities.impulseModeTitle')}
+              </Text>
+              <Text style={styles.subtitle}>
+                {t('impulseFunctionalities.impulseModeSubtitle')}
+              </Text>
             </View>
           </View>
         </View>
@@ -39,7 +49,7 @@ export default function ImpulseFunctionalities() {
           contentStyle={{ flexDirection: 'row-reverse' }}
           icon="arrow-right"
         >
-          Continuar
+          {t('impulseFunctionalities.continueButton')}
         </Button>
       </View>
     </SafeAreaView>

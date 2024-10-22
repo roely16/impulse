@@ -1,8 +1,9 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
 import { PanResponder } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const DAYS_IN_A_YEAR = 365;
 const HOURS_IN_A_DAY = 24;
@@ -10,6 +11,7 @@ const YEAR_IN_A_LIFE = 70;
 
 export default function HowMuchTime() {
 
+  const { t } = useTranslation();
   const [hours, setHours] = useState(3);
 
   const Hours = () => {
@@ -21,7 +23,6 @@ export default function HowMuchTime() {
     const panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: (evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
-        // Detecta si el usuario desliza hacia arriba o hacia abajo
         if (gestureState.dy < -10) {
           updateHours('increase');
         } else if (gestureState.dy > 10) {
@@ -73,7 +74,7 @@ export default function HowMuchTime() {
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>
-          ¿Cuanto tiempo usas el móvil al día?
+          {t('howMuchTime.title')}
         </Text>
         <Hours />
         <View style={styles.progressBarWrapper}>
@@ -91,7 +92,7 @@ export default function HowMuchTime() {
           icon="arrow-right"
           onPress={redirect}
         >
-          Continuar
+          {t('howMuchTime.continueButton')}
         </Button>
       </View>
     </SafeAreaView>

@@ -1,5 +1,6 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Icon } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 interface BlocksProps {
   showBottomShet: () => void;
@@ -7,14 +8,21 @@ interface BlocksProps {
 
 export const Blocks = (props: BlocksProps) => {
   const { showBottomShet } = props;
+
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Períodos de Bloqueo</Text>
+        <Text style={styles.headerTitle}>
+          {t('blocksSection.title')}
+        </Text>
           <TouchableOpacity onPress={showBottomShet} style={styles.addButton}>
             <View style={{flexDirection:'row', gap: 5}}>
               <Icon source="plus-circle-outline" size={15} />
-              <Text style={styles.addLabel}>Añadir</Text>
+              <Text style={styles.addLabel}>
+                {t('blocksSection.addButton')}
+              </Text>
             </View>
           </TouchableOpacity>
       </View>

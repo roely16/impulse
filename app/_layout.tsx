@@ -6,8 +6,9 @@ import 'react-native-reanimated';
 import { Header } from '@/components/Header';
 import { MixpanelService } from '@/SDK/Mixpanel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/locales/i18n';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -30,8 +31,7 @@ export default function RootLayout() {
       setIsAuthenticated(userIsAuthenticated);
       setLoadingAuth(false);
       if (userIsAuthenticated) {
-        // Espera a que el layout se haya montado y luego redirige
-        router.replace('/(tabs)'); // Ajusta la ruta según tu estructura de rutas
+        router.replace('/(tabs)');
       }
     }
     validateScreenTimeAccess();
@@ -39,18 +39,20 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded && !loadingAuth) {
-      // SplashScreen.hideAsync();
+      SplashScreen.hideAsync();
     }
   }, [loaded, loadingAuth, isAuthenticated]);
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }}></Stack.Screen>
-      <Stack.Screen name="impulse-functionalities" options={{ headerShown: false }}></Stack.Screen>
-      <Stack.Screen name="how-much-time" options={{ headerShown: false }}></Stack.Screen>
-      <Stack.Screen name="save-time-screen" options={{ headerShown: false }}></Stack.Screen>
-      <Stack.Screen name="access-screen-time" options={{ headerShown: false }}></Stack.Screen>
-      <Stack.Screen name="(tabs)" options={{ header: () => <Header /> }} />
-    </Stack>
+    <I18nextProvider i18n={i18n}>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name="impulse-functionalities" options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name="how-much-time" options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name="save-time-screen" options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name="access-screen-time" options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name="(tabs)" options={{ header: () => <Header /> }} />
+      </Stack>
+    </I18nextProvider>
   );
 }

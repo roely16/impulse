@@ -4,11 +4,13 @@ import { Button, Text } from 'react-native-paper';
 import { PermissionImage } from '@/components/PermissionImage';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
 
   const { ScreenTimeModule } = NativeModules;
 
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleScreenTimeAccess = async () => {
@@ -39,16 +41,20 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.safeareaContainer}>
       <ScrollView style={styles.container}>
         <View>
-          <Text style={styles.title}>Permite el acceso al Tiempo de Uso</Text>
+          <Text style={styles.title}>
+            {t('screenTimeAccess.title')}
+          </Text>
         </View>
         <View style={{ gap: 20, marginTop: 20, marginBottom: 40 }}>
           <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
             <Image source={require('../assets/images/smartphone.png')} />
-            <Text style={styles.information}>Para bloquear apps & webs, necesitamos permiso.</Text>
+            <Text style={styles.information}>
+              {t('screenTimeAccess.infoOne')}
+            </Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
             <Image source={require('../assets/images/password-hide.png')} />
-            <Text style={styles.information}>La información del Tiempo de Uso está <Text style={{ fontWeight: '700' }}>protegida por Apple</Text> y estará <Text style={{ fontWeight: '700' }}>almacenada 100% en tu movil</Text>.</Text>
+            <Text style={styles.information}>{t('screenTimeAccess.infoTwo.first')}<Text style={{ fontWeight: '700' }}>{t('screenTimeAccess.infoTwo.second')}</Text>{t('screenTimeAccess.infoTwo.third')}<Text style={{ fontWeight: '700' }}>{t('screenTimeAccess.infoTwo.fourth')}</Text>.</Text>
           </View>
         </View>
         <View style={{ alignItems: 'center' }}>
@@ -56,7 +62,7 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <Button onPress={handleScreenTimeAccess} icon="arrow-right" labelStyle={styles.labelStartButton} contentStyle={styles.containerStartButton} style={styles.startButton} mode="contained">Empezar</Button>
+        <Button onPress={handleScreenTimeAccess} icon="arrow-right" labelStyle={styles.labelStartButton} contentStyle={styles.containerStartButton} style={styles.startButton} mode="contained">{t('screenTimeAccess.startButton')}</Button>
       </View>
     </SafeAreaView>
   );

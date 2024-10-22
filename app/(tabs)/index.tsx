@@ -1,13 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
 import { StyleSheet, NativeModules, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, Card, Text } from 'react-native-paper';
 import { Blocks } from '@/components/Blocks';
 import { BottomSheetNewBlock } from '@/components/BottomSheet';
 import { ListBlocks, BlockType } from '@/components/ListBlocks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { CardTimeHome } from '@/components/CardTimeHome';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
+
+  const { t } = useTranslation();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [blocks, setBlocks] = useState<BlockType[]>([]);
@@ -92,7 +96,7 @@ export default function HomeScreen() {
           icon="check"
           onPress={openBottonSheet}
         >
-          Añadir bloqueo
+          {t('blocksScreen.addBlockButton')}
         </Button>
       </View>
     )
@@ -100,6 +104,7 @@ export default function HomeScreen() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
+      <CardTimeHome />
       <BottomSheetModalProvider>
         <BlockSection />
         <BottomSheetNewBlock updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />

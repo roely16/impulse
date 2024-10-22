@@ -29,7 +29,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="analytics"
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="trending-up" size={30} color={color} />

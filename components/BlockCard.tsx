@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Switch, NativeModules } from "react-native";
 import { Card, Text } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 interface BlockCardProps {
   id: string;
@@ -17,14 +17,7 @@ export const BlockCard = (props: BlockCardProps) => {
 
   const { ScreenTimeModule } = NativeModules;
 
-  const handleDeleteBlock = async () => {
-    try {
-      await ScreenTimeModule.deleteBlock(id);
-      refreshBlocks();
-    } catch (error) {
-      console.log('error deleting block', error)
-    }
-  }
+  const { t } = useTranslation();
 
   const updateBlockStatus = async (status: boolean) => {
     try {
@@ -46,12 +39,14 @@ export const BlockCard = (props: BlockCardProps) => {
         <View style={styles.rowContainer}>
           <Text style={styles.title}>{title}</Text>
           <TouchableOpacity onPress={handleEditBlock}>
-            <Text style={styles.subtitle}>Editar</Text>
+            <Text style={styles.subtitle}>
+              {t('cardBlock.editButton')}
+            </Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.subtitle}>{subtitle}</Text>
         <View style={styles.rowContainer}>
-          <Text style={styles.subtitle}>Aplicaciones: {apps}</Text>
+          <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps}</Text>
           <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>
       </Card.Content>

@@ -1,9 +1,11 @@
-import { View, StyleSheet, SafeAreaView, Image, ScrollView } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { router, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from "react-i18next";
 
 export default function SaveTime() {
 
+  const { t } = useTranslation();
   const local = useLocalSearchParams();
 
   const redirectToHowMuchTimeScreen = () => {
@@ -16,28 +18,28 @@ export default function SaveTime() {
         <View>
           <View>
             <Text style={{ fontFamily: 'Mulish', fontWeight: '700', fontSize: 22, lineHeight: 33, textAlign: 'center', marginBottom: 40 }}>
-              Según tu uso diario, pasas...
+              {t('saveTimeScreen.firstText')}
             </Text>
           </View>
           <Text style={styles.title}>
-            { local.days } días
+            { local.days } {t('saveTimeScreen.days')}
           </Text>
           <Text style={styles.subtitle}>
-            al año perdidos frente a la pantalla...
+            {t('saveTimeScreen.secondText')}
           </Text>
           <Text style={styles.subtitle}>
-            Piensa lo que podrías hacer con ese tiempo si cambias tus hábitos hoy.
+            {t('saveTimeScreen.thirdText')}
           </Text>
         </View>
         <View>
           <Text style={[styles.subtitle, { marginBottom: 40 }]}>
-            En una vida, eso suma
+            {t('saveTimeScreen.fourthText')}
           </Text>
           <Text style={styles.title}>
-            { local.years } años
+            { local.years } {t('saveTimeScreen.years')}
           </Text>
           <Text style={[styles.subtitle, { fontWeight: '700', marginTop: 40 }]}>
-            ¿Estás listo para aprovechar tu tiempo al máximo?
+            {t('saveTimeScreen.fifthText')}
           </Text>
         </View>
       </ScrollView>
@@ -51,7 +53,7 @@ export default function SaveTime() {
           contentStyle={{ flexDirection: 'row-reverse' }}
           icon="arrow-right"
         >
-          Empezar el cambio
+          {t('saveTimeScreen.startButton')}
         </Button>
       </View>
     </SafeAreaView>

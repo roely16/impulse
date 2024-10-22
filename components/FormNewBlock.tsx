@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useTranslation } from "react-i18next";
 interface FormNewBlockProps {
   changeForm: (form: string) => void;
   refreshBlocks: () => void;
@@ -28,6 +29,8 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
 
+  const { t } = useTranslation();
+
   const initialDays = [
     { day: 'L', selected: false },
     { day: 'M', selected: false },
@@ -53,7 +56,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
     return (
       <View>
-        <Text style={styles.timeLabel}>Frecuencia</Text>
+        <Text style={styles.timeLabel}>
+          {t('formNewBlock.frequency')}
+        </Text>
         <View style={styles.daysContainer}>
           {
             days.map((day, index) => (
@@ -89,10 +94,14 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const TimeConfigurationForm = (): React.ReactElement => {
     return (
       <View style={styles.timeFormContainer}>
-        <Text style={styles.timeLabel}>Seleccionar hora</Text>
+        <Text style={styles.timeLabel}>
+          {t('formNewBlock.selectTime')}
+        </Text>
         <View style={styles.formOption}>
           <View style={styles.timeOption}>
-            <Text style={styles.label}>Desde</Text>
+            <Text style={styles.label}>
+              {t('formNewBlock.from')}
+            </Text>
             <DateTimePicker
               value={startTimeRef.current}
               mode="time"
@@ -103,7 +112,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         </View>
         <View style={styles.formOption}>
           <View style={styles.timeOption}>
-            <Text style={styles.label}>Hasta</Text>
+            <Text style={styles.label}>
+              {t('formNewBlock.to')}
+            </Text>
             <DateTimePicker
               value={endTimeRef.current}
               mode="time"
@@ -130,12 +141,14 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     }
   };
 
-  const emptySelected = appsSelected === 0 && categoriesSelected === 0 && sitesSelected === 0;
+  const emptySelected = appsSelected === 0 && sitesSelected === 0;
 
   const TextAppsSelected = (): React.ReactElement => {
     if (emptySelected) {
       return (
-        <Text style={styles.selectLabel}>Seleccionar</Text>
+        <Text style={styles.selectLabel}>
+          {t('formNewBlock.appsPlaceholder')}
+        </Text>
       )
     }
     const selectedItems = [];
@@ -143,11 +156,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     if (appsSelected > 0) {
       selectedItems.push(`${appsSelected} apps`);
     }
-    if (categoriesSelected > 0) {
-      selectedItems.push(`${categoriesSelected} categorías`);
-    }
+
     if (sitesSelected > 0) {
-      selectedItems.push(`${sitesSelected} sitios`);
+      selectedItems.push(`${sitesSelected} ${t('formNewBlock.sitesLabel')}`);
     }
 
     return (
@@ -193,15 +204,15 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     const handleDeleteBlock = async () => {
       try {
         Alert.alert(
-          "Confirmación",
-          "¿Estás seguro de que deseas eliminar el bloqueo?",
+          `${t('formNewBlock.deleteAlert.title')}`,
+          `${t('formNewBlock.deleteAlert.message')}`,
           [
             {
-              text: "Cancelar",
+              text: `${t('formNewBlock.deleteAlert.cancelButton')}`,
               style: "cancel"
             },
             {
-              text: "OK",
+              text: `${t('formNewBlock.deleteAlert.confirmButton')}`,
               onPress: () => {
                 confirmDeleteBlock();
               }
@@ -216,7 +227,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     if (!isEdit) return <></>;
     return (
       <TouchableOpacity onPress={handleDeleteBlock}>
-        <Text style={styles.deleteButton}>Eliminar bloqueo</Text>
+        <Text style={styles.deleteButton}>
+          {t('formNewBlock.deleteButton')}
+        </Text>
       </TouchableOpacity>
     )
   };
@@ -228,14 +241,16 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <TextInput value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder="Añadir Nombre del Bloqueo" />
+        <TextInput value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder={t('formNewBlock.blockName')} />
         <Icon source="pencil" size={25} />
       </View>
       <TouchableOpacity onPress={handleSelectApps} style={styles.formOption}>
         <View style={styles.formOptionContent}>
           <View style={styles.labelOptionContainer}>
             <Icon source="shield" size={25} />
-            <Text style={styles.label}>Apps</Text>
+            <Text style={styles.label}>
+              {t('formNewBlock.appsOptions')}
+            </Text>
           </View>
           <View style={styles.selectOptionContainer}>
             <TextAppsSelected />
@@ -246,8 +261,12 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <TimeConfigurationForm />
       <Frequency />
       <View style={styles.buttonContainer}>
-        <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">Cancelar</Button>
-        <Button disabled={!formFilled} onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">Guardar</Button>
+        <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
+          {t('formNewBlock.cancelButton')}
+        </Button>
+        <Button disabled={!formFilled} onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
+          {t('formNewBlock.saveButton')}
+        </Button>
       </View>
       <DeleteButton />
     </View>

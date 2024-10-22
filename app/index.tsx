@@ -2,8 +2,11 @@ import { View, StyleSheet, SafeAreaView, Image, ScrollView } from "react-native"
 import { Text, Button } from "react-native-paper";
 import { router } from 'expo-router';
 import { MixpanelService } from '@/SDK/Mixpanel';
+import { useTranslation } from "react-i18next";
 
 export default function WelcomeScreen() {
+
+  const { t } = useTranslation();
 
   const redirectToHowMuchTimeScreen = () => {
     router.push('/how-much-time')
@@ -18,11 +21,11 @@ export default function WelcomeScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Text style={styles.title}>
-          Ayudate a controlar los impulsos y gana horas en tu día a día
+          {t('welcomeScreen.title')}
         </Text>
         <Image source={require('../assets/images/welcome.png')} style={styles.image} />
         <Text style={styles.subtitle}>
-          Los usuarios ya han conseguido ahorrar más de 5000 horas controlando el uso del móvil
+          {t('welcomeScreen.subtitle')}
         </Text>
       </ScrollView>
       <View style={styles.buttonContainer}>
@@ -35,7 +38,7 @@ export default function WelcomeScreen() {
           contentStyle={{ flexDirection: 'row-reverse' }}
           icon="arrow-right"
         >
-          Empezar
+          {t('welcomeScreen.startButton')}
         </Button>
       </View>
     </SafeAreaView>
