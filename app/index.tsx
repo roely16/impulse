@@ -1,8 +1,12 @@
-import { View, StyleSheet, SafeAreaView, Image, ScrollView } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { StyleSheet, Image } from "react-native";
+import { Text } from "react-native-paper";
 import { router } from 'expo-router';
 import { MixpanelService } from '@/SDK/Mixpanel';
 import { useTranslation } from "react-i18next";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { RFValue } from "react-native-responsive-fontsize";
+import { SCREEN_HEIGHT } from "@/constants/Device";
+import { OnboardingContainer } from "@/components/OnboardingContainer";
 
 export default function WelcomeScreen() {
 
@@ -17,74 +21,38 @@ export default function WelcomeScreen() {
     });
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>
-          {t('welcomeScreen.title')}
-        </Text>
-        <Image source={require('../assets/images/welcome.png')} style={styles.image} />
-        <Text style={styles.subtitle}>
-          {t('welcomeScreen.subtitle')}
-        </Text>
-      </ScrollView>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.button}
-          labelStyle={{ color: 'black' }}
-          buttonColor="#FDE047"
-          mode="contained"
-          onPress={redirectToHowMuchTimeScreen}
-          contentStyle={{ flexDirection: 'row-reverse' }}
-          icon="arrow-right"
-        >
-          {t('welcomeScreen.startButton')}
-        </Button>
-      </View>
-    </SafeAreaView>
+ return (
+    <OnboardingContainer onPress={redirectToHowMuchTimeScreen} buttonLabel={t('welcomeScreen.startButton')}>
+      <Text style={styles.title}>
+        {t('welcomeScreen.title')}
+      </Text>
+      <Image resizeMode="contain" source={require('../assets/images/welcome.png')} style={styles.image} />
+      <Text style={styles.subtitle}>
+        {t('welcomeScreen.subtitle')}
+      </Text>
+    </OnboardingContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white'
-  },
-  contentContainer: {
-    paddingHorizontal: 30,
-    paddingVertical: 40
-  },
   title: {
-    fontSize: 36,
+    fontSize: RFValue(36, SCREEN_HEIGHT),
     fontWeight: '700',
-    lineHeight: 46.8,
+    lineHeight: RFValue(46.8, SCREEN_HEIGHT),
     textAlign: 'center',
     fontFamily: 'Catamaran'
   },
   image: {
     alignSelf: 'center',
-    marginTop: 30
+    marginTop: hp('5%'),
+    height: hp('30%')
   },
   subtitle: {
-    fontSize: 22,
+    fontSize: RFValue(22, SCREEN_HEIGHT),
     fontWeight: '400',
-    lineHeight: 33,
+    lineHeight: RFValue(33, SCREEN_HEIGHT),
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: hp('5%'),
     fontFamily: 'Mulish'
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30
-  },
-  button: {
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderRadius: 6
-  },
+  }
 });

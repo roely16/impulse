@@ -1,0 +1,1 @@
+export const SCREEN_HEIGHT = 770

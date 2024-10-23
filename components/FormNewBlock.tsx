@@ -28,6 +28,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const currentTime = new Date();
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
+  const inputRef = useRef<TextInput>(null);
 
   const { t } = useTranslation();
 
@@ -137,8 +138,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock);
+      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId);
       if (result.status === 'success') {
+        console.log('result', result);
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);
         updateEmptyBlock && updateEmptyBlock(false);
@@ -171,7 +173,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSaveBlock = async () => {
     try {
-
       const startTime = convertDate(startTimeRef.current);
       const endTime = convertDate(endTimeRef.current);
       const haveBlockTitle = blockTitle.length > 0;
@@ -193,6 +194,36 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       changeForm('')
     } catch (error) {
       console.log('error', error);
+    }
+  };
+
+  const handleEditBlock = async () => {
+    try {
+      console.log('isEmptyBlock', isEmptyBlock);
+      const startTime = convertDate(startTimeRef.current);
+      const endTime = convertDate(endTimeRef.current);
+      const haveBlockTitle = blockTitle.length > 0;
+      const newBlockTitle = haveBlockTitle ? blockTitle : `${t('formNewBlock.defaultBlockName')} #${totalBlocks + 1}`;
+
+      const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
+
+      const data = {
+        id: blockId,
+        name: newBlockTitle,
+        startTime,
+        endTime,
+        appsSelected,
+        weekDays
+      }
+
+      const response = await ScreenTimeModule.updateBlock(data.id, data.name, data.startTime, data.endTime, data.weekDays, !isEmptyBlock);
+      console.log('edit block', data);
+      console.log('response', response);
+      refreshBlocks();
+      closeBottomSheet()
+      changeForm('')
+    } catch (error) {
+      
     }
   };
 
@@ -282,6 +313,10 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     setDays(initialDays);
   }
 
+  const handleIconPress = () => {
+    inputRef.current?.focus();
+  }
+
   useLayoutEffect(() => {
     const loadBlockData = async () => {
       const result = await ScreenTimeModule.getBlock(blockId);
@@ -299,8 +334,10 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <TextInput value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder={t('formNewBlock.blockName')} />
-        <Icon source="pencil" size={25} />
+        <TextInput ref={inputRef} value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder={t('formNewBlock.blockName')} />
+        <TouchableOpacity onPress={handleIconPress}>
+          <Icon source="pencil" size={25} />
+        </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={handleSelectApps} style={styles.formOption}>
         <View style={styles.formOptionContent}>
@@ -322,7 +359,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
           {t('formNewBlock.cancelButton')}
         </Button>
-        <Button disabled={!formFilled} onPress={handleSaveBlock} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
+        <Button disabled={!formFilled} onPress={() => isEdit ? handleEditBlock() : handleSaveBlock()} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
           {t('formNewBlock.saveButton')}
         </Button>
       </View>

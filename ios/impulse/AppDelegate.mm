@@ -68,6 +68,7 @@ RCT_EXTERN_METHOD(requestAuthorization:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(showAppPicker:(BOOL)isFirstSelection
+                  blockId:(NSString * _Nullable)blockId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
@@ -96,5 +97,15 @@ RCT_EXTERN_METHOD(updateBlockStatus:(NSString *)blockId
                   isEnable:(BOOL)isEnable
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateBlock:(NSString *)blockId
+                  name:(NSString *)name
+                  startTime:(NSString *)startTime
+                  endTime:(NSString *)endTime
+                  weekdays:(NSArray<NSNumber *> *)weekdays
+                  changeApps:(BOOL)changeApps
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 
 @end

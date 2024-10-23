@@ -1,9 +1,12 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
-import { PanResponder } from "react-native";
+import { StyleSheet, View, PanResponder } from "react-native";
+import { IconButton, Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { RFValue } from "react-native-responsive-fontsize";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { OnboardingContainer } from "@/components/OnboardingContainer";
+import { SCREEN_HEIGHT } from "@/constants/Device";
 
 const DAYS_IN_A_YEAR = 365;
 const HOURS_IN_A_DAY = 24;
@@ -15,7 +18,12 @@ export default function HowMuchTime() {
   const [hours, setHours] = useState(3);
 
   const Hours = () => {
-    return <Text style={styles.hourLetter}><Text style={styles.hourNumber}>{hours}</Text> h</Text>
+    return (
+      <View style={styles.hourContainer}>
+        <Text style={styles.hourNumber}>{hours}</Text>
+        <Text style={styles.hourLetter}>h</Text>
+      </View>
+    )
   };
 
   const ProgressBar = () => {
@@ -71,78 +79,45 @@ export default function HowMuchTime() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>
-          {t('howMuchTime.title')}
-        </Text>
-        <Hours />
-        <View style={styles.progressBarWrapper}>
-          <ProgressBar />
-          <UpdateBarButtons />
-        </View>
+    <OnboardingContainer onPress={redirect} buttonLabel={t('howMuchTime.continueButton')}>
+      <Text style={styles.title}>
+        {t('howMuchTime.title')}
+      </Text>
+      <Hours />
+      <View style={styles.progressBarWrapper}>
+        <ProgressBar />
+        <UpdateBarButtons />
       </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.button}
-          labelStyle={{ color: 'black' }}
-          buttonColor="#FDE047"
-          mode="contained"
-          contentStyle={{ flexDirection: 'row-reverse' }}
-          icon="arrow-right"
-          onPress={redirect}
-        >
-          {t('howMuchTime.continueButton')}
-        </Button>
-      </View>
-    </SafeAreaView>
-  );
+    </OnboardingContainer>
+  )
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white'
-  },
-  contentContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 40,
-    flexDirection: 'column',
-    gap: 50,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   title: {
-    fontSize: 36,
+    fontSize: RFValue(36, SCREEN_HEIGHT),
     fontWeight: '700',
-    lineHeight: 46.8,
+    lineHeight: RFValue(46.8, SCREEN_HEIGHT),
     textAlign: 'center',
-    fontFamily: 'Catamaran'
+    fontFamily: 'Catamaran',
   },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
+  hourContainer: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30
-  },
-  button: {
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderRadius: 6
+    marginVertical: hp('4%'),
+    gap: wp('2%')
   },
   hourLetter: {
-    fontSize: 40,
+    fontSize: RFValue(40, SCREEN_HEIGHT),
     fontWeight: '400',
-    lineHeight: 52,
-    fontFamily: 'Catamaran'
+    lineHeight: RFValue(52, SCREEN_HEIGHT),
+    fontFamily: 'Catamaran',
+    paddingTop: 5
   },
   hourNumber: {
-    fontSize: 50,
+    fontSize: RFValue(50, SCREEN_HEIGHT),
     fontWeight: '700',
-    lineHeight: 65,
+    lineHeight: RFValue(65, SCREEN_HEIGHT),
     fontFamily: 'Catamaran'
   },
   progressBarWrapper: {
@@ -153,8 +128,8 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     borderWidth: 1,
-    width: 100,
-    height: 300,
+    width: wp('25%'),
+    height: hp('35%'),
     backgroundColor: '#FDE047',
     borderRadius: 6
   },

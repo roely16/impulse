@@ -45,12 +45,13 @@ class ScreenTimeModule: NSObject {
   }
 
   @MainActor @objc
-  func showAppPicker(_ isFirstSelection: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+  func showAppPicker(_ isFirstSelection: Bool, blockId: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
+      
       if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
        let window = scene.windows.first {
         
-        let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection) { updatedSelection in
+        let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection, blockId: blockId) { updatedSelection in
           let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
           self.familySelection = updatedSelection
@@ -188,6 +189,24 @@ class ScreenTimeModule: NSObject {
       )
       let context = container.mainContext
       
+      // Stop monitoring
+      var fetchDescriptor = FetchDescriptor<Block>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      fetchDescriptor.fetchLimit = 1
+      let result = try context.fetch(fetchDescriptor)
+      let block = result.first
+      
+      let deviceActivityCenter = DeviceActivityCenter();
+      
+      if block?.weekdays.count == 0 {
+        try deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+      } else {
+        let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
+        try deviceActivityCenter.stopMonitoring(deviceActivityNames)
+        print(deviceActivityNames)
+      }
+      
       // Remove restriction
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
       store.shield.applications = nil
@@ -228,7 +247,7 @@ class ScreenTimeModule: NSObject {
         "apps": block?.appsTokens.count,
         "weekdays": block?.weekdays
       ] as [String : Any]
-      print(block?.weekdays)
+
       resolve(["status": "success", "block" : blockData])
     } catch {
       reject("Error", "Could not delete block", nil)
@@ -242,7 +261,7 @@ class ScreenTimeModule: NSObject {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
         return
       }
-      
+      let deviceActivityCenter = DeviceActivityCenter();
       let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
       let container = try ModelContainer(
         for: Block.self,
@@ -259,8 +278,45 @@ class ScreenTimeModule: NSObject {
       block?.enable = isEnable
       
       if !isEnable {
+        // Stop monitoring
+        if block?.weekdays.count == 0 {
+          try deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+        } else {
+          let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
+          try deviceActivityCenter.stopMonitoring(deviceActivityNames)
+          print(deviceActivityNames)
+        }
+        
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
         store.shield.applications = nil
+      } else {
+        let startTimeComponents = block?.startTime.split(separator: ":") ?? []
+        let endTimeComponents = block?.endTime.split(separator: ":") ?? []
+        let weekdays = block?.weekdays ?? []
+        
+        if weekdays.count == 0 {
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: blockId),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
+              intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
+              repeats: false
+            )
+          )
+          print("Only one time \(blockId)")
+        } else {
+          for weekday in weekdays {
+            try deviceActivityCenter.startMonitoring(
+              DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)"),
+              during: DeviceActivitySchedule(
+                intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1]), weekday: weekday),
+                intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1]), weekday: weekday),
+                repeats: true
+              )
+            )
+            print("Repeat on \(weekday) \(blockId)")
+          }
+        }
       }
       
       try context.save()
@@ -269,6 +325,86 @@ class ScreenTimeModule: NSObject {
     } catch {
       print("Error updating block status")
     }
+  }
+  
+  @MainActor @objc
+  func updateBlock(_ blockId: String, name: String, startTime: String, endTime: String, weekdays: [Int], changeApps: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+    do {
+      guard let uuid = UUID(uuidString: blockId) else {
+        reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
+        return
+      }
+      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
+      let container = try ModelContainer(
+        for: Block.self,
+        configurations: configuration
+      )
+      let context = container.mainContext
+      var fetchDescriptor = FetchDescriptor<Block>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      fetchDescriptor.fetchLimit = 1
+      let result = try context.fetch(fetchDescriptor)
+      let block = result.first
+      
+      let deviceActivityCenter = DeviceActivityCenter();
+      
+      if block?.weekdays.count == 0 {
+        try deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+      } else {
+        let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
+        try deviceActivityCenter.stopMonitoring(deviceActivityNames)
+        print(deviceActivityNames)
+      }
+      
+      // Remove shield from apps
+      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
+      store.shield.applications = nil
+      
+      // Create again monitoring
+      let startTimeComponents = startTime.split(separator: ":")
+      let endTimeComponents = endTime.split(separator: ":")
+      
+      if weekdays.count == 0 {
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: blockId),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
+            intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
+            repeats: false
+          )
+        )
+        print("Only one time \(blockId)")
+      } else {
+        for weekday in weekdays {
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)"),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1]), weekday: weekday),
+              intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1]), weekday: weekday),
+              repeats: true
+            )
+          )
+          print("Repeat on \(weekday) \(blockId)")
+        }
+      }
+      
+      // Saves changes
+      block?.name = name
+      if changeApps {
+        block?.appsTokens = self.appsSelected
+        block?.familySelection = self.familySelection
+      }
+      block?.startTime = startTime
+      block?.endTime = endTime
+      block?.weekdays = weekdays
+      
+      try context.save()
+      resolve(["status": "success"])
+    } catch {
+      reject("Error", "Could not update block", nil)
+    }
+    
   }
   
   @objc static func requiresMainQueueSetup() -> Bool {

@@ -1,0 +1,106 @@
+{
+    "welcomeScreen": {
+      "title": "Hilf dir, Impulse zu kontrollieren und gewinne Stunden in deinem Alltag",
+      "subtitle": "Benutzer haben bereits mehr als 5000 Stunden eingespart, indem sie die Nutzung ihres Handys kontrollieren",
+      "startButton": "Starten"
+    },
+    "howMuchTime": {
+      "title": "Wie viel Zeit verbringst du täglich am Handy?",
+      "continueButton": "Fortsetzen"
+    },
+    "saveTimeScreen": {
+      "firstText": "Basierend auf deiner täglichen Nutzung verbringst du...",
+      "secondText": "pro Jahr verloren vor dem Bildschirm...",
+      "thirdText": "Denk darüber nach, was du mit dieser Zeit machen könntest, wenn du deine Gewohnheiten heute änderst.",
+      "fourthText": "Im Laufe eines Lebens summiert sich das auf",
+      "fifthText": "Bist du bereit, deine Zeit optimal zu nutzen?",
+      "startButton": "Beginne die Veränderung",
+      "days": "Tage",
+      "years": "Jahre"
+    },
+    "impulseFunctionalities": {
+      "title": "Die beiden Funktionen, die dir helfen, deine Zeit zurückzugewinnen",
+      "blockAppsTitle": "App-Blockierung",
+      "blockAppsSubtitle": "Plane bestimmte Stunden, in denen du ablenkende Apps blockierst, damit du dich auf das konzentrieren kannst, was wirklich wichtig ist.",
+      "impulseModeTitle": "Impuls-Modus",
+      "impulseModeSubtitle": "Hast du ständig das Verlangen, deine Apps ohne Grund zu überprüfen? Wir helfen dir, diese Impulse zu kontrollieren.",
+      "continueButton": "Fortsetzen"
+    },
+    "screenTimeAccess": {
+      "title": "Erlaube den Zugriff auf die Bildschirmzeit",
+      "infoOne": "Um Apps & Webseiten zu blockieren, benötigen wir eine Erlaubnis",
+      "infoTwo": {
+        "first": "Die Bildschirmzeit-Informationen sind ",
+        "second": "von Apple geschützt",
+        "third": " und werden ",
+        "fourth": "zu 100% auf deinem Gerät gespeichert"
+      },
+      "permissionButton": {
+        "title": "Impulse möchte auf die Bildschirmzeit zugreifen",
+        "message": "Wenn du Impulse den Zugriff auf die Bildschirmzeit erlaubst, kann es deine Aktivitätsdaten einsehen, Inhalte einschränken und die Nutzung von Apps und Webseiten begrenzen.",
+        "allowButton": "Fortsetzen",
+        "denyButton": "Nicht erlauben"
+      },
+      "startButton": "Starten"
+    },
+    "blocksScreen": {
+      "addBlockButton": "Blockierung hinzufügen"
+    },
+    "optionsConfigNewBlock": {
+      "title": "Neue Blockierung konfigurieren",
+      "newBlock": "Blockierung nach Stunden",
+      "newLimit": "Nutzungslimit"
+    },
+    "formNewBlock": {
+      "blockName": "Blockierungsname hinzufügen",
+      "appsOptions": "Apps",
+      "appsPlaceholder": "Auswählen",
+      "sitesLabel": "Webseiten",
+      "selectTime": "Zeit auswählen",
+      "from": "Von",
+      "to": "Bis",
+      "frequency": "Frequenz",
+      "saveButton": "Speichern",
+      "cancelButton": "Abbrechen",
+      "deleteButton": "Blockierung löschen",
+      "deleteAlert": {
+        "title": "Bestätigung",
+        "message": "Bist du sicher, dass du die Blockierung löschen möchtest?",
+        "cancelButton": "Abbrechen",
+        "confirmButton": "Löschen"
+      }
+    },
+    "formNewLimit": {
+      "blockName": "Limit-Namen hinzufügen",
+      "appsOptions": "Apps",
+      "appsPlaceholder": "Auswählen",
+      "sitesLabel": "Webseiten",
+      "selectTime": "Tägliches Zeitlimit",
+      "selectTimeLabel": "Auswählen",
+      "maxOpenDailyTitle": "Tägliches Öffnungslimit",
+      "maxOpenDaily": "Öffnungslimit",
+      "maxOpenDailyLabel": "Auswählen",
+      "frequency": "Frequenz",
+      "saveButton": "Speichern",
+      "cancelButton": "Abbrechen",
+      "deleteButton": "Blockierung löschen",
+      "deleteAlert": {
+        "title": "Bestätigung",
+        "message": "Bist du sicher, dass du das Limit löschen möchtest?",
+        "cancelButton": "Abbrechen",
+        "confirmButton": "Löschen"
+      }
+    },
+    "blocksSection": {
+      "title": "Blockierungszeiten",
+      "addButton": "Hinzufügen"
+    },
+    "cardBlock": {
+      "editButton": "Bearbeiten",
+      "appsLabel": "Anwendungen"
+    },
+    "cardTime": {
+      "title": "Bildschirmzeit"
+    }
+  }
+  

@@ -1,7 +1,11 @@
-import { View, StyleSheet, SafeAreaView, Image, ScrollView } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { View, StyleSheet, Image } from "react-native";
+import { Text } from "react-native-paper";
 import { router } from 'expo-router';
 import { useTranslation } from "react-i18next";
+import { OnboardingContainer } from "@/components/OnboardingContainer";
+import { RFValue } from "react-native-responsive-fontsize";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { SCREEN_HEIGHT } from "@/constants/Device";
 
 export default function ImpulseFunctionalities() {
 
@@ -11,13 +15,12 @@ export default function ImpulseFunctionalities() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.header}>{t('impulseFunctionalities.title')}</Text>
-        <View style={{ marginTop: 40, gap: 50 }}>
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+    <OnboardingContainer onPress={redirectToHowMuchTimeScreen} buttonLabel={t('impulseFunctionalities.continueButton')}>
+      <Text style={styles.header}>{t('impulseFunctionalities.title')}</Text>
+        <View style={{ marginTop: hp('4%'), gap: hp('8%') }}>
+          <View style={{ flexDirection: 'row', gap: wp('3%') }}>
             <Image source={require('../assets/images/sand-timer.png')} />
-            <View style={{ flex: 1, gap: 5, flexDirection: 'column' }}>
+            <View style={{ flex: 1, gap: hp('1%'), flexDirection: 'column', paddingTop: 5 }}>
               <Text style={styles.title}>
                 {t('impulseFunctionalities.blockAppsTitle')}
               </Text>
@@ -26,9 +29,9 @@ export default function ImpulseFunctionalities() {
               </Text>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', gap: 10 }}>
+          <View style={{ flexDirection: 'row', gap: wp('3%') }}>
             <Image source={require('../assets/images/pulse.png')} />
-            <View style={{ flex: 1, gap: 5, flexDirection: 'column' }}>
+            <View style={{ flex: 1, gap: hp('1%'), flexDirection: 'column', paddingTop: 5 }}>
               <Text style={styles.title}>
                 {t('impulseFunctionalities.impulseModeTitle')}
               </Text>
@@ -38,64 +41,28 @@ export default function ImpulseFunctionalities() {
             </View>
           </View>
         </View>
-      </ScrollView>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.button}
-          labelStyle={{ color: 'black' }}
-          buttonColor="#FDE047"
-          mode="contained"
-          onPress={redirectToHowMuchTimeScreen}
-          contentStyle={{ flexDirection: 'row-reverse' }}
-          icon="arrow-right"
-        >
-          {t('impulseFunctionalities.continueButton')}
-        </Button>
-      </View>
-    </SafeAreaView>
-  );
+    </OnboardingContainer>
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white'
-  },
-  contentContainer: {
-    paddingHorizontal: 40,
-    paddingVertical: 40
-  },
   header: {
-    fontSize: 30,
+    fontSize: RFValue(30, SCREEN_HEIGHT),
     fontWeight: '700',
-    lineHeight: 39,
+    lineHeight: RFValue(39, SCREEN_HEIGHT),
     fontFamily: 'Catamaran'
   },
   title: {
-    fontSize: 24,
+    fontSize: RFValue(24, SCREEN_HEIGHT),
     fontWeight: '700',
-    lineHeight: 31.2,
+    lineHeight: RFValue(31.2, SCREEN_HEIGHT),
     fontFamily: 'Catamaran'
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: RFValue(16, SCREEN_HEIGHT),
     fontWeight: '400',
-    lineHeight: 24,
+    lineHeight: RFValue(24, SCREEN_HEIGHT),
     flexShrink: 1,
     fontFamily: 'Mulish'
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30
-  },
-  button: {
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderRadius: 6
-  },
+  }
 });

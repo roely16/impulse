@@ -3,6 +3,9 @@ import { Text } from "react-native-paper";
 import { router } from 'expo-router';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
+import { RFValue } from "react-native-responsive-fontsize";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { SCREEN_HEIGHT } from "@/constants/Device";
 
 export const PermissionImage = () => {
   
@@ -57,14 +60,14 @@ export const PermissionImage = () => {
 const styles = StyleSheet.create({
   contentContainer: {
     borderWidth: 1,
-    padding: 10,
+    padding: hp('1%'),
     borderRadius: 10
   },
   container: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    width: '85%'
+    width: wp('75%'),
   },
   darkContainer: {
     backgroundColor: 'black',
@@ -85,17 +88,20 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'white',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: RFValue(14, SCREEN_HEIGHT)
   },
   message: {
     color: 'white',
     textAlign: 'center',
-    marginTop: 5
+    marginTop: 5,
+    fontSize: RFValue(12, SCREEN_HEIGHT),
+    lineHeight: RFValue(14, SCREEN_HEIGHT)
   },
   buttonText: {
     color: '#375cb1',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: RFValue(16, SCREEN_HEIGHT),
     padding: 20,
     width: '48%'
   },
@@ -106,6 +112,6 @@ const styles = StyleSheet.create({
     width: 1,
     height: '100%',
     backgroundColor: 'gray',
-    marginHorizontal: 10,
+    marginHorizontal: 0,
   },
 });

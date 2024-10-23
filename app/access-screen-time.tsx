@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { View, SafeAreaView, StyleSheet, NativeModules, ScrollView, Image } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { View, StyleSheet, NativeModules, Image } from 'react-native';
+import { Text } from 'react-native-paper';
 import { PermissionImage } from '@/components/PermissionImage';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import { OnboardingContainer } from '@/components/OnboardingContainer';
+import { RFValue } from "react-native-responsive-fontsize";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { SCREEN_HEIGHT } from "@/constants/Device";
 
 export default function HomeScreen() {
 
@@ -38,83 +42,42 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeareaContainer}>
-      <ScrollView style={styles.container}>
-        <View>
-          <Text style={styles.title}>
-            {t('screenTimeAccess.title')}
+    <OnboardingContainer onPress={handleScreenTimeAccess} buttonLabel={t('screenTimeAccess.startButton')}>
+      <Text style={styles.title}>
+        {t('screenTimeAccess.title')}
+      </Text>
+      <View style={{ gap: hp('2%'), marginTop: hp('2%'), marginBottom: hp('6%') }}>
+        <View style={{ flexDirection: 'row', gap: hp('2%'), alignItems: 'center' }}>
+          <Image source={require('../assets/images/smartphone.png')} />
+          <Text style={styles.information}>
+            {t('screenTimeAccess.infoOne')}
           </Text>
         </View>
-        <View style={{ gap: 20, marginTop: 20, marginBottom: 40 }}>
-          <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-            <Image source={require('../assets/images/smartphone.png')} />
-            <Text style={styles.information}>
-              {t('screenTimeAccess.infoOne')}
-            </Text>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
-            <Image source={require('../assets/images/password-hide.png')} />
-            <Text style={styles.information}>{t('screenTimeAccess.infoTwo.first')}<Text style={{ fontWeight: '700' }}>{t('screenTimeAccess.infoTwo.second')}</Text>{t('screenTimeAccess.infoTwo.third')}<Text style={{ fontWeight: '700' }}>{t('screenTimeAccess.infoTwo.fourth')}</Text>.</Text>
-          </View>
+        <View style={{ flexDirection: 'row', gap: hp('2%'), alignItems: 'center' }}>
+          <Image source={require('../assets/images/password-hide.png')} />
+          <Text style={styles.information}>{t('screenTimeAccess.infoTwo.first')}<Text style={{ fontWeight: '700' }}>{t('screenTimeAccess.infoTwo.second')}</Text>{t('screenTimeAccess.infoTwo.third')}<Text style={{ fontWeight: '700' }}>{t('screenTimeAccess.infoTwo.fourth')}</Text>.</Text>
         </View>
-        <View style={{ alignItems: 'center' }}>
-          <PermissionImage />
-        </View>
-      </ScrollView>
-      <View style={styles.buttonContainer}>
-        <Button onPress={handleScreenTimeAccess} icon="arrow-right" labelStyle={styles.labelStartButton} contentStyle={styles.containerStartButton} style={styles.startButton} mode="contained">{t('screenTimeAccess.startButton')}</Button>
       </View>
-    </SafeAreaView>
+      <View style={{ alignItems: 'center' }}>
+        <PermissionImage />
+      </View>
+    </OnboardingContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeareaContainer: {
-    flex: 1,
-    backgroundColor: 'white'
-  },
-  container: {
-    paddingHorizontal: 40,
-    flex: 1,
-    paddingVertical: 40,
-  },
   title: {
-    fontSize: 36,
+    fontSize: RFValue(36, SCREEN_HEIGHT),
     textAlign: 'center',
     fontWeight: '700',
-    lineHeight: 46.8,
+    lineHeight: RFValue(46.8, SCREEN_HEIGHT),
     fontFamily: 'Catamaran'
   },
   information: {
     flex: 1,
-    fontSize: 16,
+    fontSize: RFValue(16, SCREEN_HEIGHT),
     fontWeight: '400',
-    lineHeight: 24,
+    lineHeight: RFValue(24, SCREEN_HEIGHT),
     fontFamily: 'Mulish'
-  },
-  startButton: {
-    borderRadius: 6
-  },
-  containerStartButton: {
-    backgroundColor: '#FDE047',
-    paddingVertical: 7,
-    paddingHorizontal: 16,
-    flexDirection: 'row-reverse',
-    gap: 8
-  },
-  labelStartButton: {
-    color: 'back',
-    fontSize: 16,
-    fontWeight: 600,
-    lineHeight: 24,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 40,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30
   }
 });

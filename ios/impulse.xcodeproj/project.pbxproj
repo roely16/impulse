@@ -21,6 +21,7 @@
 		4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */; };
 		4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		40511BE12CC5083400A1D6CA /* lock-shield-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 40511BE02CC5083400A1D6CA /* lock-shield-icon.png */; };
+		40511BE32CC8EBFA00A1D6CA /* Catamaran.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */; };
 		4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */; };
 		4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */; };
 		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -98,6 +99,7 @@
 		4009EC4D2CB7019D002A0FB4 /* shieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldAction.entitlements; sourceTree = "<group>"; };
 		4030B7652CACADFB0042EBF5 /* Impulse-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Impulse-Bridging-Header.h"; sourceTree = "<group>"; };
 		40511BE02CC5083400A1D6CA /* lock-shield-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "lock-shield-icon.png"; path = "impulse/Images.xcassets/lock-shield-icon.imageset/lock-shield-icon.png"; sourceTree = SOURCE_ROOT; };
+		40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Catamaran.ttf; sourceTree = "<group>"; };
 		4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = monitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */,
 				4009EBC32CB605E5002A0FB4 /* FamilyActivityPicker.swift */,
 				4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */,
+				40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */,
 			);
 			name = impulse;
 			sourceTree = "<group>";
@@ -428,6 +431,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40511BE32CC8EBFA00A1D6CA /* Catamaran.ttf in Resources */,
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,

@@ -1,7 +1,11 @@
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { Text } from "react-native-paper";
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from "react-i18next";
+import { RFValue } from "react-native-responsive-fontsize";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { OnboardingContainer } from "@/components/OnboardingContainer";
+import { SCREEN_HEIGHT } from "@/constants/Device";
 
 export default function SaveTime() {
 
@@ -13,94 +17,60 @@ export default function SaveTime() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+    <OnboardingContainer onPress={redirectToHowMuchTimeScreen} buttonLabel={t('saveTimeScreen.startButton')}>
+      <View>
         <View>
-          <View>
-            <Text style={{ fontFamily: 'Mulish', fontWeight: '700', fontSize: 22, lineHeight: 33, textAlign: 'center', marginBottom: 40 }}>
-              {t('saveTimeScreen.firstText')}
-            </Text>
-          </View>
-          <Text style={styles.title}>
-            { local.days } {t('saveTimeScreen.days')}
-          </Text>
-          <Text style={styles.subtitle}>
-            {t('saveTimeScreen.secondText')}
-          </Text>
-          <Text style={styles.subtitle}>
-            {t('saveTimeScreen.thirdText')}
+          <Text style={styles.firstText}>
+            {t('saveTimeScreen.firstText')}
           </Text>
         </View>
-        <View>
-          <Text style={[styles.subtitle, { marginBottom: 40 }]}>
-            {t('saveTimeScreen.fourthText')}
-          </Text>
-          <Text style={styles.title}>
-            { local.years } {t('saveTimeScreen.years')}
-          </Text>
-          <Text style={[styles.subtitle, { fontWeight: '700', marginTop: 40 }]}>
-            {t('saveTimeScreen.fifthText')}
-          </Text>
-        </View>
-      </ScrollView>
-      <View style={styles.buttonContainer}>
-        <Button
-          style={styles.button}
-          labelStyle={{ color: 'black' }}
-          buttonColor="#FDE047"
-          mode="contained"
-          onPress={redirectToHowMuchTimeScreen}
-          contentStyle={{ flexDirection: 'row-reverse' }}
-          icon="arrow-right"
-        >
-          {t('saveTimeScreen.startButton')}
-        </Button>
+        <Text style={styles.title}>
+          { local.days } {t('saveTimeScreen.days')}
+        </Text>
+        <Text style={styles.subtitle}>
+          {t('saveTimeScreen.secondText')}
+        </Text>
+        <Text style={[styles.subtitle, { marginBottom: hp('3%') }]}>
+          {t('saveTimeScreen.thirdText')}
+        </Text>
       </View>
-    </SafeAreaView>
-  );
+      <View>
+        <Text style={[styles.subtitle, { marginBottom: hp('3%') }]}>
+          {t('saveTimeScreen.fourthText')}
+        </Text>
+        <Text style={styles.title}>
+          { local.years } {t('saveTimeScreen.years')}
+        </Text>
+        <Text style={[styles.subtitle, { fontWeight: '700', marginTop: hp('3%') }]}>
+          {t('saveTimeScreen.fifthText')}
+        </Text>
+      </View>
+    </OnboardingContainer>
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white'
-  },
-  contentContainer: {
-    paddingHorizontal: 55,
-    paddingVertical: 40,
-    gap: 50
+  firstText: {
+    fontFamily: 'Mulish',
+    fontWeight: '700',
+    fontSize: RFValue(22, SCREEN_HEIGHT),
+    lineHeight: RFValue(33, SCREEN_HEIGHT),
+    textAlign: 'center',
+    marginBottom: hp('4%')
   },
   title: {
-    fontSize: 50,
+    fontSize: RFValue(50, SCREEN_HEIGHT),
     fontWeight: '700',
-    lineHeight: 65,
+    lineHeight: RFValue(65, SCREEN_HEIGHT),
     textAlign: 'center',
     fontFamily: 'Catamaran'
   },
-  image: {
-    alignSelf: 'center',
-    marginTop: 20
-  },
   subtitle: {
-    fontSize: 22,
+    fontSize: RFValue(22, SCREEN_HEIGHT),
     fontWeight: '400',
-    lineHeight: 33,
+    lineHeight: RFValue(33, SCREEN_HEIGHT),
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: hp('2%'),
     fontFamily: 'Mulish'
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 40
-  },
-  button: {
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderRadius: 6
-  },
+  }
 });

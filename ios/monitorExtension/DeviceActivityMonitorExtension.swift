@@ -65,9 +65,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   }
   
   override func intervalDidEnd(for activity: DeviceActivityName) {
-      super.intervalDidEnd(for: activity)
-      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activity.rawValue))
+    super.intervalDidEnd(for: activity)
+    Task {
+      let activityId = extractId(from: activity.rawValue)
+      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
       store.shield.applications = nil
+    }
   }
     
   override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
