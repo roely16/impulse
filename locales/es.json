@@ -102,5 +102,24 @@
   },
   "cardTime": {
     "title": "Tiempo de uso"
-  }
+  },
+  "weekdaysLetters": {
+    "monday": "L",
+    "tuesday": "M",
+    "wednesday": "X",
+    "thursday": "J",
+    "friday": "V",
+    "saturday": "S",
+    "sunday": "D"
+  },
+  "weekdays": {
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
+  },
+  "everyDay": "Todos los días"
 }

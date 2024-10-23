@@ -33,13 +33,13 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const { t } = useTranslation();
 
   const initialDays = [
-    { day: 'L', value: 2, selected: false },
-    { day: 'M', value: 3, selected: false },
-    { day: 'X', value: 4, selected: false },
-    { day: 'J', value: 5, selected: false },
-    { day: 'V', value: 6, selected: false },
-    { day: 'S', value: 7, selected: false },
-    { day: 'D', value: 1, selected: false },
+    { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false },
+    { day: t('weekdaysLetters.tuesday'), value: 3, name: t('weekdays.tuesday'), selected: false },
+    { day: t('weekdaysLetters.wednesday'), value: 4, name: t('weekdays.wednesday'), selected: false },
+    { day: t('weekdaysLetters.thursday'), value: 5, name: t('weekdays.thursday'), selected: false },
+    { day: t('weekdaysLetters.friday'), value: 6, name: t('weekdays.friday'), selected: false },
+    { day: t('weekdaysLetters.saturday'), value: 7, name: t('weekdays.saturday'), selected: false },
+    { day: t('weekdaysLetters.sunday'), value: 1, name: t('weekdays.sunday'), selected: false },
   ];
 
   const [days, setDays] = useState(initialDays);

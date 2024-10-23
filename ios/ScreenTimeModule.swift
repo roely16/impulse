@@ -6,20 +6,32 @@ import React
 import SwiftUI
 import SwiftData
 
-extension ManagedSettingsStore.Name {
-  static let daily = Self("daily")
-}
-
-extension DeviceActivityName {
-  static let activiy = Self("activity testing")
-}
-
 @objc(ScreenTimeModule)
 class ScreenTimeModule: NSObject {
     
   var appsSelected: Set<ApplicationToken> = []
   var familySelection: FamilyActivitySelection = FamilyActivitySelection()
-  let store = ManagedSettingsStore(named: .daily)
+  
+  private var container: ModelContainer?
+  
+  override init() {
+    super.init()
+    do {
+      // Inicializamos el contenedor una vez en el constructor
+      let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share"))
+      container = try ModelContainer(for: Block.self, configurations: configuration)
+    } catch {
+      print("Error initializing ModelContainer: \(error)")
+    }
+  }
+  
+  @MainActor
+  private func getContext() throws -> ModelContext {
+    guard let container = container else {
+      throw NSError(domain: "container_uninitialized", code: 500, userInfo: [NSLocalizedDescriptionKey: "ModelContainer is not initialized"])
+    }
+    return container.mainContext
+  }
   
   func handleAuthorizationError(_ errorCode: String? = nil, error: Error, reject: @escaping RCTPromiseRejectBlock) {
       let finalErrorCode = errorCode ?? "FAILED"
@@ -27,21 +39,34 @@ class ScreenTimeModule: NSObject {
       reject(finalErrorCode, errorMessage, error)
   }
 
-
-  @objc
+  @MainActor @objc
   func requestAuthorization(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-      if #available(iOS 16.0, *) {
-          Task {
-              do {
-                  try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
-                  resolve(["status": "success", "message": "Authorization requested successfully."])
-              } catch {
-                handleAuthorizationError(error: error, reject: reject)
-              }
-          }
-      } else {
-          reject("E_UNSUPPORTED_VERSION", "This functionality requires iOS 16.0 or higher.", nil)
+    if #available(iOS 16.0, *) {
+      Task {
+        do {
+          try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
+          let context = try getContext()
+          let block = Block(
+            name: "Bloqueo de prueba",
+            appsTokens: [],
+            familySelection: self.familySelection,
+            startTime: "09:00",
+            endTime: "16:00",
+            enable: true,
+            weekdays: [2,3,4,5,6]
+          )
+          context.insert(block)
+          try context.save()
+          
+          // Create default block
+          resolve(["status": "success", "message": "Authorization requested successfully."])
+        } catch {
+          handleAuthorizationError(error: error, reject: reject)
+        }
       }
+    } else {
+      reject("E_UNSUPPORTED_VERSION", "This functionality requires iOS 16.0 or higher.", nil)
+    }
   }
 
   @MainActor @objc
@@ -88,7 +113,6 @@ class ScreenTimeModule: NSObject {
       
       let context = container.mainContext
       
-      debugPrint(weekdays)
       let block = Block(
         name: name,
         appsTokens: self.appsSelected,
@@ -149,13 +173,7 @@ class ScreenTimeModule: NSObject {
   @MainActor @objc
   func getBlocks(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     do {
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
-      
-      let context = container.mainContext
+      let context = try getContext()
       
       let fetchDescriptor = FetchDescriptor<Block>()
       let blocks = try context.fetch(fetchDescriptor)
@@ -166,6 +184,7 @@ class ScreenTimeModule: NSObject {
             "title": block.name, // Reemplaza con los campos de tu modelo
             "subtitle": "\(block.startTime)-\(block.endTime)",
             "apps": block.appsTokens.count,
+            "weekdays": block.weekdays,
             "enable": block.enable
         ]
       }
@@ -182,12 +201,8 @@ class ScreenTimeModule: NSObject {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
         return
       }
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
-      let context = container.mainContext
+  
+      let context = try getContext()
       
       // Stop monitoring
       var fetchDescriptor = FetchDescriptor<Block>(
@@ -226,12 +241,9 @@ class ScreenTimeModule: NSObject {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
         return
       }
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
-      let context = container.mainContext
+      
+      let context = try getContext()
+      
       var fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate{ $0.id == uuid }
       )
@@ -262,12 +274,8 @@ class ScreenTimeModule: NSObject {
         return
       }
       let deviceActivityCenter = DeviceActivityCenter();
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
-      let context = container.mainContext
+      
+      let context = try getContext()
       
       let fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate { $0.id == uuid }
@@ -334,12 +342,9 @@ class ScreenTimeModule: NSObject {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
         return
       }
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
-      let context = container.mainContext
+      
+      let context = try getContext()
+      
       var fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate{ $0.id == uuid }
       )

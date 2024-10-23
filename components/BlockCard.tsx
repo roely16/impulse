@@ -8,12 +8,13 @@ interface BlockCardProps {
   subtitle: string;
   apps: number;
   enable: boolean;
+  weekdays: number[];
   refreshBlocks: () => void;
   editBlock: (id: string) => void;
 }
 
 export const BlockCard = (props: BlockCardProps) => {
-  const { id, title, subtitle, apps, enable, refreshBlocks, editBlock } = props;
+  const { id, title, subtitle, apps, enable, refreshBlocks, editBlock , weekdays = []} = props;
 
   const { ScreenTimeModule } = NativeModules;
 
@@ -50,7 +51,7 @@ export const BlockCard = (props: BlockCardProps) => {
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
     return `${hours}:${formattedMinutes} ${period}`;
-}
+  }
 
   const convertTimeRange = (input: string): string | null => {
     const times = input.split('-');
@@ -66,7 +67,43 @@ export const BlockCard = (props: BlockCardProps) => {
     }
 
     return null;
-}
+  }
+
+  const convertDaysToText = (selectedDays: number[]): string => {
+
+    const WEEKDAYS = [
+      { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false },
+      { day: t('weekdaysLetters.tuesday'), value: 3, name: t('weekdays.tuesday'), selected: false },
+      { day: t('weekdaysLetters.wednesday'), value: 4, name: t('weekdays.wednesday'), selected: false },
+      { day: t('weekdaysLetters.thursday'), value: 5, name: t('weekdays.thursday'), selected: false },
+      { day: t('weekdaysLetters.friday'), value: 6, name: t('weekdays.friday'), selected: false },
+      { day: t('weekdaysLetters.saturday'), value: 7, name: t('weekdays.saturday'), selected: false },
+      { day: t('weekdaysLetters.sunday'), value: 1, name: t('weekdays.sunday'), selected: false }
+    ];
+
+    console.log('selectedDays', selectedDays)
+    const values = selectedDays.sort((a, b) => a - b);
+    const allValues = WEEKDAYS.map(day => day.value);
+
+    if (allValues.every(val => values.includes(val))) {
+      return 'Todos los días';
+    }
+
+    const isConsecutive = values.every((val, idx) => idx === 0 || val === values[idx - 1] + 1);
+    
+    if (isConsecutive) {
+      console.log('isConsecutive', values)
+      const firstDay = WEEKDAYS.find(day => day.value === values[0]);
+      const lastDay = WEEKDAYS.find(day => day.value === values[values.length - 1]);
+      if (firstDay && lastDay) {
+        return `${firstDay.name} - ${lastDay.name}`;
+      }
+    }
+    console.log('values', values)
+    const days = values.map(val => WEEKDAYS.find(day => day.value === val)?.day);
+    console.log('days', days)
+    return days.join(', ');
+  };
 
   return (
     <Card style={styles.card} mode="elevated" elevation={1}>
@@ -79,7 +116,11 @@ export const BlockCard = (props: BlockCardProps) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.subtitle}>{convertTimeRange(subtitle)}</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={styles.subtitle}>{convertDaysToText(weekdays)}</Text>
+          { weekdays.length > 0 && <Text style={styles.subtitle}> • </Text> }
+          <Text style={styles.subtitle}>{convertTimeRange(subtitle)}</Text>
+        </View>
         <View style={styles.rowContainer}>
           <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps}</Text>
           <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />

@@ -59,6 +59,7 @@ export default function HomeScreen() {
   const getBlocks = async (isRefreshing: boolean = false) => {
     setLoading(true);
     const blocks = await ScreenTimeModule.getBlocks();
+    console.log(blocks);
     setBlocks(blocks.blocks);
     setLoading(false);
   };
