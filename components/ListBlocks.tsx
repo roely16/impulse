@@ -7,6 +7,7 @@ export interface BlockType {
   subtitle: string;
   apps: number;
   enable: boolean;
+  weekdays: number[];
 }
 
 interface ListBlocksProps {
@@ -20,13 +21,25 @@ export const ListBlocks = (_props: ListBlocksProps) => {
 
   const { blocks, refreshBlocks, isLoading, editBlock } = _props;
 
+  const getBlocksActiveAndInactive = (): { active: number, inactive: number } => {
+    const active = blocks.filter((block) => block.enable).length;
+    const inactive = blocks.filter((block) => !block.enable).length;
+
+    return {
+      active,
+      inactive
+    }
+  }
+
+  const totalOfBlocks = getBlocksActiveAndInactive();
+
   return (
     <FlatList refreshControl={
       <RefreshControl
         refreshing={isLoading}
         onRefresh={refreshBlocks}
       />
-    } style={styles.container} data={blocks} renderItem={({item}) => <BlockCard editBlock={(key) => editBlock(key)} refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
+    } style={styles.container} data={blocks} renderItem={({item}) => <BlockCard total_blocks={blocks.length} total_active_limits={totalOfBlocks.active} total_inactive_limits={totalOfBlocks.inactive} editBlock={(key) => editBlock(key)} refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
   )
 };
 

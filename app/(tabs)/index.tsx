@@ -1,6 +1,6 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import { StyleSheet, NativeModules, View } from 'react-native';
-import { Button, Card, Text } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { Blocks } from '@/components/Blocks';
 import { BottomSheetNewBlock } from '@/components/BottomSheet';
 import { ListBlocks, BlockType } from '@/components/ListBlocks';
@@ -8,6 +8,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { CardTimeHome } from '@/components/CardTimeHome';
 import { useTranslation } from 'react-i18next';
+import { MixpanelService } from '@/SDK/Mixpanel';
+import useTimeOnScreen from '@/hooks/useTimeOnScreen';
+import { useFocusEffect } from 'expo-router';
 
 export default function HomeScreen() {
 
@@ -21,6 +24,8 @@ export default function HomeScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [blockId, setBlockId] = useState<string | null>(null);
   const [isEmptyBlock, setIsEmptyBlock] = useState(false);
+
+  const getTimeOnScreen = useTimeOnScreen();
 
   const { ScreenTimeModule } = NativeModules;
   const openBottonSheet = () => {
@@ -68,13 +73,22 @@ export default function HomeScreen() {
     getBlocks();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      MixpanelService.trackEvent('home', {
+        entry_point: 'snackbar',
+        timestamp: new Date().toISOString()
+      });
+    }, [])
+  );
+
   const BlockSection = () => {
 
     const existsBlocks = blocks.length > 0;
     if (existsBlocks) {
       return (
         <>
-          <Blocks showBottomShet={openNewBlockForm} />
+          <Blocks numberOfBlocks={blocks.length} showBottomShet={openNewBlockForm} />
           <ListBlocks editBlock={openEditBlockForm} isLoading={loading} refreshBlocks={getBlocks} blocks={blocks} />
         </>
       );
@@ -90,6 +104,20 @@ export default function HomeScreen() {
       return <></>
     }
 
+    const handleAddButon = () => {
+      openBottonSheet();
+      const timeSpent = getTimeOnScreen();
+      MixpanelService.trackEvent('add_block_button', {
+        localization: 'Home',
+        type_button: 'button_principal_home',
+        time_spent_before_click: timeSpent,
+        existing_block_periods: blocks.length,
+        existing_limit_app: 0,
+        device_type: 'iOS',
+        timestamp: new Date().toISOString()
+      })
+    };
+
     return (
       <View style={styles.buttonContainer}>
         <Button
@@ -98,7 +126,7 @@ export default function HomeScreen() {
           buttonColor="#FDE047"
           mode="contained"
           icon="check"
-          onPress={openBottonSheet}
+          onPress={handleAddButon}
         >
           {t('blocksScreen.addBlockButton')}
         </Button>

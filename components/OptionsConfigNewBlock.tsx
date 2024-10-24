@@ -1,15 +1,32 @@
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Icon } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { MixpanelService } from "@/SDK/Mixpanel";
+import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 
 interface OptionsConfigNewBlockProps {
   changeForm: (form: string) => void;
+  totalBlocks?: number;
 }
 
 export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
 
   const { t } = useTranslation();
-  const { changeForm } = props;
+  const { changeForm, totalBlocks = 0 } = props;
+  const getTimeOnScreen = useTimeOnScreen();
+
+  const handleNewBlock = () => {
+    changeForm('new-block');
+    const timeSpent = getTimeOnScreen();
+    MixpanelService.trackEvent('add_block_period_modal', {
+      localization: 'add_block_modal',
+      type_button: 'add_block_period_button',
+      time_spent_before_click: timeSpent,
+      existing_block_periods: totalBlocks,
+      device_type: 'iOS',
+      timestamp: new Date().toISOString()
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -17,7 +34,7 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
         {t('optionsConfigNewBlock.title')}
       </Text>
       <View style={{ flexDirection: 'column', gap: 20, marginTop: 20 }}>
-        <TouchableOpacity onPress={() => changeForm('new-block')} style={styles.button}>
+        <TouchableOpacity onPress={handleNewBlock} style={styles.button}>
           <View style={styles.contentButton}>
             <View style={styles.buttonLabelContainer}>
               <Icon source="timelapse" size={25} />

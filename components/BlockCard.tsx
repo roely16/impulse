@@ -1,6 +1,7 @@
 import { View, StyleSheet, TouchableOpacity, Switch, NativeModules } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { MixpanelService } from "@/SDK/Mixpanel";
 
 interface BlockCardProps {
   id: string;
@@ -11,10 +12,13 @@ interface BlockCardProps {
   weekdays: number[];
   refreshBlocks: () => void;
   editBlock: (id: string) => void;
+  total_active_limits?: number;
+  total_inactive_limits?: number;
+  total_blocks?: number;
 }
 
 export const BlockCard = (props: BlockCardProps) => {
-  const { id, title, subtitle, apps, enable, refreshBlocks, editBlock , weekdays = []} = props;
+  const { id, title, subtitle, apps, enable, refreshBlocks, editBlock , weekdays = [], total_active_limits = 0, total_inactive_limits = 0, total_blocks = 0} = props;
 
   const { ScreenTimeModule } = NativeModules;
 
@@ -23,7 +27,15 @@ export const BlockCard = (props: BlockCardProps) => {
   const updateBlockStatus = async (status: boolean) => {
     try {
       const response = await ScreenTimeModule.updateBlockStatus(id, status);
-      console.log('update block status response', response)
+      MixpanelService.trackEvent('block_period_activated', {
+        localizacion: "home",
+        total_block_periods: total_blocks,
+        active_block_periods: total_active_limits,
+        inactive_block_periods: total_inactive_limits,
+        device_type: 'iOS',
+        time_between_warning_and_deactivation: 0,
+        timestamp: new Date().toISOString()
+      });
       refreshBlocks();
     } catch (error) {
       console.log('error updating block status', error)
@@ -32,6 +44,13 @@ export const BlockCard = (props: BlockCardProps) => {
 
   const handleEditBlock = async () => {
     editBlock(id);
+    MixpanelService.trackEvent('edit_block_periods', {
+      previous_state: enable ? 'active' : 'disabled',
+      localization: 'home',
+      total_active_limits: total_active_limits,
+      total_inactive_limits: total_inactive_limits,
+      timestamp: new Date().toISOString()
+    });
   }
 
   const convertTo12HourFormat = (time: string): string | null => {

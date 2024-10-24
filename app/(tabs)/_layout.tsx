@@ -17,7 +17,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="unlock" size={30} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -25,7 +25,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color }) => (
             <Fontisto name="heartbeat-alt" size={30} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
@@ -33,7 +33,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="trending-up" size={30} color={color} />
-          ),
+          )
         }}
       />
     </Tabs>

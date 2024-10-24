@@ -37,7 +37,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
       return <FormNewBlock totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     }
 
-    return <OptionsConfigNewBlock changeForm={setBottomSheetForm} />;
+    return <OptionsConfigNewBlock totalBlocks={totalBlocks} changeForm={setBottomSheetForm} />;
   };
 
   const closeBottomSheet = () => {

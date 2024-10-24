@@ -1,8 +1,10 @@
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTranslation } from "react-i18next";
+import { MixpanelService } from "@/SDK/Mixpanel";
+import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 interface FormNewBlockProps {
   changeForm: (form: string) => void;
   refreshBlocks: () => void;
@@ -31,6 +33,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const inputRef = useRef<TextInput>(null);
 
   const { t } = useTranslation();
+  const getTimeOnScreen = useTimeOnScreen();
 
   const initialDays = [
     { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false },
@@ -60,7 +63,17 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       const updatedDays = days.map((day) =>
         day.day === selectedDay.day ? { ...day, selected: !day.selected } : day
       );
+      const selectedDays = updatedDays.filter(day => day.selected).map(day => day.day);
       setDays(updatedDays);
+
+      const timeSpent = getTimeOnScreen();
+      MixpanelService.trackEvent('block_frequency_selected', {
+        type_block: 'block_period',
+        selected_days: selectedDays,
+        number_of_days_selected: selectedDays.length,
+        time_spent_on_frequency_selection: timeSpent,
+        timestamp: new Date().toISOString()
+      });
     };
 
     return (
@@ -140,10 +153,17 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     try {
       const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId);
       if (result.status === 'success') {
-        console.log('result', result);
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);
         updateEmptyBlock && updateEmptyBlock(false);
+
+        const timeSpent = getTimeOnScreen();
+        MixpanelService.trackEvent('block_apps_selected', {
+          type_block: 'block_period',
+          apps_selected_count: result.appsSelected,
+          time_spent_on_app_selection: timeSpent,
+          timestamp: new Date().toISOString()
+        });
       }
     } catch (error) {
       console.error(error);
@@ -186,9 +206,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         appsSelected,
         weekDays
       }
-      console.log('save data', data);
       const response = await ScreenTimeModule.createBlock(data.name, data.startTime, data.endTime, data.weekDays);
-      console.log('response', response);
       refreshBlocks();
       closeBottomSheet()
       changeForm('')
@@ -199,7 +217,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleEditBlock = async () => {
     try {
-      console.log('isEmptyBlock', isEmptyBlock);
       const startTime = convertDate(startTimeRef.current);
       const endTime = convertDate(endTimeRef.current);
       const haveBlockTitle = blockTitle.length > 0;
@@ -217,8 +234,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       }
 
       const response = await ScreenTimeModule.updateBlock(data.id, data.name, data.startTime, data.endTime, data.weekDays, !isEmptyBlock);
-      console.log('edit block', data);
-      console.log('response', response);
       refreshBlocks();
       closeBottomSheet()
       changeForm('')
@@ -287,7 +302,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     return date;
   }
   const setBlockData = (block) => {
-    console.log('block', block);
     setBlockTitle(block.name);
     const startTime = timeStringToDate(block.startTime);
     startTimeRef.current = startTime;
@@ -315,6 +329,36 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleIconPress = () => {
     inputRef.current?.focus();
+  }
+
+  const handleCancel = () => {
+    closeBottomSheet();
+    const timeSpent = getTimeOnScreen();
+    MixpanelService.trackEvent('block_period_creation_cancelled', {
+      step_before_cancellation: '',
+      entry_point: isEdit ? 'edit_button' : 'add_button',
+      total_time_spent: timeSpent,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  const handleSaveButton = () => {
+    if (isEdit) {
+      handleEditBlock();
+    } else {
+      handleSaveBlock();
+    }
+
+    const timeSpent = getTimeOnScreen();
+    MixpanelService.trackEvent('block_period_saved', {
+      apps_selected_count: appsSelected,
+      number_of_days_selected: days.filter(day => day.selected).length,
+      total_block_periods_after_save: totalBlocks,
+      total_time_spent: timeSpent,
+      entry_point: isEdit ? 'edit_button' : 'add_button',
+      error_occurred: false,
+      timestamp: new Date().toISOString
+    });
   }
 
   useLayoutEffect(() => {
@@ -356,10 +400,10 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <TimeConfigurationForm />
       <Frequency />
       <View style={styles.buttonContainer}>
-        <Button onPress={closeBottomSheet} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
+        <Button onPress={handleCancel} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
           {t('formNewBlock.cancelButton')}
         </Button>
-        <Button disabled={!formFilled} onPress={() => isEdit ? handleEditBlock() : handleSaveBlock()} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
+        <Button disabled={!formFilled} onPress={handleSaveButton} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
           {t('formNewBlock.saveButton')}
         </Button>
       </View>
