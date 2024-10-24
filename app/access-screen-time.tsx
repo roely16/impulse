@@ -9,6 +9,8 @@ import { OnboardingContainer } from '@/components/OnboardingContainer';
 import { RFValue } from "react-native-responsive-fontsize";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { SCREEN_HEIGHT } from "@/constants/Device";
+import { MixpanelService } from '@/SDK/Mixpanel';
+import useTimeOnScreen from '@/hooks/useTimeOnScreen';
 
 export default function HomeScreen() {
 
@@ -16,14 +18,33 @@ export default function HomeScreen() {
 
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const getTimeOnScreen = useTimeOnScreen();
 
   const handleScreenTimeAccess = async () => {
     try {
       const response = await ScreenTimeModule.requestAuthorization();
+      const timeSpent = getTimeOnScreen();
       if (response?.status === 'success') {
+
+        MixpanelService.trackEvent('onboarding_complete', {
+          onboarding_step: 5,
+          device_type: 'iOS',
+          did_allow_usage_access: true,
+          time_spend_in_step: timeSpent,
+          timestamp: new Date().toISOString()
+        });
         router.replace('/(tabs)')
         await saveScreenTimeAccess();
+        return;
       }
+
+      MixpanelService.trackEvent('onboarding_complete', {
+        onboarding_step: 5,
+        device_type: 'iOS',
+        did_allow_usage_access: false,
+        time_spend_in_step: timeSpent,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
       console.error(error);
     }

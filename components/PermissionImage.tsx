@@ -6,19 +6,39 @@ import { useTranslation } from "react-i18next";
 import { RFValue } from "react-native-responsive-fontsize";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { SCREEN_HEIGHT } from "@/constants/Device";
+import { MixpanelService } from "@/SDK/Mixpanel";
+import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 
 export const PermissionImage = () => {
   
   const { ScreenTimeModule } = NativeModules;
   const { t } = useTranslation();
+  const getTimeOnScreen = useTimeOnScreen();
 
   const handleScreenTimeAccess = async () => {
     try {
       const response = await ScreenTimeModule.requestAuthorization();
+      const timeSpent = getTimeOnScreen();
       if (response?.status === 'success') {
+        MixpanelService.trackEvent('onboarding_complete', {
+          onboarding_step: 5,
+          device_type: 'iOS',
+          did_allow_usage_access: true,
+          time_spend_in_step: timeSpent,
+          timestamp: new Date().toISOString()
+        });
         router.replace('/(tabs)')
         await saveScreenTimeAccess();
+        return;
       }
+
+      MixpanelService.trackEvent('onboarding_complete', {
+        onboarding_step: 5,
+        device_type: 'iOS',
+        did_allow_usage_access: false,
+        time_spend_in_step: timeSpent,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
       console.error(error);
     }

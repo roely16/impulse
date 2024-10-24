@@ -1,4 +1,5 @@
 import { Mixpanel } from "mixpanel-react-native";
+import { getUniqueId } from 'react-native-device-info';
 
 let instance;
 
@@ -15,7 +16,8 @@ class MixpanelSDk {
     const trackAutomaticEvents = false;
     this.mixpanel = new Mixpanel("db86127b20da494d72aba1bbdc3d934c", trackAutomaticEvents);
     await this.mixpanel.init();
-    this.mixpanel.identify('HERSON')
+    const uniqueId = await getUniqueId();
+    this.mixpanel.identify(uniqueId)
   }
 
   trackEvent(eventName: string, properties: object = {}) {

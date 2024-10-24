@@ -7,6 +7,8 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { OnboardingContainer } from "@/components/OnboardingContainer";
 import { SCREEN_HEIGHT } from "@/constants/Device";
+import { MixpanelService } from "@/SDK/Mixpanel";
+import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 
 const DAYS_IN_A_YEAR = 365;
 const HOURS_IN_A_DAY = 24;
@@ -16,6 +18,7 @@ export default function HowMuchTime() {
 
   const { t } = useTranslation();
   const [hours, setHours] = useState(3);
+  const getTimeOnScreen = useTimeOnScreen();
 
   const Hours = () => {
     return (
@@ -75,7 +78,21 @@ export default function HowMuchTime() {
   const redirect = () => {
     const days = Math.round((hours * DAYS_IN_A_YEAR) / HOURS_IN_A_DAY);
     const years = Math.round((hours * DAYS_IN_A_YEAR * YEAR_IN_A_LIFE) / (HOURS_IN_A_DAY * DAYS_IN_A_YEAR));
+
+    const timeSpent = getTimeOnScreen();
+
+    MixpanelService.trackEvent("onboarding_time_selected", {
+      onboarding_step: 2,
+      selected_hours: hours,
+      interaction_type: 'adjusted',
+      initial_value: 3,
+      time_spend_on_screen: timeSpent,
+      slider_interaction: 2,
+      devive_type: 'iOS',
+    });
+
     router.push({ pathname: '/save-time-screen', params: { days, years } });
+
   };
 
   return (
