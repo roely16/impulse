@@ -1,0 +1,125 @@
+{
+  "welcomeScreen": {
+    "title": "Ajude-se a controlar os impulsos e ganhe horas no seu dia a dia",
+    "subtitle": "Os usuários já conseguiram economizar mais de 5000 horas controlando o uso do celular",
+    "startButton": "Começar"
+  },
+  "howMuchTime": {
+    "title": "Quanto tempo você usa o celular por dia?",
+    "continueButton": "Continuar"
+  },
+  "saveTimeScreen": {
+    "firstText": "De acordo com seu uso diário, você passa...",
+    "secondText": "por ano perdido em frente à tela...",
+    "thirdText": "Pense no que você poderia fazer com esse tempo se mudasse seus hábitos hoje.",
+    "fourthText": "Em uma vida, isso soma",
+    "fifthText": "Você está pronto para aproveitar ao máximo seu tempo?",
+    "startButton": "Começar a mudança",
+    "days": "dias",
+    "years": "anos"
+  },
+  "impulseFunctionalities": {
+    "title": "As duas funcionalidades que vão ajudá-lo a recuperar seu tempo",
+    "blockAppsTitle": "Bloqueio de Aplicativos",
+    "blockAppsSubtitle": "Agende horários específicos para bloquear esses aplicativos que o distraem, permitindo que você se concentre no que realmente importa.",
+    "impulseModeTitle": "Modo Impulsos",
+    "impulseModeSubtitle": "Sente a tentação constante de verificar seus aplicativos sem motivo? Vamos ajudá-lo a controlar esses impulsos.",
+    "continueButton": "Continuar"
+  },
+  "screenTimeAccess": {
+    "title": "Permitir acesso ao Tempo de Uso",
+    "infoOne": "Para bloquear aplicativos e sites, precisamos de permissão",
+    "infoTwo": {
+      "first": "As informações do Tempo de Uso são ",
+      "second": "protegidas pela Apple",
+      "third": " e serão ",
+      "fourth": "armazenadas 100% no seu dispositivo"
+    },
+    "permissionButton": {
+      "title": "O Impulse deseja acessar o Tempo de Tela",
+      "message": "Permitir que o Impulse acesse o Tempo de Tela pode permitir que ele veja seus dados de atividade, restrinja conteúdo e limite o uso de aplicativos e sites.",
+      "allowButton": "Continuar",
+      "denyButton": "Não permitir"
+    },
+    "startButton": "Começar"
+  },
+  "blocksScreen": {
+    "addBlockButton": "Adicionar bloqueio"
+  },
+  "optionsConfigNewBlock": {
+    "title": "Configurar novo bloqueio",
+    "newBlock": "Bloqueio por Horas",
+    "newLimit": "Limite de uso"
+  },
+  "formNewBlock": {
+    "blockName": "Adicionar Nome do Bloqueio",
+    "appsOptions": "Aplicativos",
+    "appsPlaceholder": "Selecionar",
+    "sitesLabel": "sites",
+    "selectTime": "Selecionar hora",
+    "from": "De",
+    "to": "Até",
+    "frequency": "Frequência",
+    "saveButton": "Salvar",
+    "cancelButton": "Cancelar",
+    "deleteButton": "Excluir bloqueio",
+    "deleteAlert": {
+      "title": "Confirmação",
+      "message": "Tem certeza de que deseja excluir o bloqueio?",
+      "cancelButton": "Cancelar",
+      "confirmButton": "Excluir"
+    },
+    "defaultBlockName": "Bloqueio"
+  },
+  "formNewLimit": {
+    "blockName": "Adicionar Nome do Limite",
+    "appsOptions": "Aplicativos",
+    "appsPlaceholder": "Selecionar",
+    "sitesLabel": "sites",
+    "selectTime": "Limite de tempo por dia",
+    "selectTimeLabel": "Selecionar",
+    "maxOpenDailyTitle": "Limite de aberturas diárias",
+    "maxOpenDaily": "Limite de Aberturas",
+    "maxOpenDailyLabel": "Selecionar",
+    "frequency": "Frequência",
+    "saveButton": "Salvar",
+    "cancelButton": "Cancelar",
+    "deleteButton": "Excluir bloqueio",
+    "deleteAlert": {
+      "title": "Confirmação",
+      "message": "Tem certeza de que deseja excluir o limite?",
+      "cancelButton": "Cancelar",
+      "confirmButton": "Excluir"
+    }
+  },
+  "blocksSection": {
+    "title": "Períodos de Bloqueio",
+    "addButton": "Adicionar"
+  },
+  "cardBlock": {
+    "editButton": "Editar",
+    "appsLabel": "Aplicativos"
+  },
+  "cardTime": {
+    "title": "Tempo de uso"
+  },
+  "weekdaysLetters": {
+    "monday": "S",
+    "tuesday": "T",
+    "wednesday": "Q",
+    "thursday": "Q",
+    "friday": "S",
+    "saturday": "S",
+    "sunday": "D"
+  },
+  "weekdays": {
+    "monday": "Segunda-feira",
+    "tuesday": "Terça-feira",
+    "wednesday": "Quarta-feira",
+    "thursday": "Quinta-feira",
+    "friday": "Sexta-feira",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
+  },
+  "everyDay": "Todos os dias"
+}

@@ -18,6 +18,8 @@ interface FormNewBlockProps {
 
 interface DayType {
   day: string;
+  value: number;
+  name: string;
   selected: boolean;
 }
 
@@ -61,7 +63,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
     const toggleSelected = (selectedDay: DayType) => {
       const updatedDays = days.map((day) =>
-        day.day === selectedDay.day ? { ...day, selected: !day.selected } : day
+        day.value === selectedDay.value ? { ...day, selected: !day.selected } : day
       );
       const selectedDays = updatedDays.filter(day => day.selected).map(day => day.day);
       setDays(updatedDays);
@@ -84,7 +86,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         <View style={styles.daysContainer}>
           {
             days.map((day, index) => (
-              <TouchableOpacity onPress={() => toggleSelected(day)} key={day.day} style={day.selected ? styles.daySelected : styles.dayButton}>
+              <TouchableOpacity onPress={() => toggleSelected(day)} key={day.value} style={day.selected ? styles.daySelected : styles.dayButton}>
                 <Text style={{ color: day.selected ? 'white' : 'black' }}>{day.day}</Text>
               </TouchableOpacity>
             ))

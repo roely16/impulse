@@ -68,8 +68,7 @@
         "message": "Bist du sicher, dass du die Blockierung löschen möchtest?",
         "cancelButton": "Abbrechen",
         "confirmButton": "Löschen"
-      },
-      "defaultBlockName": "Blockierung"
+      }
     },
     "formNewLimit": {
       "blockName": "Limit-Namen hinzufügen",
@@ -102,6 +101,25 @@
     },
     "cardTime": {
       "title": "Bildschirmzeit"
-    }
+    },
+    "weekdaysLetters": {
+      "monday": "M",
+      "tuesday": "D",
+      "wednesday": "M",
+      "thursday": "D",
+      "friday": "F",
+      "saturday": "S",
+      "sunday": "S"
+    },
+    "weekdays": {
+      "monday": "Montag",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag",
+      "friday": "Freitag",
+      "saturday": "Samstag",
+      "sunday": "Sonntag"
+    },
+    "everyDay": "Jeden Tag"
   }
   
