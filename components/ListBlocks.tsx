@@ -1,5 +1,6 @@
 import { StyleSheet, FlatList, RefreshControl } from "react-native";
 import { BlockCard } from "./BlockCard";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export interface BlockType {
   id: string;
@@ -46,7 +47,7 @@ export const ListBlocks = (_props: ListBlocksProps) => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: hp('0.2%'),
     gap: 15
   }
 });
