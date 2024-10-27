@@ -10,6 +10,7 @@ import os.log
 import UserNotifications
 import SwiftData
 import ManagedSettings
+import Foundation
 
 let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
 
@@ -18,6 +19,22 @@ let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impuls
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   
   private var block: Block?
+  private var limit: Limit?
+  private var eventModel: Event?
+  
+  private lazy var container: ModelContainer = {
+    let configuration = ModelConfiguration(
+        isStoredInMemoryOnly: false,
+        allowsSave: true,
+        groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
+    )
+    return try! ModelContainer(for: Block.self, Limit.self, Event.self, configurations: configuration)
+  }()
+  
+  @MainActor
+  private var context: ModelContext {
+      return container.mainContext
+  }
   
   @MainActor func getBlock(blockId: String){
     do {
@@ -40,6 +57,44 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
   }
   
+  @MainActor func getLimit(limitId: String) throws {
+    do {
+      guard let uuid = UUID(uuidString: limitId) else {
+        throw NSError(domain: "Invalid UUID", code: 1, userInfo: nil)
+      }
+      let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
+      let container = try ModelContainer(
+        for: Limit.self,
+        configurations: configuration
+      )
+      let context = container.mainContext
+      let fetchDescriptor = FetchDescriptor<Limit>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      let result = try context.fetch(fetchDescriptor)
+      limit = result.first
+    } catch {
+      throw error
+    }
+  }
+  
+  @MainActor func getEvent(eventId: String) throws {
+    do {
+      guard let uuid = UUID(uuidString: eventId) else {
+        throw NSError(domain: "Invalid UUID", code: 1, userInfo: nil)
+      }
+
+      let context = container.mainContext
+      let fetchDescriptor = FetchDescriptor<Event>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      let result = try context.fetch(fetchDescriptor)
+      eventModel = result.first
+    } catch {
+      throw error
+    }
+  }
+  
   func extractId(from activityRawValue: String) -> String {
       let dayIdentifier = "-day-"
 
@@ -51,6 +106,32 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       
       // Si no se encuentra, devolver el string original
       return activityRawValue
+  }
+  
+  func extractLimitId(from activityRawValue: String) -> String {
+      let limitIdentifier = "-limit"
+
+      // Verifica si el string contiene el identificador
+      if let range = activityRawValue.range(of: limitIdentifier) {
+          // Si se encuentra, extrae la parte anterior
+          return String(activityRawValue[..<range.lowerBound])
+      }
+      
+      // Si no se encuentra, devolver el string original
+      return activityRawValue
+  }
+  
+  func extractEventId(from eventRawValue: String) -> String {
+      let eventIdentifier = "-event"
+
+      // Verifica si el string contiene el identificador
+      if let range = eventRawValue.range(of: eventIdentifier) {
+          // Si se encuentra, extrae la parte anterior
+          return String(eventRawValue[..<range.lowerBound])
+      }
+      
+      // Si no se encuentra, devolver el string original
+      return eventRawValue
   }
   
   override func intervalDidStart(for activity: DeviceActivityName) {
@@ -74,9 +155,24 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   }
     
   override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
-      super.eventDidReachThreshold(event, activity: activity)
+    super.eventDidReachThreshold(event, activity: activity)
+    
+    Task {
+      do {
+        
+        let eventId = extractEventId(from: event.rawValue)
+        try await getEvent(eventId: eventId)
+        
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(eventId)"))
+        
+        if let appToken = eventModel?.appToken {
+            store.shield.applications = Set([appToken])
+        }
+      } catch {
+        sharedDefaults?.set("Error during eventDidReachThreshold: \(error.localizedDescription)", forKey: "lastActivityLog")
+      }
       
-      // Handle the event reaching its threshold.
+    }
   }
   
   override func intervalWillStartWarning(for activity: DeviceActivityName) {

@@ -14,7 +14,7 @@ const defaultLanguage = languages.length > 0 ? languages[0] : 'es';
 i18n
   .use(initReactI18next)
   .init({
-    lng: defaultLanguage,
+    lng: 'es',
     compatibilityJSON: 'v3',
     fallbackLng: 'es',
     interpolation: {

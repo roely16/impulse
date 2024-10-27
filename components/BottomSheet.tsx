@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { OptionsConfigNewBlock } from './OptionsConfigNewBlock';
 import { FormNewBlock } from './FormNewBlock';
+import { FormNewLimit } from './FormNewLimit';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 
 interface BottomSheetNewBlockProps {
@@ -35,6 +36,8 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
       return <FormNewBlock totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+    } else if (bottomSheetForm === 'new-limit') {
+      return <FormNewLimit totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock totalBlocks={totalBlocks} changeForm={setBottomSheetForm} />;

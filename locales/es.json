@@ -77,6 +77,7 @@
     "appsPlaceholder": "Seleccionar",
     "sitesLabel": "sitios",
     "selectTime": "Tiempo límite por día",
+    "selectTimeTitle": "Tiempo Límite",
     "selectTimeLabel": "Seleccionar",
     "maxOpenDailyTitle": "Límite aperturas diarías",
     "maxOpenDaily": "Límite Aperturas",
@@ -84,21 +85,32 @@
     "frequency": "Frecuencia",
     "saveButton": "Guardar",
     "cancelButton": "Cancelar",
-    "deleteButton": "Eliminar bloqueo",
+    "deleteButton": "Eliminar límite",
     "deleteAlert": {
       "title": "Confirmación",
       "message": "¿Estás seguro de que deseas eliminar el límite?",
       "cancelButton": "Cancelar",
       "confirmButton": "Eliminar"
-    }
+    },
+    "defaultBlockName": "Límite"
   },
   "blocksSection": {
     "title": "Períodos de Bloqueo",
     "addButton": "Añadir"
   },
+  "limitsSection": {
+    "title": "Límites por Apps",
+    "addButton": "Añadir"
+  },
   "cardBlock": {
     "editButton": "Editar",
     "appsLabel": "Apps"
+  },
+  "cardLimit": {
+    "editButton": "Editar",
+    "appsLabel": "Apps",
+    "timeLabel": "min",
+    "maxOpenLabel": "aperturas"
   },
   "cardTime": {
     "title": "Tiempo de uso"
@@ -121,5 +133,6 @@
     "saturday": "Sábado",
     "sunday": "Domingo"
   },
-  "everyDay": "Todos los días"
+  "everyDay": "Todos los días",
+  "testBlockName": "Bloqueo de prueba"
 }

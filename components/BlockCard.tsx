@@ -152,7 +152,7 @@ export const BlockCard = (props: BlockCardProps) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: 'white',
-    marginBottom: 20
+    marginHorizontal: 20
   },
   cardContent: {
     gap: 5

@@ -17,7 +17,8 @@ export const PermissionImage = () => {
 
   const handleScreenTimeAccess = async () => {
     try {
-      const response = await ScreenTimeModule.requestAuthorization();
+      const testBlockName = t('testBlockName');
+      const response = await ScreenTimeModule.requestAuthorization(testBlockName);
       const timeSpent = getTimeOnScreen();
       if (response?.status === 'success') {
         MixpanelService.trackEvent('onboarding_complete', {

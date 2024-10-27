@@ -28,6 +28,19 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
     });
   };
 
+  const handleNewLimit = () => {
+    changeForm('new-limit');
+    const timeSpent = getTimeOnScreen();
+    MixpanelService.trackEvent('add_block_period_modal', {
+      localization: 'add_block_modal',
+      type_button: 'add_limit_button',
+      time_spent_before_click: timeSpent,
+      existing_block_periods: totalBlocks,
+      device_type: 'iOS',
+      timestamp: new Date().toISOString()
+    });
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -45,7 +58,7 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
             <Icon source="chevron-right" size={25} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={handleNewLimit} style={styles.button}>
           <View style={styles.contentButton}>
             <View style={styles.buttonLabelContainer}>
               <Icon source="timer-sand" size={25} />

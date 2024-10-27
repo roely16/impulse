@@ -19,7 +19,7 @@ class ScreenTimeModule: NSObject {
     do {
       // Inicializamos el contenedor una vez en el constructor
       let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share"))
-      container = try ModelContainer(for: Block.self, configurations: configuration)
+      container = try ModelContainer(for: Event.self, Block.self, Limit.self, configurations: configuration)
     } catch {
       print("Error initializing ModelContainer: \(error)")
     }
@@ -40,7 +40,7 @@ class ScreenTimeModule: NSObject {
   }
 
   @MainActor @objc
-  func requestAuthorization(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+  func requestAuthorization(_ testBlockName: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     if #available(iOS 16.0, *) {
       Task {
         do {
@@ -78,7 +78,16 @@ class ScreenTimeModule: NSObject {
         
         let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection, blockId: blockId) { updatedSelection in
           let applications = updatedSelection.applications
+          applications.forEach{app in
+            print("app \(app.token)")
+          }
           self.appsSelected = updatedSelection.applicationTokens
+          self.appsSelected.forEach{appSelected in
+            print("app selected \(appSelected.hashValue)")
+          }
+          self.appsSelected.forEach{app in
+            print("token app \(app.self)")
+          }
           self.familySelection = updatedSelection
           print("Apps selected: \(updatedSelection.applications.count)")
           print("Categories selected: \(updatedSelection.categories.count)")
@@ -159,6 +168,91 @@ class ScreenTimeModule: NSObject {
     }
   }
   
+  @MainActor @objc
+  func createLimit(_ name: String, timeLimit: String, openLimit: String, weekdays: [Int], resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+    
+    let deviceActivityCenter = DeviceActivityCenter();
+    
+    do {
+      let context = try getContext()
+      
+      // Create limit
+      let limit = Limit(
+        name: name,
+        appsTokens: self.appsSelected,
+        familySelection: self.familySelection,
+        timeLimit: timeLimit,
+        openLimit: openLimit,
+        enable: true,
+        weekdays: weekdays
+      )
+      context.insert(limit)
+      try context.save()
+      
+      var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
+      
+      // Create events
+      try self.appsSelected.forEach{appSelected in
+        let event = Event(
+          limitId: limit.id,
+          appToken: appSelected
+        )
+        context.insert(event)
+        try context.save()
+
+        // Create array with events for monitoring
+        let threshold = DateComponents(minute: 1)
+        let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
+        let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
+        
+        eventsArray[eventName] = activityEvent
+
+      }
+      
+      print("Events arrays: \(eventsArray)")
+      
+      try deviceActivityCenter.startMonitoring(
+        DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit"),
+        during: DeviceActivitySchedule(
+          intervalStart: DateComponents(hour: 0, minute: 0),
+          intervalEnd: DateComponents(hour: 23, minute: 59),
+          repeats: true
+        ),
+        events: eventsArray
+      )
+      
+      resolve(["status": "success", "appsWithLimit": self.appsSelected.count])
+    } catch {
+      print("Error trying to create limit")
+    }
+  }
+  
+  @MainActor @objc
+  func getLimits(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+    
+    do {
+      let context = try getContext()
+      
+      let fetchDescriptor = FetchDescriptor<Limit>()
+      let limits = try context.fetch(fetchDescriptor)
+      
+      let limitArray = limits.map { limit -> [String: Any] in
+        return [
+            "id": limit.id.uuidString, // Asegúrate de que 'id' sea un UUID
+            "title": limit.name, // Reemplaza con los campos de tu modelo
+            "timeLimit": limit.timeLimit,
+            "openLimit": limit.openLimit,
+            "apps": limit.appsTokens.count,
+            "weekdays": limit.weekdays,
+            "enable": limit.enable
+        ]
+      }
+      resolve(["status": "success", "limits" : limitArray])
+
+    } catch {
+      print("Error trying to get limits")
+    }
+  }
   @objc
   func readLastLog(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")

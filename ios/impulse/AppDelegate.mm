@@ -64,7 +64,8 @@
 
 @interface RCT_EXTERN_MODULE(ScreenTimeModule, NSObject)
 
-RCT_EXTERN_METHOD(requestAuthorization:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(requestAuthorization:(NSString *)testBlockName
+                  resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(showAppPicker:(BOOL)isFirstSelection
@@ -107,5 +108,14 @@ RCT_EXTERN_METHOD(updateBlock:(NSString *)blockId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(createLimit:(NSString *)name
+                  timeLimit:(NSString *)startTime
+                  openLimit:(NSString *)endTime
+                  weekdays:(NSArray<NSNumber *> *)weekdays
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getLimits:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

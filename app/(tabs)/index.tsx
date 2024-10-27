@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, useLayoutEffect, useCallback } from 'react';
-import { StyleSheet, NativeModules, View } from 'react-native';
+import { StyleSheet, NativeModules, View, SectionList } from 'react-native';
 import { Button } from 'react-native-paper';
-import { Blocks } from '@/components/Blocks';
 import { BottomSheetNewBlock } from '@/components/BottomSheet';
 import { ListBlocks, BlockType } from '@/components/ListBlocks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -11,6 +10,10 @@ import { useTranslation } from 'react-i18next';
 import { MixpanelService } from '@/SDK/Mixpanel';
 import useTimeOnScreen from '@/hooks/useTimeOnScreen';
 import { useFocusEffect } from 'expo-router';
+import { HeaderLimits } from '@/components/HeaderLimits';
+import { HeaderBlocks } from '@/components/HeaderBlocks';
+import { BlockCard } from '@/components/BlockCard';
+import { LimitCard, ListType } from '@/components/LimitCard';
 
 export default function HomeScreen() {
 
@@ -18,6 +21,7 @@ export default function HomeScreen() {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [blocks, setBlocks] = useState<BlockType[]>([]);
+  const [limits, setLimits] = useState<ListType[]>([]);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [bottomSheetForm, setBottomSheetForm] = useState<string>('config-block');
   const [loading, setLoading] = useState(false);
@@ -69,8 +73,19 @@ export default function HomeScreen() {
     setLoading(false);
   };
 
+  const getLimits = async () => {
+    try {
+      const limits = await ScreenTimeModule.getLimits();
+      setLimits(limits.limits);
+      console.log(limits);
+    } catch {
+      console.log('Error getting limits');
+    }
+  }
+  
   useEffect(() => {
     getBlocks();
+    getLimits();
   }, []);
 
   useFocusEffect(
@@ -84,18 +99,46 @@ export default function HomeScreen() {
 
   const BlockSection = () => {
 
-    const existsBlocks = blocks.length > 0;
-    if (existsBlocks) {
-      return (
-        <>
-          <Blocks numberOfBlocks={blocks.length} showBottomShet={openNewBlockForm} />
-          <ListBlocks editBlock={openEditBlockForm} isLoading={loading} refreshBlocks={getBlocks} blocks={blocks} />
-        </>
-      );
+    const sectionListData = [
+      {
+        title: <HeaderBlocks numberOfBlocks={blocks.length} showBottomShet={openNewBlockForm} />,
+        type: 'block',
+        data: blocks
+      },
+      {
+        title: <HeaderLimits showBottomShet={openBottonSheet} numberOfBlocks={blocks.length} />,
+        type: 'limit',
+        data: limits
+      }
+    ];
+
+    const getBlocksActiveAndInactive = (): { active: number, inactive: number } => {
+      const active = blocks.filter((block) => block.enable).length;
+      const inactive = blocks.filter((block) => !block.enable).length;
+  
+      return {
+        active,
+        inactive
+      }
     }
+  
+    const totalOfBlocks = getBlocksActiveAndInactive();
 
     return (
-      <></>
+      <SectionList
+        sections={sectionListData}
+        stickySectionHeadersEnabled={false}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, section }) => {
+          if (section.type === 'block') {
+            return <BlockCard total_blocks={blocks.length} total_active_limits={totalOfBlocks.active} total_inactive_limits={totalOfBlocks.inactive} editBlock={(key) => openEditBlockForm(key)} refreshBlocks={getBlocks} {...item} />
+          } else if (section.type === 'limit') {
+            return <LimitCard editBlock={(key) => openEditBlockForm(key)} refreshBlocks={getBlocks} {...item}></LimitCard>
+          }
+          return <></>;
+        }}
+        renderSectionHeader={({ section: { title } }) => title}
+      />
     )
   }
 

@@ -121,5 +121,6 @@
     "saturday": "Saturday",
     "sunday": "Sunday"
   },
-  "everyDay": "Every day"
+  "everyDay": "Every day",
+  "testBlockName": "Test blocking"
 }

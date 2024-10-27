@@ -22,7 +22,8 @@ export default function HomeScreen() {
 
   const handleScreenTimeAccess = async () => {
     try {
-      const response = await ScreenTimeModule.requestAuthorization();
+      const defaultBlockName = t('testBlockName');
+      const response = await ScreenTimeModule.requestAuthorization(defaultBlockName);
       const timeSpent = getTimeOnScreen();
       if (response?.status === 'success') {
 
