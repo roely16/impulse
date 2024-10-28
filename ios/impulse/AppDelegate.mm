@@ -108,6 +108,7 @@ RCT_EXTERN_METHOD(updateBlock:(NSString *)blockId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+// Limit functions
 RCT_EXTERN_METHOD(createLimit:(NSString *)name
                   timeLimit:(NSString *)startTime
                   openLimit:(NSString *)endTime
@@ -116,6 +117,15 @@ RCT_EXTERN_METHOD(createLimit:(NSString *)name
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(getLimits:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(deleteLimit:(NSString *)limitId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateLimitStatus:(NSString *)limitId
+                  enable:(BOOL)isEnable
+                  resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

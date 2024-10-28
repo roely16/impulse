@@ -1,19 +1,20 @@
 import { useState, useRef, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
-import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTranslation } from "react-i18next";
 import { MixpanelService } from "@/SDK/Mixpanel";
 import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 import { Dropdown } from 'react-native-element-dropdown';
+import { format, toZonedTime } from 'date-fns-tz';
 import { styles } from "./styles";
 
 interface FormNewLimitProps {
   changeForm: (form: string) => void;
-  refreshBlocks: () => void;
+  refreshLimits: () => void;
   closeBottomSheet: () => void;
   isEdit?: boolean;
-  blockId?: string | null;
+  limitId?: string | null;
   isEmptyBlock?: boolean;
   updateEmptyBlock?: (isEmpty: boolean) => void;
   totalBlocks?: number;
@@ -41,15 +42,17 @@ const data = [
 
 export const FormNewLimit = (props: FormNewLimitProps) => {
 
-  const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = props;
+  const { refreshLimits, changeForm, closeBottomSheet, isEdit, limitId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = props;
   const [appsSelected, setAppsSelected] = useState(0);
   const [sitesSelected, setSitesSelected] = useState(0);
   const [blockTitle, setBlockTitle] = useState('');
   const currentTime = new Date();
+  currentTime.setHours(0, 0, 0, 0);
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
+  const limitTimeRef = useRef(currentTime);
+  const [limitTimeString, setLimitTimeString] = useState<string>('');
   const inputRef = useRef<TextInput>(null);
-  const [timeLimit, setTimeLimit] = useState<string>('');
   const [openLimit, setOpenLimit] = useState<string>('');
 
   const { t } = useTranslation();
@@ -87,6 +90,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
       const selectedDays = updatedDays.filter(day => day.selected).map(day => day.day);
       setDays(updatedDays);
 
+      // TODO Update Mixpanel event
       const timeSpent = getTimeOnScreen();
       MixpanelService.trackEvent('block_frequency_selected', {
         type_block: 'block_period',
@@ -122,17 +126,22 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
     return `${hours}:${minutes}`;
   }
 
-  const onChange = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+  const onChangeLimitTime = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+
     if (event.type === 'set') {
-      startTimeRef.current = selectedDate || startTimeRef.current;
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      if (selectedDate === undefined) {
+        return;
+      }
+
+      const guatemalaTime = toZonedTime(selectedDate, timeZone);
+
+      const formatted = format(guatemalaTime, 'HH:mm', { timeZone });
+      setLimitTimeString(formatted);
+      limitTimeRef.current = selectedDate || limitTimeRef.current;
     }
   };
-
-  const onChangeTo = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
-    if (event.type === 'set') {
-      endTimeRef.current = selectedDate || endTimeRef.current;
-    }
-  }
 
   const TimeConfigurationForm = (): React.ReactElement => {
     return (
@@ -145,7 +154,14 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
             <Text style={styles.label}>
               {t('formNewLimit.selectTimeTitle')}
             </Text>
-            <Dropdown value={timeLimit} style={styles.dropdownStyle} placeholder={t('formNewLimit.selectTimeLabel')} data={data} labelField="label" valueField="value" onChange={item => setTimeLimit(item.value)} />
+            <DateTimePicker
+              value={limitTimeRef.current}
+              mode="countdown"
+              onChange={onChangeLimitTime}
+              display="spinner"
+              minuteInterval={15}
+              timeZoneName="America/Guatemala"
+            />
           </View>
         </View>
       </View>
@@ -161,9 +177,9 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
         <View style={styles.formOption}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>
-              {t('formNewLimit.selectTimeTitle')}
+              {t('formNewLimit.maxOpenDaily')}
             </Text>
-            <Dropdown value={openLimit} style={styles.dropdownStyle} placeholder={t('formNewLimit.selectTimeLabel')} data={data} labelField="label" valueField="value" onChange={item => setOpenLimit(item.value)} />
+            <Dropdown placeholderStyle={styles.selectLabel} selectedTextStyle={[styles.selectLabel, { textAlign: 'right', marginRight: 10 }]} renderRightIcon={() => <Icon source="chevron-right" size={25} />} value={openLimit} style={styles.dropdownStyle} placeholder={t('formNewLimit.selectTimeLabel')} data={data} labelField="label" valueField="value" onChange={item => setOpenLimit(item.value)} />
           </View>
         </View>
       </View>
@@ -172,13 +188,15 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId);
+      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, limitId);
       if (result.status === 'success') {
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);
         updateEmptyBlock && updateEmptyBlock(false);
 
         const timeSpent = getTimeOnScreen();
+
+        // TODO Update Mixpanel event
         MixpanelService.trackEvent('block_apps_selected', {
           type_block: 'block_period',
           apps_selected_count: result.appsSelected,
@@ -220,17 +238,15 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
       const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
       const data = {
         name: newBlockTitle,
-        timeLimit,
+        timeLimit: limitTimeString,
         openLimit,
         appsSelected,
         weekDays
       }
-      console.log('data', data);
       const response = await ScreenTimeModule.createLimit(data.name, data.timeLimit, data.openLimit, data.weekDays);
-      console.log('response', response);
-      // refreshBlocks();
-      // closeBottomSheet()
-      // changeForm('')
+      refreshLimits();
+      closeBottomSheet()
+      changeForm('')
     } catch (error) {
       console.log('error', error);
     }
@@ -238,41 +254,41 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   const handleEditBlock = async () => {
     try {
-      const startTime = convertDate(startTimeRef.current);
-      const endTime = convertDate(endTimeRef.current);
-      const haveBlockTitle = blockTitle.length > 0;
-      const newBlockTitle = haveBlockTitle ? blockTitle : `${t('formNewLimit.defaultBlockName')} #${totalBlocks + 1}`;
+      // const startTime = convertDate(startTimeRef.current);
+      // const endTime = convertDate(endTimeRef.current);
+      // const haveBlockTitle = blockTitle.length > 0;
+      // const newBlockTitle = haveBlockTitle ? blockTitle : `${t('formNewLimit.defaultBlockName')} #${totalBlocks + 1}`;
 
-      const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
+      // const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
 
-      const data = {
-        id: blockId,
-        name: newBlockTitle,
-        startTime,
-        endTime,
-        appsSelected,
-        weekDays
-      }
+      // const data = {
+      //   id: blockId,
+      //   name: newBlockTitle,
+      //   startTime,
+      //   endTime,
+      //   appsSelected,
+      //   weekDays
+      // }
 
-      const response = await ScreenTimeModule.updateBlock(data.id, data.name, data.startTime, data.endTime, data.weekDays, !isEmptyBlock);
-      refreshBlocks();
-      closeBottomSheet()
-      changeForm('')
+      // const response = await ScreenTimeModule.updateBlock(data.id, data.name, data.startTime, data.endTime, data.weekDays, !isEmptyBlock);
+      // refreshBlocks();
+      // closeBottomSheet()
+      // changeForm('')
     } catch (error) {
       
     }
   };
 
-  const formFilled = !emptySelected && timeLimit && openLimit;
+  const formFilled = !emptySelected && limitTimeRef && openLimit;
 
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
   const DeleteButton = (): React.ReactElement => {
 
-    const confirmDeleteBlock = async () => {
+    const confirmDeleteLimit = async () => {
       try {
-        await ScreenTimeModule.deleteBlock(blockId);
-        refreshBlocks();
+        await ScreenTimeModule.deleteLimit(limitId);
+        refreshLimits();
         closeBottomSheet()
       } catch (error) {
         console.log('error deleting block', error)  
@@ -291,7 +307,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
             {
               text: `${t('formNewLimit.deleteAlert.confirmButton')}`,
               onPress: () => {
-                confirmDeleteBlock();
+                confirmDeleteLimit();
               }
             }
           ]
@@ -323,20 +339,20 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
     return date;
   }
   const setBlockData = (block) => {
-    setBlockTitle(block.name);
-    const startTime = timeStringToDate(block.startTime);
-    startTimeRef.current = startTime;
-    const endTime = timeStringToDate(block.endTime);
-    endTimeRef.current = endTime;
-    setAppsSelected(block.apps);
+    // setBlockTitle(block.name);
+    // const startTime = timeStringToDate(block.startTime);
+    // startTimeRef.current = startTime;
+    // const endTime = timeStringToDate(block.endTime);
+    // endTimeRef.current = endTime;
+    // setAppsSelected(block.apps);
 
-    const updatedDays = initialDays.map(day => {
-        if (block.weekdays.includes(day.value)) {
-            return { ...day, selected: true };
-        }
-        return day;
-    });
-    setDays(updatedDays);
+    // const updatedDays = initialDays.map(day => {
+    //     if (block.weekdays.includes(day.value)) {
+    //         return { ...day, selected: true };
+    //     }
+    //     return day;
+    // });
+    // setDays(updatedDays);
   }
 
   const clearData = () => {
@@ -384,7 +400,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   useLayoutEffect(() => {
     const loadBlockData = async () => {
-      const result = await ScreenTimeModule.getBlock(blockId);
+      const result = await ScreenTimeModule.getLimit(limitId);
       if (result.status === 'success') {
         setBlockData(result.block);
       }

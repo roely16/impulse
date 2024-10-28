@@ -1,1 +1,1 @@
-export { LimitCard, ListType } from "./LimitCard";
+export { LimitCard, LimitType } from "./LimitCard";

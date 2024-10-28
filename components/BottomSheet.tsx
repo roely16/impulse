@@ -8,19 +8,21 @@ import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typesc
 
 interface BottomSheetNewBlockProps {
   refreshBlocks: () => void;
+  refreshLimits: () => void;
   onBottomSheetClosed: () => void;
   bottomSheetForm?: string;
   setBottomSheetForm: (form: string) => void;
   isEdit?: boolean;
   blockId?: string | null;
+  limitId?: string | null;
   isEmptyBlock?: boolean;
   updateEmptyBlock?: (isEmpty: boolean) => void;
   totalBlocks?: number;
 }
 
-export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
+export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
 
-  const { refreshBlocks, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = _props
+  const { refreshBlocks, refreshLimits, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, limitId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = _props
 
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
@@ -37,7 +39,7 @@ export const BottomSheetNewBlock = forwardRef<BottomSheet, BottomSheetNewBlockPr
     if (bottomSheetForm === 'new-block') {
       return <FormNewBlock totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     } else if (bottomSheetForm === 'new-limit') {
-      return <FormNewLimit totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+      return <FormNewLimit totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} limitId={limitId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshLimits={refreshLimits} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock totalBlocks={totalBlocks} changeForm={setBottomSheetForm} />;

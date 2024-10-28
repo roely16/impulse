@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import { StyleSheet, NativeModules, View, SectionList } from 'react-native';
 import { Button } from 'react-native-paper';
-import { BottomSheetNewBlock } from '@/components/BottomSheet';
+import { BottomSheetBlockAndLimit } from '@/components/BottomSheet';
 import { ListBlocks, BlockType } from '@/components/ListBlocks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -13,7 +13,7 @@ import { useFocusEffect } from 'expo-router';
 import { HeaderLimits } from '@/components/HeaderLimits';
 import { HeaderBlocks } from '@/components/HeaderBlocks';
 import { BlockCard } from '@/components/BlockCard';
-import { LimitCard, ListType } from '@/components/LimitCard';
+import { LimitCard, LimitType } from '@/components/LimitCard';
 
 export default function HomeScreen() {
 
@@ -21,12 +21,13 @@ export default function HomeScreen() {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [blocks, setBlocks] = useState<BlockType[]>([]);
-  const [limits, setLimits] = useState<ListType[]>([]);
+  const [limits, setLimits] = useState<LimitType[]>([]);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [bottomSheetForm, setBottomSheetForm] = useState<string>('config-block');
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [blockId, setBlockId] = useState<string | null>(null);
+  const [limitId, setLimitId] = useState<string | null>(null);
   const [isEmptyBlock, setIsEmptyBlock] = useState(false);
 
   const getTimeOnScreen = useTimeOnScreen();
@@ -64,6 +65,14 @@ export default function HomeScreen() {
     bottomSheetRef.current?.expand();
     setBottomSheetVisible(true);
   };
+
+  const openEditLimit = (limitId: string) => {
+    setLimitId(limitId);
+    setIsEditing(true);
+    setBottomSheetForm('new-limit');
+    bottomSheetRef.current?.expand();
+    setBottomSheetVisible(true);
+  }
 
   const getBlocks = async (isRefreshing: boolean = false) => {
     setLoading(true);
@@ -133,7 +142,7 @@ export default function HomeScreen() {
           if (section.type === 'block') {
             return <BlockCard total_blocks={blocks.length} total_active_limits={totalOfBlocks.active} total_inactive_limits={totalOfBlocks.inactive} editBlock={(key) => openEditBlockForm(key)} refreshBlocks={getBlocks} {...item} />
           } else if (section.type === 'limit') {
-            return <LimitCard editBlock={(key) => openEditBlockForm(key)} refreshBlocks={getBlocks} {...item}></LimitCard>
+            return <LimitCard editLimit={(key) => openEditLimit(key)} refreshLimits={getLimits} {...item}></LimitCard>
           }
           return <></>;
         }}
@@ -182,7 +191,7 @@ export default function HomeScreen() {
       <CardTimeHome />
       <BottomSheetModalProvider>
         <BlockSection />
-        <BottomSheetNewBlock totalBlocks={blocks.length} updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} ref={bottomSheetRef} />
+        <BottomSheetBlockAndLimit totalBlocks={blocks.length} updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} limitId={limitId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} refreshLimits={getLimits} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
       <AddButton />
     </GestureHandlerRootView>

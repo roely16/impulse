@@ -103,10 +103,7 @@ export const styles = StyleSheet.create({
   },
   dropdownStyle: {
     height: 34, 
-    width: 150,
-    borderColor: 'gray',
-    borderWidth: 0.2,
-    borderRadius: 8,
-    paddingHorizontal: 8 
+    width: 140,
+    paddingHorizontal: 8
   }
 });

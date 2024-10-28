@@ -12,14 +12,14 @@ interface LimitCardProps {
   apps: number;
   enable: boolean;
   weekdays: number[];
-  refreshBlocks: () => void;
-  editBlock: (id: string) => void;
+  refreshLimits: () => void;
+  editLimit: (id: string) => void;
   total_active_limits?: number;
   total_inactive_limits?: number;
   total_blocks?: number;
 }
 
-export interface ListType {
+export interface LimitType {
   id: string;
   title: string;
   timeLimit: string;
@@ -30,15 +30,17 @@ export interface ListType {
 }
 
 export const LimitCard = (props: LimitCardProps) => {
-  const { id, title, timeLimit, openLimit, apps, enable, refreshBlocks, editBlock , weekdays = [], total_active_limits = 0, total_inactive_limits = 0, total_blocks = 0} = props;
+  const { id, title, timeLimit, openLimit, apps, enable, refreshLimits, editLimit , weekdays = [], total_active_limits = 0, total_inactive_limits = 0, total_blocks = 0} = props;
 
   const { ScreenTimeModule } = NativeModules;
 
   const { t } = useTranslation();
 
-  const updateBlockStatus = async (status: boolean) => {
+  const updateLimitStatus = async (status: boolean) => {
     try {
-      const response = await ScreenTimeModule.updateBlockStatus(id, status);
+      const response = await ScreenTimeModule.updateLimitStatus(id, status);
+      console.log('response', response);
+      // TODO: Update Mixpanel event
       MixpanelService.trackEvent('block_period_activated', {
         localizacion: "home",
         total_block_periods: total_blocks,
@@ -48,14 +50,14 @@ export const LimitCard = (props: LimitCardProps) => {
         time_between_warning_and_deactivation: 0,
         timestamp: new Date().toISOString()
       });
-      refreshBlocks();
+      refreshLimits();
     } catch (error) {
       console.log('error updating block status', error)
     }
   }
 
   const handleEditBlock = async () => {
-    editBlock(id);
+    editLimit(id);
     MixpanelService.trackEvent('edit_block_periods', {
       previous_state: enable ? 'active' : 'disabled',
       localization: 'home',
@@ -100,7 +102,7 @@ export const LimitCard = (props: LimitCardProps) => {
         </View>
         <View style={styles.rowContainer}>
           <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps}</Text>
-          <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
+          <Switch onValueChange={value => updateLimitStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>
       </Card.Content>
     </Card>
