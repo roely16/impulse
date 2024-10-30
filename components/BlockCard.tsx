@@ -100,27 +100,23 @@ export const BlockCard = (props: BlockCardProps) => {
       { day: t('weekdaysLetters.sunday'), value: 1, name: t('weekdays.sunday'), selected: false }
     ];
 
-    console.log('selectedDays', selectedDays)
     const values = selectedDays.sort((a, b) => a - b);
     const allValues = WEEKDAYS.map(day => day.value);
 
     if (allValues.every(val => values.includes(val))) {
-      return 'Todos los días';
+      return t('everyday');
     }
 
     const isConsecutive = values.every((val, idx) => idx === 0 || val === values[idx - 1] + 1);
     
     if (isConsecutive) {
-      console.log('isConsecutive', values)
       const firstDay = WEEKDAYS.find(day => day.value === values[0]);
       const lastDay = WEEKDAYS.find(day => day.value === values[values.length - 1]);
       if (firstDay && lastDay) {
         return `${firstDay.name} - ${lastDay.name}`;
       }
     }
-    console.log('values', values)
     const days = values.map(val => WEEKDAYS.find(day => day.value === val)?.day);
-    console.log('days', days)
     return days.join(', ');
   };
 
