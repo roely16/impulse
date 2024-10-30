@@ -71,13 +71,19 @@ class ScreenTimeModule: NSObject {
   }
 
   @MainActor @objc
-  func showAppPicker(_ isFirstSelection: Bool, blockId: String = "", limitId: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+  func showAppPicker(_ isFirstSelection: Bool, blockId: String = "", limitId: String = "", saveButtonText: String = "", titleText: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
       
       if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
        let window = scene.windows.first {
         
-        let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection, blockId: blockId, limitId: limitId) { updatedSelection in
+        let pickerView = ActivityPickerView(
+          isFirstSelection: isFirstSelection,
+          blockId: blockId,
+          limitId: limitId,
+          saveButtonText: saveButtonText,
+          titleText: titleText
+        ) { updatedSelection in
           let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
           self.familySelection = updatedSelection

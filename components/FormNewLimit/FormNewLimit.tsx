@@ -200,7 +200,9 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker(isEmptyLimit, null, limitId);
+      const buttonText = t('appPicker.saveButton');
+      const titleText = t('appPicker.title');
+      const result = await ScreenTimeModule.showAppPicker(isEmptyLimit, null, limitId, buttonText, titleText);
       if (result.status === 'success') {
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);

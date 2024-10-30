@@ -146,7 +146,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId, null);
+      const buttonText = t('appPicker.saveButton');
+      const titleText = t('appPicker.title');
+      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId, null, buttonText, titleText);
       if (result.status === 'success') {
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);

@@ -9,6 +9,8 @@ struct ActivityPickerView: View {
   var isFirstSelection: Bool
   var blockId: String = ""
   var limitId: String = ""
+  var saveButtonText: String = "Guardar"
+  var titleText: String = "Selecciona aplicaciones/sitios que distraen"
   var onSelectionChanged: (FamilyActivitySelection) -> Void
   @Environment(\.presentationMode) var presentationMode
   
@@ -30,7 +32,7 @@ struct ActivityPickerView: View {
             isSelectionSaved = true
             presentationMode.wrappedValue.dismiss()
           }) {
-            Text("Guardar")
+            Text(saveButtonText)
                 .fontWeight(.bold)
                 .padding()
                 .background(Color.blue)
@@ -52,7 +54,7 @@ struct ActivityPickerView: View {
           loadLimitSelectionFromStore()
         }
       }
-        .navigationBarTitle("Selecciona aplicaciones/sitios que distraen", displayMode: .inline)
+        .navigationBarTitle(titleText, displayMode: .inline)
         .navigationBarItems(
           leading: Button(action: {
               presentationMode.wrappedValue.dismiss()

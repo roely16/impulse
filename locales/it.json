@@ -77,6 +77,7 @@
     "appsPlaceholder": "Selezionare",
     "sitesLabel": "siti",
     "selectTime": "Limite di tempo giornaliero",
+    "selectTimeTitle": "Tempo Límite",
     "selectTimeLabel": "Selezionare",
     "maxOpenDailyTitle": "Limite aperture giornaliere",
     "maxOpenDaily": "Limite Aperture",
@@ -84,21 +85,32 @@
     "frequency": "Frequenza",
     "saveButton": "Salva",
     "cancelButton": "Annulla",
-    "deleteButton": "Elimina blocco",
+    "deleteButton": "Elimina limite",
     "deleteAlert": {
       "title": "Conferma",
       "message": "Sei sicuro di voler eliminare il limite?",
       "cancelButton": "Annulla",
       "confirmButton": "Elimina"
-    }
+    },
+    "defaultBlockName": "Límite"
   },
   "blocksSection": {
     "title": "Periodi di Blocco",
     "addButton": "Aggiungi"
   },
+  "limitsSection": {
+    "title": "Limiti per App",
+    "addButton": "Aggiungi"
+  },
   "cardBlock": {
     "editButton": "Modifica",
     "appsLabel": "App"
+  },
+  "cardLimit": {
+    "editButton": "Modifica",
+    "appsLabel": "App",
+    "timeLabel": "min",
+    "maxOpenLabel": "aperture"
   },
   "cardTime": {
     "title": "Tempo di utilizzo"
@@ -121,5 +133,10 @@
     "saturday": "Sabato",
     "sunday": "Domenica"
   },
-  "everyDay": "Tutti i giorni"
+  "everyDay": "Tutti i giorni",
+  "testBlockName": "Bloqueo di prova",
+  "appPicker": {
+    "saveButton": "Enregistrer",
+    "title": "Sélectionnez des applications/sites distrayants"
+  }
 }

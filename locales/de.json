@@ -1,14 +1,14 @@
 {
-    "welcomeScreen": {
+  "welcomeScreen": {
       "title": "Hilf dir, Impulse zu kontrollieren und gewinne Stunden in deinem Alltag",
       "subtitle": "Benutzer haben bereits mehr als 5000 Stunden eingespart, indem sie die Nutzung ihres Handys kontrollieren",
       "startButton": "Starten"
-    },
-    "howMuchTime": {
+  },
+  "howMuchTime": {
       "title": "Wie viel Zeit verbringst du täglich am Handy?",
       "continueButton": "Fortsetzen"
-    },
-    "saveTimeScreen": {
+  },
+  "saveTimeScreen": {
       "firstText": "Basierend auf deiner täglichen Nutzung verbringst du...",
       "secondText": "pro Jahr verloren vor dem Bildschirm...",
       "thirdText": "Denk darüber nach, was du mit dieser Zeit machen könntest, wenn du deine Gewohnheiten heute änderst.",
@@ -17,41 +17,41 @@
       "startButton": "Beginne die Veränderung",
       "days": "Tage",
       "years": "Jahre"
-    },
-    "impulseFunctionalities": {
+  },
+  "impulseFunctionalities": {
       "title": "Die beiden Funktionen, die dir helfen, deine Zeit zurückzugewinnen",
       "blockAppsTitle": "App-Blockierung",
       "blockAppsSubtitle": "Plane bestimmte Stunden, in denen du ablenkende Apps blockierst, damit du dich auf das konzentrieren kannst, was wirklich wichtig ist.",
       "impulseModeTitle": "Impuls-Modus",
       "impulseModeSubtitle": "Hast du ständig das Verlangen, deine Apps ohne Grund zu überprüfen? Wir helfen dir, diese Impulse zu kontrollieren.",
       "continueButton": "Fortsetzen"
-    },
-    "screenTimeAccess": {
+  },
+  "screenTimeAccess": {
       "title": "Erlaube den Zugriff auf die Bildschirmzeit",
       "infoOne": "Um Apps & Webseiten zu blockieren, benötigen wir eine Erlaubnis",
       "infoTwo": {
-        "first": "Die Bildschirmzeit-Informationen sind ",
-        "second": "von Apple geschützt",
-        "third": " und werden ",
-        "fourth": "zu 100% auf deinem Gerät gespeichert"
+          "first": "Die Bildschirmzeit-Informationen sind ",
+          "second": "von Apple geschützt",
+          "third": " und werden ",
+          "fourth": "zu 100% auf deinem Gerät gespeichert"
       },
       "permissionButton": {
-        "title": "Impulse möchte auf die Bildschirmzeit zugreifen",
-        "message": "Wenn du Impulse den Zugriff auf die Bildschirmzeit erlaubst, kann es deine Aktivitätsdaten einsehen, Inhalte einschränken und die Nutzung von Apps und Webseiten begrenzen.",
-        "allowButton": "Fortsetzen",
-        "denyButton": "Nicht erlauben"
+          "title": "Impulse möchte auf die Bildschirmzeit zugreifen",
+          "message": "Wenn du Impulse den Zugriff auf die Bildschirmzeit erlaubst, kann es deine Aktivitätsdaten einsehen, Inhalte einschränken und die Nutzung von Apps und Webseiten begrenzen.",
+          "allowButton": "Fortsetzen",
+          "denyButton": "Nicht erlauben"
       },
       "startButton": "Starten"
-    },
-    "blocksScreen": {
+  },
+  "blocksScreen": {
       "addBlockButton": "Blockierung hinzufügen"
-    },
-    "optionsConfigNewBlock": {
+  },
+  "optionsConfigNewBlock": {
       "title": "Neue Blockierung konfigurieren",
       "newBlock": "Blockierung nach Stunden",
       "newLimit": "Nutzungslimit"
-    },
-    "formNewBlock": {
+  },
+  "formNewBlock": {
       "blockName": "Blockierungsname hinzufügen",
       "appsOptions": "Apps",
       "appsPlaceholder": "Auswählen",
@@ -64,18 +64,20 @@
       "cancelButton": "Abbrechen",
       "deleteButton": "Blockierung löschen",
       "deleteAlert": {
-        "title": "Bestätigung",
-        "message": "Bist du sicher, dass du die Blockierung löschen möchtest?",
-        "cancelButton": "Abbrechen",
-        "confirmButton": "Löschen"
-      }
-    },
-    "formNewLimit": {
+          "title": "Bestätigung",
+          "message": "Bist du sicher, dass du die Blockierung löschen möchtest?",
+          "cancelButton": "Abbrechen",
+          "confirmButton": "Löschen"
+      },
+      "defaultBlockName": "Blockierung"
+  },
+  "formNewLimit": {
       "blockName": "Limit-Namen hinzufügen",
       "appsOptions": "Apps",
       "appsPlaceholder": "Auswählen",
       "sitesLabel": "Webseiten",
       "selectTime": "Tägliches Zeitlimit",
+      "selectTimeTitle": "Zeitlimit",
       "selectTimeLabel": "Auswählen",
       "maxOpenDailyTitle": "Tägliches Öffnungslimit",
       "maxOpenDaily": "Öffnungslimit",
@@ -85,24 +87,35 @@
       "cancelButton": "Abbrechen",
       "deleteButton": "Blockierung löschen",
       "deleteAlert": {
-        "title": "Bestätigung",
-        "message": "Bist du sicher, dass du das Limit löschen möchtest?",
-        "cancelButton": "Abbrechen",
-        "confirmButton": "Löschen"
-      }
-    },
-    "blocksSection": {
+          "title": "Bestätigung",
+          "message": "Bist du sicher, dass du das Limit löschen möchtest?",
+          "cancelButton": "Abbrechen",
+          "confirmButton": "Löschen"
+      },
+      "defaultBlockName": "Limit"
+  },
+  "blocksSection": {
       "title": "Blockierungszeiten",
       "addButton": "Hinzufügen"
-    },
-    "cardBlock": {
+  },
+  "limitsSection": {
+      "title": "Limits für Apps",
+      "addButton": "Hinzufügen"
+  },
+  "cardBlock": {
       "editButton": "Bearbeiten",
       "appsLabel": "Anwendungen"
-    },
-    "cardTime": {
+  },
+  "cardLimit": {
+      "editButton": "Bearbeiten",
+      "appsLabel": "Apps",
+      "timeLabel": "min",
+      "maxOpenLabel": "Öffnungen"
+  },
+  "cardTime": {
       "title": "Bildschirmzeit"
-    },
-    "weekdaysLetters": {
+  },
+  "weekdaysLetters": {
       "monday": "M",
       "tuesday": "D",
       "wednesday": "M",
@@ -110,8 +123,8 @@
       "friday": "F",
       "saturday": "S",
       "sunday": "S"
-    },
-    "weekdays": {
+  },
+  "weekdays": {
       "monday": "Montag",
       "tuesday": "Dienstag",
       "wednesday": "Mittwoch",
@@ -119,7 +132,11 @@
       "friday": "Freitag",
       "saturday": "Samstag",
       "sunday": "Sonntag"
-    },
-    "everyDay": "Jeden Tag"
+  },
+  "everyDay": "Jeden Tag",
+  "testBlockName": "Testblock",
+  "appPicker": {
+    "saveButton": "Speichern",
+    "title": "Wählen Sie ablenkende Apps/Sites aus"
   }
-  
+}

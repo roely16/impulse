@@ -5,6 +5,8 @@ import en from './en.json';
 import es from './es.json';
 import de from './de.json';
 import fr from './fr.json';
+import pt from './pt.json';
+import it from './it.json';
 
 console.log(getLocales());
 
@@ -14,7 +16,7 @@ const defaultLanguage = languages.length > 0 ? languages[0] : 'es';
 i18n
   .use(initReactI18next)
   .init({
-    lng: 'es',
+    lng: defaultLanguage,
     compatibilityJSON: 'v3',
     fallbackLng: 'es',
     interpolation: {
@@ -32,6 +34,12 @@ i18n
       },
       de: {
         translation: de
+      },
+      pt: {
+        translation: pt
+      },
+      it: {
+        translation: it
       }
     },
     debug: false

@@ -134,5 +134,9 @@
     "sunday": "Domingo"
   },
   "everyDay": "Todos los días",
-  "testBlockName": "Bloqueo de prueba"
+  "testBlockName": "Bloqueo de prueba",
+  "appPicker": {
+    "saveButton": "Guardar",
+    "title": "Selecciona aplicaciones/sitios que distraen"
+  }
 }

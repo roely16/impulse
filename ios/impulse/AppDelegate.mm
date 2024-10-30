@@ -71,6 +71,8 @@ RCT_EXTERN_METHOD(requestAuthorization:(NSString *)testBlockName
 RCT_EXTERN_METHOD(showAppPicker:(BOOL)isFirstSelection
                   blockId:(NSString * _Nullable)blockId
                   limitId:(NSString * _Nullable)limitId
+                  saveButtonText:(NSString *)saveButtonText
+                  titleText:(NSString *)titleText
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

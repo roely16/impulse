@@ -77,6 +77,7 @@
     "appsPlaceholder": "Select",
     "sitesLabel": "sites",
     "selectTime": "Daily time limit",
+    "selectTimeTitle": "Time Limit",
     "selectTimeLabel": "Select",
     "maxOpenDailyTitle": "Daily opening limit",
     "maxOpenDaily": "Opening Limit",
@@ -90,15 +91,26 @@
       "message": "Are you sure you want to delete the limit?",
       "cancelButton": "Cancel",
       "confirmButton": "Delete"
-    }
+    },
+    "defaultBlockName": "Limit"
   },
   "blocksSection": {
     "title": "Blocking Periods",
     "addButton": "Add"
   },
+  "limitsSection": {
+    "title": "App Limits",
+    "addButton": "Add"
+  },
   "cardBlock": {
     "editButton": "Edit",
     "appsLabel": "Apps"
+  },
+  "cardLimit": {
+    "editButton": "Edit",
+    "appsLabel": "Apps",
+    "timeLabel": "min",
+    "maxOpenLabel": "opens"
   },
   "cardTime": {
     "title": "Screen Time"
@@ -122,5 +134,9 @@
     "sunday": "Sunday"
   },
   "everyDay": "Every day",
-  "testBlockName": "Test blocking"
+  "testBlockName": "Test blocking",
+  "appPicker": {
+    "saveButton": "Save",
+    "title": "Select distracting apps/sites"
+  }
 }
