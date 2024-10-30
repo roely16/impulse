@@ -1,5 +1,5 @@
 import { useState, useRef, useLayoutEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
+import { View, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTranslation } from "react-i18next";
@@ -15,9 +15,9 @@ interface FormNewLimitProps {
   closeBottomSheet: () => void;
   isEdit?: boolean;
   limitId?: string | null;
-  isEmptyBlock?: boolean;
-  updateEmptyBlock?: (isEmpty: boolean) => void;
-  totalBlocks?: number;
+  isEmptyLimit?: boolean;
+  updateEmptyLimit?: (isEmpty: boolean) => void;
+  totalLimits?: number;
 }
 
 interface DayType {
@@ -42,18 +42,20 @@ const data = [
 
 export const FormNewLimit = (props: FormNewLimitProps) => {
 
-  const { refreshLimits, changeForm, closeBottomSheet, isEdit, limitId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = props;
+  const { refreshLimits, changeForm, closeBottomSheet, isEdit, limitId, isEmptyLimit, updateEmptyLimit, totalLimits = 0 } = props;
   const [appsSelected, setAppsSelected] = useState(0);
   const [sitesSelected, setSitesSelected] = useState(0);
-  const [blockTitle, setBlockTitle] = useState('');
+  const [limitTitle, setLimitTitle] = useState('');
   const currentTime = new Date();
   currentTime.setHours(0, 0, 0, 0);
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
   const limitTimeRef = useRef(currentTime);
-  const [limitTimeString, setLimitTimeString] = useState<string>('');
+  const limitTimeString = useRef<string>('');
   const inputRef = useRef<TextInput>(null);
   const [openLimit, setOpenLimit] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
@@ -72,15 +74,6 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   const { ScreenTimeModule } = NativeModules;
 
-  const readLastLog = async () => {
-    try {
-      const response = await ScreenTimeModule.readLastLog();
-      console.log('response last log', response);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   const Frequency = (): React.ReactElement => {
 
     const toggleSelected = (selectedDay: DayType) => {
@@ -93,7 +86,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
       // TODO Update Mixpanel event
       const timeSpent = getTimeOnScreen();
       MixpanelService.trackEvent('block_frequency_selected', {
-        type_block: 'block_period',
+        type_block: 'limit_app',
         selected_days: selectedDays,
         number_of_days_selected: selectedDays.length,
         time_spent_on_frequency_selection: timeSpent,
@@ -119,13 +112,6 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
     )
   };
 
-  const convertDate = (date: Date | undefined): string => {
-    if (!date) return '';
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hours}:${minutes}`;
-  }
-
   const onChangeLimitTime = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
 
     if (event.type === 'set') {
@@ -138,8 +124,20 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
       const guatemalaTime = toZonedTime(selectedDate, timeZone);
 
       const formatted = format(guatemalaTime, 'HH:mm', { timeZone });
-      setLimitTimeString(formatted);
+      limitTimeString.current = formatted;
       limitTimeRef.current = selectedDate || limitTimeRef.current;
+      
+      const timeSpent = getTimeOnScreen();
+
+      MixpanelService.trackEvent('limit_time_selected', {
+        time_limit_added: true,
+        type_block: 'limit_app',
+        limit_time: limitTimeString.current,
+        default_time_used: false,
+        time_spent_on_time_selection: timeSpent,
+        error_occurred: false,
+        timestamp: new Date().toISOString()
+      });
     }
   };
 
@@ -149,19 +147,18 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
         <Text style={styles.timeLabel}>
           {t('formNewLimit.selectTime')}
         </Text>
-        <View style={styles.formOption}>
+        <View style={[styles.formOption, { paddingVertical: 0 }]}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>
               {t('formNewLimit.selectTimeTitle')}
             </Text>
-            <DateTimePicker
+            {isLoading ? <></> : <DateTimePicker
               value={limitTimeRef.current}
               mode="countdown"
               onChange={onChangeLimitTime}
               display="spinner"
-              minuteInterval={15}
-              timeZoneName="America/Guatemala"
-            />
+              style={{ height: 120 }}
+            />}
           </View>
         </View>
       </View>
@@ -169,6 +166,21 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
   };
 
   const OpenLimitPicker = () => {
+
+    const handleOnChange = (item: {value: string}) => {
+      setOpenLimit(item.value)
+      const timeSpent = getTimeOnScreen();
+      MixpanelService.trackEvent('max_open_daily_selected', {
+        type_block: 'limit_app',
+        opening_limit_added: true,
+        limit_openings: item.value,
+        default_openings_used: false,
+        time_spent_on_openings_selection: timeSpent,
+        error_occurred: false,
+        timeStamp: new Date().toISOString()
+      });
+    };
+
     return (
       <View style={styles.timeFormContainer}>
         <Text style={styles.timeLabel}>
@@ -179,7 +191,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
             <Text style={styles.label}>
               {t('formNewLimit.maxOpenDaily')}
             </Text>
-            <Dropdown placeholderStyle={styles.selectLabel} selectedTextStyle={[styles.selectLabel, { textAlign: 'right', marginRight: 10 }]} renderRightIcon={() => <Icon source="chevron-right" size={25} />} value={openLimit} style={styles.dropdownStyle} placeholder={t('formNewLimit.selectTimeLabel')} data={data} labelField="label" valueField="value" onChange={item => setOpenLimit(item.value)} />
+            <Dropdown placeholderStyle={styles.selectLabel} selectedTextStyle={[styles.selectLabel, { textAlign: 'right', marginRight: 10 }]} renderRightIcon={() => <Icon source="chevron-right" size={25} />} value={openLimit} style={styles.dropdownStyle} placeholder={t('formNewLimit.selectTimeLabel')} data={data} labelField="label" valueField="value" onChange={handleOnChange} />
           </View>
         </View>
       </View>
@@ -188,11 +200,11 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, limitId);
+      const result = await ScreenTimeModule.showAppPicker(isEmptyLimit, null, limitId);
       if (result.status === 'success') {
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);
-        updateEmptyBlock && updateEmptyBlock(false);
+        updateEmptyLimit && updateEmptyLimit(false);
 
         const timeSpent = getTimeOnScreen();
 
@@ -232,50 +244,54 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
   const handleSaveLimit = async () => {
     try {
-      const haveBlockTitle = blockTitle.length > 0;
-      const newBlockTitle = haveBlockTitle ? blockTitle : `${t('formNewLimit.defaultBlockName')} #${totalBlocks + 1}`;
+      setIsSaving(true);
+      const haveLimitTitle = limitTitle.length > 0;
+      const newLimitTitle = haveLimitTitle ? limitTitle : `${t('formNewLimit.defaultBlockName')} #${totalLimits + 1}`;
 
       const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
       const data = {
-        name: newBlockTitle,
-        timeLimit: limitTimeString,
+        name: newLimitTitle,
+        timeLimit: limitTimeString.current,
         openLimit,
         appsSelected,
         weekDays
       }
       const response = await ScreenTimeModule.createLimit(data.name, data.timeLimit, data.openLimit, data.weekDays);
-      refreshLimits();
-      closeBottomSheet()
-      changeForm('')
+      if (response.status === 'success') {
+        refreshLimits();
+        closeBottomSheet()
+        changeForm('')
+      }
+      setIsSaving(false);
     } catch (error) {
       console.log('error', error);
+      setIsSaving(false);
     }
   };
 
   const handleEditBlock = async () => {
     try {
-      // const startTime = convertDate(startTimeRef.current);
-      // const endTime = convertDate(endTimeRef.current);
-      // const haveBlockTitle = blockTitle.length > 0;
-      // const newBlockTitle = haveBlockTitle ? blockTitle : `${t('formNewLimit.defaultBlockName')} #${totalBlocks + 1}`;
+      setIsSaving(true);
+      const haveLimitTitle = limitTitle.length > 0;
+      const newLimitTitle = haveLimitTitle ? limitTitle : `${t('formNewLimit.defaultBlockName')} #${totalLimits + 1}`;
 
-      // const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
+      const weekDays = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
 
-      // const data = {
-      //   id: blockId,
-      //   name: newBlockTitle,
-      //   startTime,
-      //   endTime,
-      //   appsSelected,
-      //   weekDays
-      // }
-
-      // const response = await ScreenTimeModule.updateBlock(data.id, data.name, data.startTime, data.endTime, data.weekDays, !isEmptyBlock);
-      // refreshBlocks();
-      // closeBottomSheet()
-      // changeForm('')
+      const data = {
+        id: limitId,
+        name: newLimitTitle,
+        timeLimit: limitTimeString.current,
+        openLimit,
+        appsSelected,
+        weekDays
+      }
+      await ScreenTimeModule.updateLimit(data.id, data.name, data.timeLimit, data.openLimit, data.weekDays, !isEmptyLimit);
+      refreshLimits();
+      closeBottomSheet()
+      changeForm('')
+      setIsSaving(false);
     } catch (error) {
-      
+      setIsSaving(false);
     }
   };
 
@@ -327,36 +343,32 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
     )
   };
 
-  function timeStringToDate(timeString) {
-    const [hours, minutes] = timeString.split(':').map(Number);
-    
-    // Crea un objeto Date con la fecha actual
-    const now = new Date();
-    
-    // Establece las horas y minutos
-    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-    
-    return date;
-  }
-  const setBlockData = (block) => {
-    // setBlockTitle(block.name);
-    // const startTime = timeStringToDate(block.startTime);
-    // startTimeRef.current = startTime;
-    // const endTime = timeStringToDate(block.endTime);
-    // endTimeRef.current = endTime;
-    // setAppsSelected(block.apps);
+  const setLimitData = (limit) => {
+    setLimitTitle(limit.name);
+    const [hours, minutes] = limit.timeLimit.split(":").map(Number);
+    const date = new Date();
+    date.setUTCHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
 
-    // const updatedDays = initialDays.map(day => {
-    //     if (block.weekdays.includes(day.value)) {
-    //         return { ...day, selected: true };
-    //     }
-    //     return day;
-    // });
-    // setDays(updatedDays);
+    const guatemalaTime = toZonedTime(date, 'Europe/Lisbon');
+
+    limitTimeRef.current = new Date(guatemalaTime);
+    setAppsSelected(limit.apps);
+    setOpenLimit(limit.openTime);
+    limitTimeString.current = limit.timeLimit;
+    const updatedDays = initialDays.map(day => {
+        if (limit.weekdays.includes(day.value)) {
+            return { ...day, selected: true };
+        }
+        return day;
+    });
+    setDays(updatedDays);
   }
 
   const clearData = () => {
-    setBlockTitle('');
+    setLimitTitle('');
     startTimeRef.current = currentTime;
     endTimeRef.current = new Date(currentTime.getTime() + 15 * 60000);
     setAppsSelected(0);
@@ -371,7 +383,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
   const handleCancel = () => {
     closeBottomSheet();
     const timeSpent = getTimeOnScreen();
-    MixpanelService.trackEvent('block_period_creation_cancelled', {
+    MixpanelService.trackEvent('limit_creation_cancelled', {
       step_before_cancellation: '',
       entry_point: isEdit ? 'edit_button' : 'add_button',
       total_time_spent: timeSpent,
@@ -387,10 +399,12 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
     }
 
     const timeSpent = getTimeOnScreen();
-    MixpanelService.trackEvent('block_period_saved', {
+
+    // TODO Update Mixpanel event
+    MixpanelService.trackEvent('limit_period_saved', {
       apps_selected_count: appsSelected,
       number_of_days_selected: days.filter(day => day.selected).length,
-      total_block_periods_after_save: totalBlocks,
+      total_block_periods_after_save: totalLimits,
       total_time_spent: timeSpent,
       entry_point: isEdit ? 'edit_button' : 'add_button',
       error_occurred: false,
@@ -399,23 +413,32 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
   }
 
   useLayoutEffect(() => {
-    const loadBlockData = async () => {
-      const result = await ScreenTimeModule.getLimit(limitId);
+    const localLimitData = async () => {
+      setIsLoading(true);
+      const result = await ScreenTimeModule.getLimitDetail(limitId);
+      console.log('result', result);
       if (result.status === 'success') {
-        setBlockData(result.block);
+        setLimitData(result.limit);
       }
+      setIsLoading(false);
     };
     if (isEdit) {
-      loadBlockData();
+      localLimitData();
     } else {
       clearData();
     }
   }, [isEdit]);
 
+  if (isLoading) {
+    return (
+      <></>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <TextInput ref={inputRef} value={blockTitle} onChangeText={setBlockTitle} style={styles.title} placeholderTextColor="black" placeholder={t('formNewLimit.blockName')} />
+        <TextInput ref={inputRef} value={limitTitle} onChangeText={setLimitTitle} style={styles.title} placeholderTextColor="black" placeholder={t('formNewLimit.blockName')} />
         <TouchableOpacity onPress={handleIconPress}>
           <Icon source="pencil" size={25} />
         </TouchableOpacity>
@@ -438,10 +461,10 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
       <OpenLimitPicker />
       <Frequency />
       <View style={styles.buttonContainer}>
-        <Button onPress={readLastLog} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
+        <Button onPress={handleCancel} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
           {t('formNewLimit.cancelButton')}
         </Button>
-        <Button disabled={!formFilled} onPress={handleSaveButton} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
+        <Button loading={isSaving} disabled={!formFilled || isSaving} onPress={handleSaveButton} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
           {t('formNewLimit.saveButton')}
         </Button>
       </View>

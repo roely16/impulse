@@ -31,7 +31,7 @@ export const OptionsConfigNewBlock = (props: OptionsConfigNewBlockProps) => {
   const handleNewLimit = () => {
     changeForm('new-limit');
     const timeSpent = getTimeOnScreen();
-    MixpanelService.trackEvent('add_block_period_modal', {
+    MixpanelService.trackEvent('add_limit_app_button_modal', {
       localization: 'add_block_modal',
       type_button: 'add_limit_button',
       time_spent_before_click: timeSpent,

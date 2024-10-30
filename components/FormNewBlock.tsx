@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -33,6 +33,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
   const inputRef = useRef<TextInput>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
@@ -50,14 +51,6 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const [days, setDays] = useState(initialDays);
 
   const { ScreenTimeModule } = NativeModules;
-
-  const readLastLog = () => {
-    try {
-      const response = ScreenTimeModule.readLastLog();
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   const Frequency = (): React.ReactElement => {
 
@@ -153,7 +146,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSelectApps = async () => {
     try {
-      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId);
+      const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId, null);
       if (result.status === 'success') {
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);
@@ -195,6 +188,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
   const handleSaveBlock = async () => {
     try {
+      setIsSaving(true);
       const startTime = convertDate(startTimeRef.current);
       const endTime = convertDate(endTimeRef.current);
       const haveBlockTitle = blockTitle.length > 0;
@@ -212,13 +206,16 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       refreshBlocks();
       closeBottomSheet()
       changeForm('')
+      setIsSaving(false);
     } catch (error) {
       console.log('error', error);
+      setIsSaving(false);
     }
   };
 
   const handleEditBlock = async () => {
     try {
+      setIsSaving(true);
       const startTime = convertDate(startTimeRef.current);
       const endTime = convertDate(endTimeRef.current);
       const haveBlockTitle = blockTitle.length > 0;
@@ -239,8 +236,9 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       refreshBlocks();
       closeBottomSheet()
       changeForm('')
+      setIsSaving(false);
     } catch (error) {
-      
+      setIsSaving(false);
     }
   };
 
@@ -364,6 +362,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   }
 
   useLayoutEffect(() => {
+    console.log('useLayoutEffect');
     const loadBlockData = async () => {
       const result = await ScreenTimeModule.getBlock(blockId);
       if (result.status === 'success') {
@@ -373,9 +372,11 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
     if (isEdit) {
       loadBlockData();
     } else {
-      clearData();
+      if (isEmptyBlock) {
+        clearData();
+      }
     }
-  }, [isEdit]);
+  }, [isEdit, isEmptyBlock]);
 
   return (
     <View style={styles.container}>
@@ -405,7 +406,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
         <Button onPress={handleCancel} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
           {t('formNewBlock.cancelButton')}
         </Button>
-        <Button disabled={!formFilled} onPress={handleSaveButton} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
+        <Button loading={isSaving} disabled={!formFilled || isSaving} onPress={handleSaveButton} icon="check" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: buttonBackground }]} mode="contained">
           {t('formNewBlock.saveButton')}
         </Button>
       </View>

@@ -13,6 +13,7 @@ class ScreenTimeModule: NSObject {
   var familySelection: FamilyActivitySelection = FamilyActivitySelection()
   
   private var container: ModelContainer?
+  private var logger = Logger()
   
   override init() {
     super.init()
@@ -70,13 +71,13 @@ class ScreenTimeModule: NSObject {
   }
 
   @MainActor @objc
-  func showAppPicker(_ isFirstSelection: Bool, blockId: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+  func showAppPicker(_ isFirstSelection: Bool, blockId: String = "", limitId: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     DispatchQueue.main.async {
       
       if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
        let window = scene.windows.first {
         
-        let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection, blockId: blockId) { updatedSelection in
+        let pickerView = ActivityPickerView(isFirstSelection: isFirstSelection, blockId: blockId, limitId: limitId) { updatedSelection in
           let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
           self.familySelection = updatedSelection
@@ -198,7 +199,7 @@ class ScreenTimeModule: NSObject {
       // Create events
       try self.appsSelected.forEach{appSelected in
         let event = Event(
-          limitId: limit.id,
+          limit: limit,
           appToken: appSelected
         )
         context.insert(event)
@@ -260,11 +261,11 @@ class ScreenTimeModule: NSObject {
   }
   
   @MainActor
-  func disableLimit(limitId: UUID){
+  func disableLimit(limitId: UUID, updateStore: Bool = false){
     do {
       // Remove shields
-      let events = findLimitEvents(limitId: limitId)
-      events.forEach{event in
+      let limit = findLimit(limitId: limitId)
+      limit?.events.forEach{event in
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
         store.shield.applications = nil
       }
@@ -274,16 +275,18 @@ class ScreenTimeModule: NSObject {
       deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(String(describing: limitId.uuidString))-limit")])
       
       // Update limit status
-      let limit = findLimit(limitId: limitId)
-      limit?.enable = false
-      try limit?.modelContext?.save()
+      if updateStore {
+        limit?.enable = false
+        try limit?.modelContext?.save()
+      }
+      
     } catch {
       print("Error trying to disable limit")
     }
   }
   
   @MainActor
-  func enableLimit(limitId: UUID){
+  func enableLimit(limitId: UUID, updateStore: Bool = false){
     do {
       
       // Get limit
@@ -292,11 +295,8 @@ class ScreenTimeModule: NSObject {
       // Get minutes to block for each event
       let minutesToBlock = getLimitTime(time: limit?.timeLimit ?? "");
       
-      // Create events for monitoring
-      let events = findLimitEvents(limitId: limitId)
-      
       var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
-      events.forEach{event in
+      limit?.events.forEach{event in
         if minutesToBlock != nil {
           let threshold = DateComponents(minute: minutesToBlock)
           let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
@@ -320,28 +320,13 @@ class ScreenTimeModule: NSObject {
       )
       
       // Update limit status
-      limit?.enable = true
-      try limit?.modelContext?.save()
+      if updateStore {
+        limit?.enable = true
+        try limit?.modelContext?.save()
+      }
     } catch {
       print("Error trying to enable limit")
     }
-  }
-  
-  @MainActor
-  func findLimitEvents(limitId: UUID) -> [Event] {
-    do {
-      let context = try getContext()
-      
-      // Find events
-      let fetchDescriptor = FetchDescriptor<Event>(
-        predicate: #Predicate{ $0.limitId == limitId }
-      )
-      let events = try context.fetch(fetchDescriptor)
-      return events
-    } catch {
-      print("Error trying to find limit with events")
-    }
-    return []
   }
   
   @MainActor
@@ -370,12 +355,10 @@ class ScreenTimeModule: NSObject {
       }
       
       // Get events
+      let limit = findLimit(limitId: uuid)
       let context = try getContext()
-      let fetchDescriptor = FetchDescriptor<Event>(
-        predicate: #Predicate{ $0.limitId == uuid }
-      )
-      let events = try context.fetch(fetchDescriptor)
-      events.forEach{event in
+      
+      limit?.events.forEach{event in
         // Remove restrictions for every app
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id)"))
         store.shield.applications = nil
@@ -386,7 +369,6 @@ class ScreenTimeModule: NSObject {
        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit")])
             
       // Delete limit and events
-      try context.delete(model: Event.self, where: #Predicate { $0.limitId == uuid })
       try context.delete(model: Limit.self, where: #Predicate { $0.id == uuid })
       resolve(["status": "success"])
     } catch {
@@ -404,14 +386,84 @@ class ScreenTimeModule: NSObject {
     if !enable {
       // Disable limint and remove events shield
       print("Disable limit")
-      disableLimit(limitId: uuid)
+      disableLimit(limitId: uuid, updateStore: true)
     } else {
       // Enable limit and events again
       print("Enable limit")
-      enableLimit(limitId: uuid)
+      enableLimit(limitId: uuid, updateStore: true)
     }
     
     resolve(["status": "success"])
+  }
+  
+  @MainActor @objc
+  func getLimitDetail(_ limitId: String, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+    guard let uuid = UUID(uuidString: limitId) else {
+      reject("invalid_uuid", "The limit id is not a valid UUID", nil)
+      return
+    }
+    
+    let limit = findLimit(limitId: uuid)
+    
+    let limitData = [
+      "id": limit?.id.uuidString,
+      "name": limit?.name,
+      "timeLimit": limit?.timeLimit,
+      "openTime": limit?.openLimit,
+      "apps": limit?.appsTokens.count,
+      "weekdays": limit?.weekdays
+    ] as [String : Any]
+    
+    resolve(["status": "success", "limit" : limitData])
+  }
+  
+  @MainActor @objc
+  func updateLimit(_ limitId: String, name: String, timeLimit: String, openLimit: String, weekdays: [Int], changeApps: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+    do {
+      guard let uuid = UUID(uuidString: limitId) else {
+        reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
+        return
+      }
+      // Call disable limit without change status
+      disableLimit(limitId: uuid, updateStore: false)
+
+      // Save changes on store
+      let limit = findLimit(limitId: uuid)
+      limit?.name = name
+      limit?.timeLimit = timeLimit
+      limit?.openLimit = openLimit
+      if changeApps {
+        limit?.appsTokens = self.appsSelected
+        limit?.familySelection = self.familySelection
+      }
+      limit?.weekdays = weekdays
+      
+      try limit?.modelContext?.save()
+      
+      // Delete an recreate events for limit with new apps
+      if changeApps {
+        let context = try getContext()
+
+        limit?.events.forEach{event in
+          context.delete(event)
+        }
+        // Create events
+        try self.appsSelected.forEach{appSelected in
+          let event = Event(
+            limit: limit!,
+            appToken: appSelected
+          )
+          context.insert(event)
+          try context.save()
+        }
+      }
+      
+      // Enable limit again with the last changes
+      enableLimit(limitId: uuid, updateStore: false)
+      resolve(["status": "success"])
+    } catch {
+      logger.error("Error trying to update limit")
+    }
   }
   
   @objc

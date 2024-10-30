@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, View, PanResponder } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -9,6 +9,9 @@ import { OnboardingContainer } from "@/components/OnboardingContainer";
 import { SCREEN_HEIGHT } from "@/constants/Device";
 import { MixpanelService } from "@/SDK/Mixpanel";
 import useTimeOnScreen from "@/hooks/useTimeOnScreen";
+import { useSharedValue, withSpring } from 'react-native-reanimated';
+import { Slider } from 'react-native-awesome-slider';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const DAYS_IN_A_YEAR = 365;
 const HOURS_IN_A_DAY = 24;
@@ -19,6 +22,10 @@ export default function HowMuchTime() {
   const { t } = useTranslation();
   const [hours, setHours] = useState(3);
   const getTimeOnScreen = useTimeOnScreen();
+
+  const progress = useSharedValue(3);
+  const min = useSharedValue(0);
+  const max = useSharedValue(10);
 
   const Hours = () => {
     return (
@@ -31,38 +38,32 @@ export default function HowMuchTime() {
 
   const ProgressBar = () => {
 
-    const panResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onPanResponderMove: (evt, gestureState) => {
-        if (gestureState.dy < -10) {
-          updateHours('increase');
-        } else if (gestureState.dy > 10) {
-          updateHours('decrease');
-        }
-      },
-    });
-
-    const getPercentage = () => {
-      const barHeight = 100 - (hours * 100) / 10;
-
-      return { height: `${barHeight}%` };
-    }
-
-    const barHeight = getPercentage();
-
-    const zeroBorderRadius = hours === 0 ? { borderBottomLeftRadius: 6, borderBottomRightRadius: 6 } : {};
     return (
-      <View style={styles.progressBarContainer} {...panResponder.panHandlers}>
-        <View style={[styles.progressBar, barHeight, zeroBorderRadius]}></View>
-      </View>
-    )
+      <GestureHandlerRootView>
+        <Slider
+          style={{ transform: [{ rotate: "-90deg" }], width: 300 }}
+          progress={progress}
+          minimumValue={min}
+          maximumValue={max}
+          sliderHeight={100}
+          renderBubble={() => <></>}
+          renderThumb={() => <></>}
+          theme={{ minimumTrackTintColor: '#FDE047' }}
+          onSlidingComplete={(value) => {
+            setHours(Math.round(value));
+          }}
+        />
+      </GestureHandlerRootView>
+    );
   };
 
   const updateHours = (type: string) => {
     if (type === 'increase' && hours < 10) {
       setHours(hours + 1);
-    } else if (type === 'decrease' && hours >= 1) {
+      progress.value = withSpring(hours + 1);
+    } else if (type === 'decrease' && hours > 0) {
       setHours(hours - 1);
+      progress.value = withSpring(hours - 1);
     }
   }
 
@@ -94,9 +95,9 @@ export default function HowMuchTime() {
     router.push({ pathname: '/save-time-screen', params: { days, years } });
 
   };
-
+ 
   return (
-    <OnboardingContainer onPress={redirect} buttonLabel={t('howMuchTime.continueButton')}>
+    <OnboardingContainer scrollEnabled={false} onPress={redirect} buttonLabel={t('howMuchTime.continueButton')}>
       <Text style={styles.title}>
         {t('howMuchTime.title')}
       </Text>
@@ -141,7 +142,8 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative'
+    position: 'relative',
+    marginTop: hp('10%')
   },
   progressBarContainer: {
     borderWidth: 1,

@@ -7,11 +7,11 @@ import { styles } from "./styles";
 
 interface HeaderLimitsProps {
   showBottomShet: () => void;
-  numberOfBlocks: number;
+  numberOfLimits: number;
 }
 
 export const HeaderLimits = (props: HeaderLimitsProps) => {
-  const { showBottomShet, numberOfBlocks = 0 } = props;
+  const { showBottomShet, numberOfLimits = 0 } = props;
 
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
@@ -20,11 +20,12 @@ export const HeaderLimits = (props: HeaderLimitsProps) => {
     showBottomShet();
 
     const timeSpent = getTimeOnScreen();
-    MixpanelService.trackEvent('add_block_period_button_card', {
+    // TODO: Update Mixpanel event
+    MixpanelService.trackEvent('add_limit_app_button_card', {
       localization: 'Home',
       type_button: 'add_block_period_button',
       time_spent_before_click: timeSpent,
-      existing_block_periods: numberOfBlocks,
+      existing_block_periods: numberOfLimits,
       device_type: 'iOS',
       timestamp: new Date().toISOString()
     });

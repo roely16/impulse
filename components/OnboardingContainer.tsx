@@ -6,15 +6,16 @@ interface OnboardingContainerProps {
   children: React.ReactNode;
   onPress: () => void;
   buttonLabel: string;
+  scrollEnabled?: boolean;
 }  
 
 export const OnboardingContainer = (props: OnboardingContainerProps) => {
 
-  const { children, onPress, buttonLabel } = props;
+  const { children, onPress, buttonLabel, scrollEnabled = true } = props;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.contentContainer}>
+      <ScrollView scrollEnabled={scrollEnabled} style={styles.contentContainer}>
         {children}
       </ScrollView>
       <View style={styles.buttonContainer}>

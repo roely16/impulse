@@ -8,6 +8,7 @@ struct ActivityPickerView: View {
   @State var selection = FamilyActivitySelection(includeEntireCategory: true)
   var isFirstSelection: Bool
   var blockId: String = ""
+  var limitId: String = ""
   var onSelectionChanged: (FamilyActivitySelection) -> Void
   @Environment(\.presentationMode) var presentationMode
   
@@ -39,13 +40,16 @@ struct ActivityPickerView: View {
           .padding()
       }
       .onAppear {
-        print(isSelectionSaved)
+        print("on appear \(isFirstSelection) \(blockId) \(limitId)")
         if !isFirstSelection {
           print("load selection")
           loadSelection()
         } else if (blockId != "") {
           print("local selection from store")
           loadSelectionFromStore()
+        } else if (limitId != "") {
+          print("local limit selection from store")
+          loadLimitSelectionFromStore()
         }
       }
         .navigationBarTitle("Selecciona aplicaciones/sitios que distraen", displayMode: .inline)
@@ -102,6 +106,31 @@ struct ActivityPickerView: View {
       selection = block?.familySelection ?? FamilyActivitySelection(includeEntireCategory: true)
     } catch {
       
+    }
+  }
+  
+  @MainActor func loadLimitSelectionFromStore () {
+    do {
+      guard let uuid = UUID(uuidString: limitId) else {
+        print("Wrong block id")
+        return
+      }
+
+      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
+      let container = try ModelContainer(
+        for: Limit.self,
+        configurations: configuration
+      )
+      let context = container.mainContext
+      var fetchDescriptor = FetchDescriptor<Limit>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      fetchDescriptor.fetchLimit = 1
+      let result = try context.fetch(fetchDescriptor)
+      let limit = result.first
+      selection = limit?.familySelection ?? FamilyActivitySelection(includeEntireCategory: true)
+    } catch {
+      print("Error trying to get limit data from store")
     }
   }
 }

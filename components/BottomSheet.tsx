@@ -16,13 +16,16 @@ interface BottomSheetNewBlockProps {
   blockId?: string | null;
   limitId?: string | null;
   isEmptyBlock?: boolean;
+  isEmptyLimit?: boolean;
   updateEmptyBlock?: (isEmpty: boolean) => void;
+  updateEmptyLimit?: (isEmpty: boolean) => void;
   totalBlocks?: number;
+  totalLimits?: number;
 }
 
 export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
 
-  const { refreshBlocks, refreshLimits, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, limitId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = _props
+  const { refreshBlocks, refreshLimits, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, limitId, isEmptyBlock, isEmptyLimit, updateEmptyBlock, updateEmptyLimit, totalBlocks = 0, totalLimits = 0 } = _props
 
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
@@ -39,7 +42,7 @@ export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBl
     if (bottomSheetForm === 'new-block') {
       return <FormNewBlock totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     } else if (bottomSheetForm === 'new-limit') {
-      return <FormNewLimit totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} limitId={limitId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshLimits={refreshLimits} changeForm={setBottomSheetForm} />;
+      return <FormNewLimit totalLimits={totalLimits} updateEmptyLimit={updateEmptyLimit} isEmptyLimit={isEmptyLimit} limitId={limitId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshLimits={refreshLimits} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock totalBlocks={totalBlocks} changeForm={setBottomSheetForm} />;

@@ -22,6 +22,9 @@ final class Limit {
   var enable: Bool = true
   var weekdays: [Int] = []
   
+  @Relationship(deleteRule: .cascade, inverse: \Event.limit)
+  var events = [Event]()
+  
   init(
     name: String =  "",
     appsTokens: Set<ApplicationToken> = [],

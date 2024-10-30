@@ -29,6 +29,7 @@ export default function HomeScreen() {
   const [blockId, setBlockId] = useState<string | null>(null);
   const [limitId, setLimitId] = useState<string | null>(null);
   const [isEmptyBlock, setIsEmptyBlock] = useState(false);
+  const [isLimitEmpty, setIsLimitEmpty] = useState(false);
 
   const getTimeOnScreen = useTimeOnScreen();
 
@@ -40,13 +41,23 @@ export default function HomeScreen() {
     setIsEditing(false);
     setBlockId(null);
     setIsEmptyBlock(true);
+    setIsLimitEmpty(true);
   };
 
   const openNewBlockForm = () => {
+    bottomSheetRef.current?.expand();
     setBottomSheetForm('new-block');
     setIsEditing(false);
     setBlockId(null);
     setIsEmptyBlock(true);
+    setBottomSheetVisible(true);
+  };
+
+  const openNewLimitForm = () => {
+    setBottomSheetForm('new-limit');
+    setIsEditing(false);
+    setLimitId(null);
+    setIsLimitEmpty(true);
     bottomSheetRef.current?.expand();
     setBottomSheetVisible(true);
   };
@@ -55,7 +66,9 @@ export default function HomeScreen() {
     setBottomSheetVisible(false);
     setIsEditing(false);
     setBlockId(null);
+    setLimitId(null);
     setIsEmptyBlock(true);
+    setIsLimitEmpty(true);
   };
 
   const openEditBlockForm = (blockId: string) => {
@@ -74,10 +87,9 @@ export default function HomeScreen() {
     setBottomSheetVisible(true);
   }
 
-  const getBlocks = async (isRefreshing: boolean = false) => {
+  const getBlocks = async () => {
     setLoading(true);
     const blocks = await ScreenTimeModule.getBlocks();
-    console.log(blocks);
     setBlocks(blocks.blocks);
     setLoading(false);
   };
@@ -86,7 +98,6 @@ export default function HomeScreen() {
     try {
       const limits = await ScreenTimeModule.getLimits();
       setLimits(limits.limits);
-      console.log(limits);
     } catch {
       console.log('Error getting limits');
     }
@@ -115,11 +126,11 @@ export default function HomeScreen() {
         data: blocks
       },
       {
-        title: <HeaderLimits showBottomShet={openBottonSheet} numberOfBlocks={blocks.length} />,
+        title: <HeaderLimits showBottomShet={openNewLimitForm} numberOfLimits={limits.length} />,
         type: 'limit',
         data: limits
       }
-    ];
+    ].filter(section => section.data.length > 0);;
 
     const getBlocksActiveAndInactive = (): { active: number, inactive: number } => {
       const active = blocks.filter((block) => block.enable).length;
@@ -134,7 +145,7 @@ export default function HomeScreen() {
     const totalOfBlocks = getBlocksActiveAndInactive();
 
     return (
-      <SectionList
+      <SectionList<LimitType>
         sections={sectionListData}
         stickySectionHeadersEnabled={false}
         keyExtractor={(item) => item.id}
@@ -142,7 +153,7 @@ export default function HomeScreen() {
           if (section.type === 'block') {
             return <BlockCard total_blocks={blocks.length} total_active_limits={totalOfBlocks.active} total_inactive_limits={totalOfBlocks.inactive} editBlock={(key) => openEditBlockForm(key)} refreshBlocks={getBlocks} {...item} />
           } else if (section.type === 'limit') {
-            return <LimitCard editLimit={(key) => openEditLimit(key)} refreshLimits={getLimits} {...item}></LimitCard>
+            return <LimitCard total_limits={limits.length} editLimit={(key) => openEditLimit(key)} refreshLimits={getLimits} {...item}></LimitCard>
           }
           return <></>;
         }}
@@ -191,7 +202,7 @@ export default function HomeScreen() {
       <CardTimeHome />
       <BottomSheetModalProvider>
         <BlockSection />
-        <BottomSheetBlockAndLimit totalBlocks={blocks.length} updateEmptyBlock={setIsEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} limitId={limitId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} refreshLimits={getLimits} ref={bottomSheetRef} />
+        <BottomSheetBlockAndLimit totalBlocks={blocks.length} totalLimits={limits.length} updateEmptyBlock={setIsEmptyBlock} updateEmptyLimit={setIsLimitEmpty} isEmptyBlock={isEmptyBlock} isEmptyLimit={isLimitEmpty} blockId={blockId} limitId={limitId} isEdit={isEditing} setBottomSheetForm={setBottomSheetForm} bottomSheetForm={bottomSheetForm} onBottomSheetClosed={closedBottomSheet} refreshBlocks={getBlocks} refreshLimits={getLimits} ref={bottomSheetRef} />
       </BottomSheetModalProvider>
       <AddButton />
     </GestureHandlerRootView>

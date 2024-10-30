@@ -70,6 +70,7 @@ RCT_EXTERN_METHOD(requestAuthorization:(NSString *)testBlockName
 
 RCT_EXTERN_METHOD(showAppPicker:(BOOL)isFirstSelection
                   blockId:(NSString * _Nullable)blockId
+                  limitId:(NSString * _Nullable)limitId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
@@ -125,6 +126,19 @@ RCT_EXTERN_METHOD(deleteLimit:(NSString *)limitId
 
 RCT_EXTERN_METHOD(updateLimitStatus:(NSString *)limitId
                   enable:(BOOL)isEnable
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateLimit:(NSString *)limitId
+                  name:(NSString *)name
+                  timeLimit:(NSString *)timeLimit
+                  openLimit:(NSString *)openLimit
+                  weekdays:(NSArray<NSNumber *> *)weekdays
+                  changeApps:(BOOL)changeApps
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getLimitDetail:(NSString *)limitId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

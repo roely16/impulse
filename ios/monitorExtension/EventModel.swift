@@ -12,13 +12,13 @@ import ManagedSettings
 @Model
 final class Event {
   var id: UUID = UUID()
-  var limitId: UUID
+  var limit: Limit?
   var appToken: ApplicationToken
   
-  init(limitId: UUID, appToken: ApplicationToken){
+  init(limitId: UUID, limit: Limit, appToken: ApplicationToken){
     self.id = UUID()
-    self.limitId = limitId
     self.appToken = appToken
+    self.limit = limit
   }
 }
 
