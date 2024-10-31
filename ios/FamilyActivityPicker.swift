@@ -95,7 +95,7 @@ struct ActivityPickerView: View {
 
       let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
       let container = try ModelContainer(
-        for: Block.self,
+        for: Block.self, Limit.self, Event.self,
         configurations: configuration
       )
       let context = container.mainContext
@@ -120,7 +120,7 @@ struct ActivityPickerView: View {
 
       let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
       let container = try ModelContainer(
-        for: Limit.self,
+        for: Block.self, Limit.self, Event.self,
         configurations: configuration
       )
       let context = container.mainContext

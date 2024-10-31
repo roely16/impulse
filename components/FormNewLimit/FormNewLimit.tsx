@@ -312,7 +312,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
         console.log('error deleting block', error)  
       }
     }
-    const handleDeleteBlock = async () => {
+    const handleDeleteLimit = async () => {
       try {
         Alert.alert(
           `${t('formNewLimit.deleteAlert.title')}`,
@@ -337,7 +337,7 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
 
     if (!isEdit) return <></>;
     return (
-      <TouchableOpacity onPress={handleDeleteBlock}>
+      <TouchableOpacity onPress={() => handleDeleteLimit()}>
         <Text style={styles.deleteButton}>
           {t('formNewLimit.deleteButton')}
         </Text>

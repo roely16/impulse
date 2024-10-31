@@ -18,9 +18,12 @@ class ScreenTimeModule: NSObject {
   override init() {
     super.init()
     do {
-      // Inicializamos el contenedor una vez en el constructor
-      let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share"))
-      container = try ModelContainer(for: Event.self, Block.self, Limit.self, configurations: configuration)
+      let configuration = ModelConfiguration(
+        isStoredInMemoryOnly: false,
+        allowsSave: true,
+        groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
+      )
+      container = try ModelContainer(for: Block.self, Limit.self, Event.self, configurations: configuration)
     } catch {
       print("Error initializing ModelContainer: \(error)")
     }
@@ -112,14 +115,9 @@ class ScreenTimeModule: NSObject {
     let deviceActivityCenter = DeviceActivityCenter();
     
     do {
-      let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
       
-      let context = container.mainContext
-      
+      let context = try getContext()
+      print("Contex Blockt: \(context)")
       let block = Block(
         name: name,
         appsTokens: self.appsSelected,
@@ -185,6 +183,7 @@ class ScreenTimeModule: NSObject {
     do {
       let context = try getContext()
       
+      print("Context Limit: \(context)")
       // Create limit
       let limit = Limit(
         name: name,
