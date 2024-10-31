@@ -41,11 +41,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       guard let uuid = UUID(uuidString: blockId) else {
         return
       }
-      let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self,
-        configurations: configuration
-      )
+
       let context = container.mainContext
       let fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate{ $0.id == uuid }
@@ -62,11 +58,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       guard let uuid = UUID(uuidString: limitId) else {
         throw NSError(domain: "Invalid UUID", code: 1, userInfo: nil)
       }
-      let configuration = ModelConfiguration(isStoredInMemoryOnly: false, allowsSave: true, groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Limit.self,
-        configurations: configuration
-      )
+
       let context = container.mainContext
       let fetchDescriptor = FetchDescriptor<Limit>(
         predicate: #Predicate{ $0.id == uuid }

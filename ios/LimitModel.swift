@@ -28,7 +28,7 @@ final class Limit {
   init(
     name: String =  "",
     appsTokens: Set<ApplicationToken> = [],
-    familySelection: FamilyActivitySelection = FamilyActivitySelection(),
+    familySelection: FamilyActivitySelection = FamilyActivitySelection(includeEntireCategory: true),
     timeLimit: String = "",
     openLimit: String = "",
     enable: Bool = true,

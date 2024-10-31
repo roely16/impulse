@@ -284,7 +284,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
 
     if (!isEdit) return <></>;
     return (
-      <TouchableOpacity onPress={handleDeleteBlock}>
+      <TouchableOpacity onPress={() => handleDeleteBlock()}>
         <Text style={styles.deleteButton}>
           {t('formNewBlock.deleteButton')}
         </Text>

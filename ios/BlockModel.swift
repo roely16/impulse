@@ -22,7 +22,15 @@ final class Block {
   var enable: Bool = true
   var weekdays: [Int] = []
   
-  init(name: String, appsTokens: Set<ApplicationToken> = [], familySelection: FamilyActivitySelection, startTime: String, endTime: String, enable: Bool = true, weekdays: [Int]) {
+  init(
+    name: String = "",
+    appsTokens: Set<ApplicationToken> = [],
+    familySelection: FamilyActivitySelection = FamilyActivitySelection(includeEntireCategory: true),
+    startTime: String = "",
+    endTime: String = "",
+    enable: Bool = true,
+    weekdays: [Int] = []
+  ) {
     self.id = UUID()
     self.name = name
     self.appsTokens = appsTokens
