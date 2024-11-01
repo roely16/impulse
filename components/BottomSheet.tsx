@@ -1,10 +1,11 @@
-import React, { forwardRef, useCallback } from 'react';
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { OptionsConfigNewBlock } from './OptionsConfigNewBlock';
-import { FormNewBlock } from './FormNewBlock';
+import { FormNewBlock, FormNewBlockRef } from './FormNewBlock';
 import { FormNewLimit } from './FormNewLimit';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
+import { FormNewLimitRef } from './FormNewLimit/FormNewLimit';
 
 interface BottomSheetNewBlockProps {
   refreshBlocks: () => void;
@@ -27,6 +28,9 @@ export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBl
 
   const { refreshBlocks, refreshLimits, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, limitId, isEmptyBlock, isEmptyLimit, updateEmptyBlock, updateEmptyLimit, totalBlocks = 0, totalLimits = 0 } = _props
 
+  const formNewBlockRef = useRef<FormNewBlockRef>(null);
+  const formNewLimitRef = useRef<FormNewLimitRef>(null);
+  
   const renderBackdrop = useCallback(
 		(props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
 			<BottomSheetBackdrop
@@ -40,9 +44,9 @@ export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBl
 
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
-      return <FormNewBlock totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+      return <FormNewBlock ref={formNewBlockRef} totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
     } else if (bottomSheetForm === 'new-limit') {
-      return <FormNewLimit totalLimits={totalLimits} updateEmptyLimit={updateEmptyLimit} isEmptyLimit={isEmptyLimit} limitId={limitId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshLimits={refreshLimits} changeForm={setBottomSheetForm} />;
+      return <FormNewLimit ref={formNewLimitRef} totalLimits={totalLimits} updateEmptyLimit={updateEmptyLimit} isEmptyLimit={isEmptyLimit} limitId={limitId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshLimits={refreshLimits} changeForm={setBottomSheetForm} />;
     }
 
     return <OptionsConfigNewBlock totalBlocks={totalBlocks} changeForm={setBottomSheetForm} />;
@@ -51,12 +55,16 @@ export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBl
   const closeBottomSheet = () => {
     if (ref && 'current' in ref && ref.current) {
       ref.current.close();
+      formNewBlockRef.current?.clearForm();
+      formNewLimitRef.current?.clearForm();
       updateEmptyBlock && updateEmptyBlock(true);
     }
   };
 
   const handleOnChange = (index: number) => {
     if (index === -1) {
+      formNewBlockRef.current?.clearForm();
+      formNewLimitRef.current?.clearForm();
       onBottomSheetClosed();
     }
   };

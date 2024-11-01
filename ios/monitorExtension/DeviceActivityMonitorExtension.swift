@@ -28,7 +28,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         allowsSave: true,
         groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
     )
-    return try! ModelContainer(for: Block.self, Limit.self, Event.self, configurations: configuration)
+    return try! ModelContainer(for: Block.self, Limit.self, Event.self, LimitHistory.self, configurations: configuration)
   }()
   
   @MainActor
@@ -84,6 +84,20 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       eventModel = result.first
     } catch {
       throw error
+    }
+  }
+  
+  @MainActor func saveLimitHistory(){
+    do {
+      let context = container.mainContext
+      // Save history
+      let history = LimitHistory(
+        event: eventModel!
+      )
+      context.insert(history)
+      try context.save()
+    } catch {
+      print("Error trying to save limit history")
     }
   }
   
@@ -159,6 +173,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         if let appToken = eventModel?.appToken {
             store.shield.applications = Set([appToken])
+            await saveLimitHistory()
         }
       } catch {
         sharedDefaults?.set("Error during eventDidReachThreshold: \(error.localizedDescription)", forKey: "lastActivityLog")

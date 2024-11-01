@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, forwardRef, useImperativeHandle } from "react";
 import { View, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -27,6 +27,10 @@ interface DayType {
   selected: boolean;
 }
 
+export interface FormNewLimitRef {
+  clearForm: () => void;
+}
+
 const data = [
   { label: '1', value: '1' },
   { label: '2', value: '2' },
@@ -40,7 +44,7 @@ const data = [
   { label: '10', value: '10' },
 ];
 
-export const FormNewLimit = (props: FormNewLimitProps) => {
+export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((props, ref) => {
 
   const { refreshLimits, changeForm, closeBottomSheet, isEdit, limitId, isEmptyLimit, updateEmptyLimit, totalLimits = 0 } = props;
   const [appsSelected, setAppsSelected] = useState(0);
@@ -60,6 +64,12 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
 
+  useImperativeHandle(ref, () => ({
+    clearForm: () => {
+      clearData();
+    }
+  }));
+  
   const initialDays = [
     { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false },
     { day: t('weekdaysLetters.tuesday'), value: 3, name: t('weekdays.tuesday'), selected: false },
@@ -297,7 +307,8 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
     }
   };
 
-  const formFilled = !emptySelected && limitTimeRef && openLimit;
+  const daysSelected = days.filter((day) => day.selected).map((day) => day.value).sort((a, b) => a - b);
+  const formFilled = !emptySelected && limitTimeRef && daysSelected.length > 0;
 
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
@@ -473,4 +484,4 @@ export const FormNewLimit = (props: FormNewLimitProps) => {
       <DeleteButton />
     </View>
   )
-};
+});

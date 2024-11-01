@@ -145,7 +145,7 @@ export default function HomeScreen() {
     const totalOfBlocks = getBlocksActiveAndInactive();
 
     return (
-      <SectionList<LimitType>
+      <SectionList<any>
         sections={sectionListData}
         stickySectionHeadersEnabled={false}
         keyExtractor={(item) => item.id}
@@ -232,16 +232,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10
+    bottom: 10,
+    alignSelf: 'center',
+    zIndex: 10, 
   },
   addButton: {
     paddingHorizontal: 18,
     paddingVertical: 7,
-    borderRadius: 6
+    borderRadius: 6,
   },
 });
