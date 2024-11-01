@@ -32,6 +32,8 @@
 		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
 		4096DDB22CBA42140070F6D3 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDB12CBA42140070F6D3 /* BlockModel.swift */; };
+		40C91CE12CD3FFAA00021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE02CD3FFA900021668 /* LimitHistory.swift */; };
+		40C91CE32CD407C300021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE22CD407C300021668 /* LimitHistory.swift */; };
 		40FC05062CB4966F00FC9C61 /* ScreenTimeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-impulse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
@@ -117,6 +119,8 @@
 		4096DDA22CB91D040070F6D3 /* monitorExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = monitorExtension.entitlements; sourceTree = "<group>"; };
 		4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
 		4096DDB12CBA42140070F6D3 /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
+		40C91CE02CD3FFA900021668 /* LimitHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitHistory.swift; sourceTree = "<group>"; };
+		40C91CE22CD407C300021668 /* LimitHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitHistory.swift; sourceTree = "<group>"; };
 		40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeModule.swift; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-impulse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-impulse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-impulse.debug.xcconfig"; path = "Target Support Files/Pods-impulse/Pods-impulse.debug.xcconfig"; sourceTree = "<group>"; };
@@ -186,6 +190,7 @@
 				40511BED2CCCBDD200A1D6CA /* LimitModule.swift */,
 				40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */,
 				40511BF02CCCE9DA00A1D6CA /* EventModel.swift */,
+				40C91CE02CD3FFA900021668 /* LimitHistory.swift */,
 			);
 			name = impulse;
 			sourceTree = "<group>";
@@ -242,6 +247,7 @@
 				4096DDB12CBA42140070F6D3 /* BlockModel.swift */,
 				40511BE62CCB88AA00A1D6CA /* LimitModel.swift */,
 				40511BF22CCE172100A1D6CA /* EventModel.swift */,
+				40C91CE22CD407C300021668 /* LimitHistory.swift */,
 			);
 			path = monitorExtension;
 			sourceTree = "<group>";
@@ -602,6 +608,7 @@
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				0B2E44F56B0D41F58B2A671D /* noop-file.swift in Sources */,
 				40511BEF2CCCBDD200A1D6CA /* LimitModule.swift in Sources */,
+				40C91CE12CD3FFAA00021668 /* LimitHistory.swift in Sources */,
 				40511BF12CCCE9DA00A1D6CA /* EventModel.swift in Sources */,
 				4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */,
 			);
@@ -631,6 +638,7 @@
 				4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */,
 				40511BF32CCE172100A1D6CA /* EventModel.swift in Sources */,
 				4096DDB22CBA42140070F6D3 /* BlockModel.swift in Sources */,
+				40C91CE32CD407C300021668 /* LimitHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

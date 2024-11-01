@@ -12,8 +12,11 @@ import ManagedSettings
 @Model
 final class Event {
   var id: UUID = UUID()
-  var limit: Limit
+  var limit: Limit?
   var appToken: ApplicationToken
+  
+  @Relationship(deleteRule: .cascade, inverse: \LimitHistory.event)
+  var history = [LimitHistory]()
   
   init(limit: Limit, appToken: ApplicationToken){
     self.id = UUID()

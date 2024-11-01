@@ -23,7 +23,7 @@ class ScreenTimeModule: NSObject {
         allowsSave: true,
         groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
       )
-      container = try ModelContainer(for: Block.self, Limit.self, Event.self, configurations: configuration)
+      container = try ModelContainer(for: Block.self, Limit.self, Event.self, LimitHistory.self, configurations: configuration)
     } catch {
       print("Error initializing ModelContainer: \(error)")
     }
@@ -306,13 +306,27 @@ class ScreenTimeModule: NSObject {
           let threshold = DateComponents(minute: minutesToBlock)
           let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
           let activityEvent = DeviceActivityEvent(applications: [event.appToken], threshold: threshold)
-          
+                    
           eventsArray[eventName] = activityEvent
+          
+          // Find if the event has history
+          let numberOfEvents = findLimitHistory(event: event)
+          print("Number of events: \(numberOfEvents)")
+          if numberOfEvents! > 0 {
+            // Block app if the event has history
+            let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
+            store.shield.applications = [event.appToken]
+          }
+          
         }
       }
       
       // Start monitoring
       let deviceActivityCenter = DeviceActivityCenter();
+      
+      let activities = deviceActivityCenter.activities
+      
+      print("current activities \(activities)")
       
       try deviceActivityCenter.startMonitoring(
         DeviceActivityName(rawValue: "\(limitId.uuidString)-limit"),
@@ -331,6 +345,23 @@ class ScreenTimeModule: NSObject {
       }
     } catch {
       print("Error trying to enable limit")
+    }
+  }
+  
+  @MainActor
+  func findLimitHistory(event: Event) -> Int? {
+    do {
+      
+      let calendar = Calendar.current
+      let startOfDay = calendar.startOfDay(for: Date())
+      let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+      
+      let history = try event.history.filter(#Predicate{ $0.date >= startOfDay && $0.date < endOfDay })
+      
+      return history.count
+    } catch {
+      print("Error trying to get limit history")
+      return nil
     }
   }
   

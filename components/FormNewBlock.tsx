@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, forwardRef, useImperativeHandle } from "react";
 import { View, StyleSheet, TouchableOpacity, NativeModules, TextInput, Alert } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -23,7 +23,11 @@ interface DayType {
   selected: boolean;
 }
 
-export const FormNewBlock = (props: FormNewBlockProps) => {
+export interface FormNewBlockRef {
+  clearForm: () => void;
+}
+
+export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((props, ref) => {
 
   const { refreshBlocks, changeForm, closeBottomSheet, isEdit, blockId, isEmptyBlock, updateEmptyBlock, totalBlocks = 0 } = props;
   const [appsSelected, setAppsSelected] = useState(0);
@@ -38,6 +42,12 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
 
+  useImperativeHandle(ref, () => ({
+    clearForm: () => {
+      clearData();
+    }
+  }));
+  
   const initialDays = [
     { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false },
     { day: t('weekdaysLetters.tuesday'), value: 3, name: t('weekdays.tuesday'), selected: false },
@@ -321,6 +331,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
   }
 
   const clearData = () => {
+    console.log('clearData');
     setBlockTitle('');
     startTimeRef.current = currentTime;
     endTimeRef.current = new Date(currentTime.getTime() + 15 * 60000);
@@ -415,7 +426,7 @@ export const FormNewBlock = (props: FormNewBlockProps) => {
       <DeleteButton />
     </View>
   )
-};
+});
 
 const styles = StyleSheet.create({
   container: {
