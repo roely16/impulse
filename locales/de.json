@@ -138,5 +138,16 @@
   "appPicker": {
     "saveButton": "Speichern",
     "title": "Wählen Sie ablenkende Apps/Sites aus"
+  },
+  "impulseWelcomeScreen": {
+    "title": "Impuls\nModus",
+    "firstText": "Hast du ständig das Bedürfnis, deine Apps ohne bestimmten Grund zu überprüfen?",
+    "secondText": "\"87% der Zeit, wenn wir eine App öffnen, tun wir es aus Langeweile\"",
+    "thirdText": {
+      "first": "Der ",
+      "second": "Impulsmodus ",
+      "third": "wird jedes Mal aktiviert, wenn du versuchst, eine App zu öffnen, die du eingerichtet hast, damit du entscheiden kannst, ob du fortfahren möchtest oder nicht."
+    },
+    "configureButton": "Konfigurieren"
   }
 }

@@ -138,5 +138,16 @@
   "appPicker": {
     "saveButton": "Guardar",
     "title": "Selecciona aplicaciones/sitios que distraen"
+  },
+  "impulseWelcomeScreen": {
+    "title": "Modo\nImpulsos",
+    "firstText": "¿Sientes la tentación constante de revisar tus aplicaciones sin motivo alguno?",
+    "secondText": "\"El 87% de las veces que consultamos una app en por un impulso por aburrimiento\"",
+    "thirdText": {
+      "first": "El  ",
+      "second": "modo impulsos ",
+      "third": "se activará cada vez que intentés entrar en una app que hayas configurado para que decidas si quieres continuar o no."
+    },
+    "configureButton": "Configurar"
   }
 }

@@ -138,5 +138,16 @@
   "appPicker": {
     "saveButton": "Enregistrer",
     "title": "Sélectionnez des applications/sites distrayants"
+  },
+  "impulseWelcomeScreen": {
+    "title": "Modo\nImpulsos",
+    "firstText": "Você sente a tentação constante de verificar seus aplicativos sem motivo algum?",
+    "secondText": "\"87% das vezes que consultamos um app, é por tédio\"",
+    "thirdText": {
+      "first": "O ",
+      "second": "modo impulsos ",
+      "third": "será ativado toda vez que você tentar abrir um aplicativo que configurou, para que possa decidir se deseja continuar ou não."
+    },
+    "configureButton": "Configurar"
   }
 }

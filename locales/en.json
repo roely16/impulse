@@ -138,5 +138,16 @@
   "appPicker": {
     "saveButton": "Save",
     "title": "Select distracting apps/sites"
+  },
+  "impulseWelcomeScreen": {
+    "title": "Impulse\nMode",
+    "firstText": "Do you feel the constant urge to check your apps for no particular reason?",
+    "secondText": "\"87% of the time we open an app, it’s out of boredom\"",
+    "thirdText": {
+      "first": "The ",
+      "second": "Impulse Mode ",
+      "third": "will activate each time you try to open an app you’ve set up, so you can decide whether to continue or not."
+    },
+    "configureButton": "Configure"
   }
 }

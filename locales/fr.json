@@ -138,6 +138,17 @@
     "appPicker": {
       "saveButton": "Sauvegarder",
       "title": "Sélectionnez les applications/sites qui distraient"
+    },
+    "impulseWelcomeScreen": {
+      "title": "Mode\nImpulsions",
+      "firstText": "Ressens-tu l'envie constante de consulter tes applications sans raison particulière ?",
+      "secondText": "\"87 % du temps où nous consultons une app, c'est par ennui\"",
+      "thirdText": {
+        "first": "Le ",
+        "second": "mode impulsions ",
+        "third": "s'activera chaque fois que tu essaieras d'ouvrir une application que tu as configurée, afin que tu puisses décider si tu souhaites continuer ou non."
+      },
+      "configureButton": "Configurer"
     }
   }
   
