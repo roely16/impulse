@@ -149,5 +149,20 @@
       "third": "wird jedes Mal aktiviert, wenn du versuchst, eine App zu öffnen, die du eingerichtet hast, damit du entscheiden kannst, ob du fortfahren möchtest oder nicht."
     },
     "configureButton": "Konfigurieren"
+  },
+  "usageReportScreen": {
+    "title": "Nutzungsberichte",
+    "weeklyUsageTime": {
+      "title": "Wöchentliche Nutzungszeit",
+      "cardLabel": "Täglicher Durchschnitt"
+    },
+    "dailyUsageTime": {
+      "title": "Tägliche Nutzungszeit",
+      "cardLabel": "Täglicher Durchschnitt"
+    },
+    "openingAttemps": {
+      "title": "Öffnungsversuche",
+      "cardLabel": "Täglicher Durchschnitt"
+    }
   }
 }

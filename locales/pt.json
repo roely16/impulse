@@ -149,5 +149,20 @@
       "third": "será ativado toda vez que você tentar abrir um aplicativo que configurou, para que possa decidir se deseja continuar ou não."
     },
     "configureButton": "Configurar"
+  },
+  "usageReportScreen": {
+    "title": "Relatórios de Uso",
+    "weeklyUsageTime": {
+      "title": "Tempo de Uso Semanal",
+      "cardLabel": "Média Diária"
+    },
+    "dailyUsageTime": {
+      "title": "Tempo de Uso Diário",
+      "cardLabel": "Média Diária"
+    },
+    "openingAttemps": {
+      "title": "Tentativas de Abertura",
+      "cardLabel": "Média Diária"
+    }
   }
 }
