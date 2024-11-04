@@ -164,5 +164,13 @@
       "title": "Öffnungsversuche",
       "cardLabel": "Täglicher Durchschnitt"
     }
+  },
+  "impulseControlScreen": {
+    "title": "Impulskontrolle",
+    "message": {
+      "first": "Der ",
+      "second": "Impulsmodus ",
+      "third": "wird aktiviert, jedes Mal, wenn du versuchst, eine App zu öffnen, die du so konfiguriert hast, dass du entscheiden kannst, ob du fortfahren möchtest oder nicht."
+    }
   }
 }

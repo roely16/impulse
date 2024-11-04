@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useFocusEffect } from "expo-router";
 import { MixpanelService } from "@/SDK/Mixpanel";
@@ -7,10 +7,19 @@ import { useTranslation } from "react-i18next";
 import { SCREEN_HEIGHT } from "@/constants/Device";
 import { RFValue } from "react-native-responsive-fontsize";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { ImpulseControl } from "@/components/ImpulseControl/ImpulseControl";
+import { LimitType } from "@/components/LimitCard";
 
 export default function ImpulseScreen() {
 
+  const [loading, setLoading] = useState(false);
+  const [limits, setLimits] = useState<LimitType[]>([]);
+  const [alreadyConfigured, setAlreadyConfigured] = useState(false);
   const { t } = useTranslation();
+
+  const handleConfigure = () => {
+    setAlreadyConfigured(true);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -20,7 +29,26 @@ export default function ImpulseScreen() {
       });
     }, [])
   );
-  
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
+        <ActivityIndicator animating={loading} color={'#FDE047'} size="large" />
+      </View>
+    )
+  }
+
+  if (!loading && alreadyConfigured) {
+    return <ImpulseControl limits={limits} />
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -42,6 +70,7 @@ export default function ImpulseScreen() {
           contentStyle={{ flexDirection: 'row-reverse' }}
           icon="arrow-right"
           labelStyle={{ color: 'black' }}
+          onPress={handleConfigure}
         >
           {t('impulseWelcomeScreen.configureButton')}
         </Button>

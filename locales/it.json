@@ -164,5 +164,13 @@
       "title": "Tentativi di apertura",
       "cardLabel": "Media giornaliera"
     }
+  },
+  "impulseControlScreen": {
+    "title": "Controllo degli Impulsi",
+    "message": {
+      "first": "Il ",
+      "second": "modo impulsi ",
+      "third": "verrà attivato ogni volta che proverai ad accedere a un'app che hai configurato per decidere se vuoi continuare o meno."
+    }
   }
 }

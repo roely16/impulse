@@ -1,169 +1,177 @@
 {
-    "welcomeScreen": {
-      "title": "Aidez-vous à contrôler vos impulsions et gagnez des heures dans votre quotidien",
-      "subtitle": "Les utilisateurs ont déjà économisé plus de 5000 heures en contrôlant l'utilisation de leur téléphone portable",
-      "startButton": "Commencer"
+  "welcomeScreen": {
+    "title": "Aidez-vous à contrôler vos impulsions et gagnez des heures dans votre quotidien",
+    "subtitle": "Les utilisateurs ont déjà économisé plus de 5000 heures en contrôlant l'utilisation de leur téléphone portable",
+    "startButton": "Commencer"
+  },
+  "howMuchTime": {
+    "title": "Combien de temps utilisez-vous votre téléphone chaque jour?",
+    "continueButton": "Continuer"
+  },
+  "saveTimeScreen": {
+    "firstText": "D'après votre utilisation quotidienne, vous passez...",
+    "secondText": "par an perdu devant l'écran...",
+    "thirdText": "Pensez à ce que vous pourriez faire avec ce temps si vous changiez vos habitudes dès aujourd'hui.",
+    "fourthText": "Dans une vie, cela représente",
+    "fifthText": "Êtes-vous prêt à profiter pleinement de votre temps?",
+    "startButton": "Commencer le changement",
+    "days": "jours",
+    "years": "années"
+  },
+  "impulseFunctionalities": {
+    "title": "Les deux fonctionnalités qui vous aideront à récupérer votre temps",
+    "blockAppsTitle": "Blocage des applications",
+    "blockAppsSubtitle": "Programmez des heures spécifiques pour bloquer ces applications qui vous distraient, vous permettant ainsi de vous concentrer sur ce qui compte vraiment.",
+    "impulseModeTitle": "Mode Impulsions",
+    "impulseModeSubtitle": "Ressentez-vous constamment l'envie de vérifier vos applications sans raison? Nous vous aiderons à contrôler ces impulsions.",
+    "continueButton": "Continuer"
+  },
+  "screenTimeAccess": {
+    "title": "Autoriser l'accès au Temps d'écran",
+    "infoOne": "Pour bloquer les applications et les sites web, nous avons besoin d'une autorisation",
+    "infoTwo": {
+      "first": "Les informations du Temps d'écran sont ",
+      "second": "protégées par Apple",
+      "third": " et seront ",
+      "fourth": "stockées à 100% sur votre appareil"
     },
-    "howMuchTime": {
-      "title": "Combien de temps utilisez-vous votre téléphone chaque jour?",
-      "continueButton": "Continuer"
+    "permissionButton": {
+      "title": "Impulse souhaite accéder au Temps d'écran",
+      "message": "Autoriser Impulse à accéder au Temps d'écran peut lui permettre de voir vos données d'activité, de restreindre le contenu et de limiter l'utilisation des applications et des sites web.",
+      "allowButton": "Continuer",
+      "denyButton": "Ne pas permettre"
     },
-    "saveTimeScreen": {
-      "firstText": "D'après votre utilisation quotidienne, vous passez...",
-      "secondText": "par an perdu devant l'écran...",
-      "thirdText": "Pensez à ce que vous pourriez faire avec ce temps si vous changiez vos habitudes dès aujourd'hui.",
-      "fourthText": "Dans une vie, cela représente",
-      "fifthText": "Êtes-vous prêt à profiter pleinement de votre temps?",
-      "startButton": "Commencer le changement",
-      "days": "jours",
-      "years": "années"
-    },
-    "impulseFunctionalities": {
-      "title": "Les deux fonctionnalités qui vous aideront à récupérer votre temps",
-      "blockAppsTitle": "Blocage des applications",
-      "blockAppsSubtitle": "Programmez des heures spécifiques pour bloquer ces applications qui vous distraient, vous permettant ainsi de vous concentrer sur ce qui compte vraiment.",
-      "impulseModeTitle": "Mode Impulsions",
-      "impulseModeSubtitle": "Ressentez-vous constamment l'envie de vérifier vos applications sans raison? Nous vous aiderons à contrôler ces impulsions.",
-      "continueButton": "Continuer"
-    },
-    "screenTimeAccess": {
-      "title": "Autoriser l'accès au Temps d'écran",
-      "infoOne": "Pour bloquer les applications et les sites web, nous avons besoin d'une autorisation",
-      "infoTwo": {
-        "first": "Les informations du Temps d'écran sont ",
-        "second": "protégées par Apple",
-        "third": " et seront ",
-        "fourth": "stockées à 100% sur votre appareil"
-      },
-      "permissionButton": {
-        "title": "Impulse souhaite accéder au Temps d'écran",
-        "message": "Autoriser Impulse à accéder au Temps d'écran peut lui permettre de voir vos données d'activité, de restreindre le contenu et de limiter l'utilisation des applications et des sites web.",
-        "allowButton": "Continuer",
-        "denyButton": "Ne pas permettre"
-      },
-      "startButton": "Commencer"
-    },
-    "blocksScreen": {
-      "addBlockButton": "Ajouter un blocage"
-    },
-    "optionsConfigNewBlock": {
-      "title": "Configurer un nouveau blocage",
-      "newBlock": "Blocage par heures",
-      "newLimit": "Limite d'utilisation"
-    },
-    "formNewBlock": {
-      "blockName": "Ajouter un nom de blocage",
-      "appsOptions": "Applications",
-      "appsPlaceholder": "Sélectionner",
-      "sitesLabel": "sites",
-      "selectTime": "Sélectionner l'heure",
-      "from": "De",
-      "to": "À",
-      "frequency": "Fréquence",
-      "saveButton": "Sauvegarder",
+    "startButton": "Commencer"
+  },
+  "blocksScreen": {
+    "addBlockButton": "Ajouter un blocage"
+  },
+  "optionsConfigNewBlock": {
+    "title": "Configurer un nouveau blocage",
+    "newBlock": "Blocage par heures",
+    "newLimit": "Limite d'utilisation"
+  },
+  "formNewBlock": {
+    "blockName": "Ajouter un nom de blocage",
+    "appsOptions": "Applications",
+    "appsPlaceholder": "Sélectionner",
+    "sitesLabel": "sites",
+    "selectTime": "Sélectionner l'heure",
+    "from": "De",
+    "to": "À",
+    "frequency": "Fréquence",
+    "saveButton": "Sauvegarder",
+    "cancelButton": "Annuler",
+    "deleteButton": "Supprimer le blocage",
+    "deleteAlert": {
+      "title": "Confirmation",
+      "message": "Êtes-vous sûr de vouloir supprimer le blocage?",
       "cancelButton": "Annuler",
-      "deleteButton": "Supprimer le blocage",
-      "deleteAlert": {
-        "title": "Confirmation",
-        "message": "Êtes-vous sûr de vouloir supprimer le blocage?",
-        "cancelButton": "Annuler",
-        "confirmButton": "Supprimer"
-      },
-      "defaultBlockName": "Blocage"
+      "confirmButton": "Supprimer"
     },
-    "formNewLimit": {
-      "blockName": "Ajouter un nom de limite",
-      "appsOptions": "Applications",
-      "appsPlaceholder": "Sélectionner",
-      "sitesLabel": "sites",
-      "selectTime": "Limite de temps par jour",
-      "selectTimeTitle": "Temps Limite",
-      "selectTimeLabel": "Sélectionner",
-      "maxOpenDailyTitle": "Limite d'ouvertures quotidiennes",
-      "maxOpenDaily": "Limite d'ouvertures",
-      "maxOpenDailyLabel": "Sélectionner",
-      "frequency": "Fréquence",
-      "saveButton": "Sauvegarder",
+    "defaultBlockName": "Blocage"
+  },
+  "formNewLimit": {
+    "blockName": "Ajouter un nom de limite",
+    "appsOptions": "Applications",
+    "appsPlaceholder": "Sélectionner",
+    "sitesLabel": "sites",
+    "selectTime": "Limite de temps par jour",
+    "selectTimeTitle": "Temps Limite",
+    "selectTimeLabel": "Sélectionner",
+    "maxOpenDailyTitle": "Limite d'ouvertures quotidiennes",
+    "maxOpenDaily": "Limite d'ouvertures",
+    "maxOpenDailyLabel": "Sélectionner",
+    "frequency": "Fréquence",
+    "saveButton": "Sauvegarder",
+    "cancelButton": "Annuler",
+    "deleteButton": "Supprimer la limite",
+    "deleteAlert": {
+      "title": "Confirmation",
+      "message": "Êtes-vous sûr de vouloir supprimer la limite?",
       "cancelButton": "Annuler",
-      "deleteButton": "Supprimer la limite",
-      "deleteAlert": {
-        "title": "Confirmation",
-        "message": "Êtes-vous sûr de vouloir supprimer la limite?",
-        "cancelButton": "Annuler",
-        "confirmButton": "Supprimer"
-      },
-      "defaultBlockName": "Limite"
+      "confirmButton": "Supprimer"
     },
-    "blocksSection": {
-      "title": "Périodes de blocage",
-      "addButton": "Ajouter"
+    "defaultBlockName": "Limite"
+  },
+  "blocksSection": {
+    "title": "Périodes de blocage",
+    "addButton": "Ajouter"
+  },
+  "limitsSection": {
+    "title": "Limites par Apps",
+    "addButton": "Ajouter"
+  },
+  "cardBlock": {
+    "editButton": "Éditer",
+    "appsLabel": "Apps"
+  },
+  "cardLimit": {
+    "editButton": "Éditer",
+    "appsLabel": "Apps",
+    "timeLabel": "min",
+    "maxOpenLabel": "ouvertures"
+  },
+  "cardTime": {
+    "title": "Temps d'écran"
+  },
+  "weekdaysLetters": {
+    "monday": "L",
+    "tuesday": "M",
+    "wednesday": "M",
+    "thursday": "J",
+    "friday": "V",
+    "saturday": "S",
+    "sunday": "D"
+  },
+  "weekdays": {
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
+  },
+  "everyDay": "Tous les jours",
+  "testBlockName": "Blocage de test",
+  "appPicker": {
+    "saveButton": "Sauvegarder",
+    "title": "Sélectionnez les applications/sites qui distraient"
+  },
+  "impulseWelcomeScreen": {
+    "title": "Mode\nImpulsions",
+    "firstText": "Ressens-tu l'envie constante de consulter tes applications sans raison particulière ?",
+    "secondText": "\"87 % du temps où nous consultons une app, c'est par ennui\"",
+    "thirdText": {
+      "first": "Le ",
+      "second": "mode impulsions ",
+      "third": "s'activera chaque fois que tu essaieras d'ouvrir une application que tu as configurée, afin que tu puisses décider si tu souhaites continuer ou non."
     },
-    "limitsSection": {
-      "title": "Limites par Apps",
-      "addButton": "Ajouter"
+    "configureButton": "Configurer"
+  },
+  "usageReportScreen": {
+    "title": "Rapports d'utilisation",
+    "weeklyUsageTime": {
+      "title": "Temps d'utilisation hebdomadaire",
+      "cardLabel": "Moyenne quotidienne"
     },
-    "cardBlock": {
-      "editButton": "Éditer",
-      "appsLabel": "Apps"
+    "dailyUsageTime": {
+      "title": "Temps d'utilisation quotidien",
+      "cardLabel": "Moyenne quotidienne"
     },
-    "cardLimit": {
-      "editButton": "Éditer",
-      "appsLabel": "Apps",
-      "timeLabel": "min",
-      "maxOpenLabel": "ouvertures"
-    },
-    "cardTime": {
-      "title": "Temps d'écran"
-    },
-    "weekdaysLetters": {
-      "monday": "L",
-      "tuesday": "M",
-      "wednesday": "M",
-      "thursday": "J",
-      "friday": "V",
-      "saturday": "S",
-      "sunday": "D"
-    },
-    "weekdays": {
-      "monday": "Lundi",
-      "tuesday": "Mardi",
-      "wednesday": "Mercredi",
-      "thursday": "Jeudi",
-      "friday": "Vendredi",
-      "saturday": "Samedi",
-      "sunday": "Dimanche"
-    },
-    "everyDay": "Tous les jours",
-    "testBlockName": "Blocage de test",
-    "appPicker": {
-      "saveButton": "Sauvegarder",
-      "title": "Sélectionnez les applications/sites qui distraient"
-    },
-    "impulseWelcomeScreen": {
-      "title": "Mode\nImpulsions",
-      "firstText": "Ressens-tu l'envie constante de consulter tes applications sans raison particulière ?",
-      "secondText": "\"87 % du temps où nous consultons une app, c'est par ennui\"",
-      "thirdText": {
-        "first": "Le ",
-        "second": "mode impulsions ",
-        "third": "s'activera chaque fois que tu essaieras d'ouvrir une application que tu as configurée, afin que tu puisses décider si tu souhaites continuer ou non."
-      },
-      "configureButton": "Configurer"
-    },
-    "usageReportScreen": {
-      "title": "Rapports d'utilisation",
-      "weeklyUsageTime": {
-        "title": "Temps d'utilisation hebdomadaire",
-        "cardLabel": "Moyenne quotidienne"
-      },
-      "dailyUsageTime": {
-        "title": "Temps d'utilisation quotidien",
-        "cardLabel": "Moyenne quotidienne"
-      },
-      "openingAttemps": {
-        "title": "Tentatives d'ouverture",
-        "cardLabel": "Moyenne quotidienne"
-      }
+    "openingAttemps": {
+      "title": "Tentatives d'ouverture",
+      "cardLabel": "Moyenne quotidienne"
+    }
+  },
+  "impulseControlScreen": {
+    "title": "Contrôle des Impulsions",
+    "message": {
+      "first": "Le ",
+      "second": "mode impulsions ",
+      "third": "sera activé chaque fois que vous essayez d'entrer dans une application que vous avez configurée pour décider si vous souhaitez continuer ou non."
     }
   }
+}
   
