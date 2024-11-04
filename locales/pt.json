@@ -172,5 +172,20 @@
       "second": "modo de impulsos ",
       "third": "será ativado toda vez que você tentar entrar em um aplicativo que você configurou para decidir se deseja continuar ou não."
     }
+  },
+  "impulseConfigForm": {
+    "title": "Configuração Extra",
+    "impulseControlDuration": {
+      "title": "Duração do Controle de Impulso",
+      "message": "O botão Continuar ficará bloqueado até que a contagem regressiva termine.",
+      "buttonLabel": "Duração",
+      "buttonPlaceholder": "Selecionar"
+    },
+    "usageWarning": {
+      "title": "Aviso de Uso",
+      "message": "Nós iremos notificá-lo quando você atingir um tempo de uso determinado em um aplicativo, para que você possa decidir se deseja continuar ou fazer uma pausa.",
+      "buttonLabel": "Aviso",
+      "buttonPlaceholder": "Selecionar"
+    }
   }
 }

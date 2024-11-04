@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useFocusEffect } from "expo-router";
@@ -8,16 +8,23 @@ import { SCREEN_HEIGHT } from "@/constants/Device";
 import { RFValue } from "react-native-responsive-fontsize";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { ImpulseControl } from "@/components/ImpulseControl/ImpulseControl";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { LimitType } from "@/components/LimitCard";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BottomSheetBlockAndLimit } from '@/components/BottomSheet';
+
 
 export default function ImpulseScreen() {
 
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const [loading, setLoading] = useState(false);
   const [limits, setLimits] = useState<LimitType[]>([]);
   const [alreadyConfigured, setAlreadyConfigured] = useState(false);
   const { t } = useTranslation();
 
-  const handleConfigure = () => {
+  const handleConfigure = async () => {
+    await AsyncStorage.setItem('seeImpulseConfigScreen', 'true');
     setAlreadyConfigured(true);
   };
 
@@ -32,9 +39,16 @@ export default function ImpulseScreen() {
 
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => {
+    // Check if user has already configured impulse
+    const checkUserConfig = async () => {
+      const seeImpulseConfigScreen = await AsyncStorage.getItem('seeImpulseConfigScreen');
+      if (seeImpulseConfigScreen) {
+        // Load limits 
+        setAlreadyConfigured(true);
+      }
       setLoading(false);
-    }, 1000);
+    };
+    checkUserConfig();
   }, []);
 
   if (loading) {
@@ -45,37 +59,57 @@ export default function ImpulseScreen() {
     )
   }
 
-  if (!loading && alreadyConfigured) {
-    return <ImpulseControl limits={limits} />
-  }
+  const ScreenContent = () => {
 
+    const handleNewImpulse = () => {
+      bottomSheetRef.current?.expand();
+    };
+
+    if (!loading && alreadyConfigured) {
+      return <ImpulseControl configNewImpulse={handleNewImpulse} limits={limits} />
+    }
+
+    return (
+      <ScrollView style={styles.container}>
+        <View>
+          <Text style={styles.title}>{t('impulseWelcomeScreen.title')}</Text>
+        </View>
+        <View style={styles.messageContainer}>
+          <Text style={styles.firstText}>{t('impulseWelcomeScreen.firstText')}</Text>
+          <Text style={styles.secondtText}>{t('impulseWelcomeScreen.secondText')}</Text>
+          <Text>
+            <Text style={styles.thirdText}>{t('impulseWelcomeScreen.thirdText.first')}</Text>
+            <Text style={styles.thirdTextBold}>{t('impulseWelcomeScreen.thirdText.second')}</Text>
+            <Text style={styles.thirdText}>{t('impulseWelcomeScreen.thirdText.third')}</Text>
+          </Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button 
+            style={styles.button} 
+            buttonColor="#FDE047"
+            contentStyle={{ flexDirection: 'row-reverse' }}
+            icon="arrow-right"
+            labelStyle={{ color: 'black' }}
+            onPress={handleConfigure}
+          >
+            {t('impulseWelcomeScreen.configureButton')}
+          </Button>
+        </View>
+      </ScrollView>
+    )
+  };
+
+  const closedBottomSheet = () => {
+
+  };
+  
   return (
-    <ScrollView style={styles.container}>
-      <View>
-        <Text style={styles.title}>{t('impulseWelcomeScreen.title')}</Text>
-      </View>
-      <View style={styles.messageContainer}>
-        <Text style={styles.firstText}>{t('impulseWelcomeScreen.firstText')}</Text>
-        <Text style={styles.secondtText}>{t('impulseWelcomeScreen.secondText')}</Text>
-        <Text>
-          <Text style={styles.thirdText}>{t('impulseWelcomeScreen.thirdText.first')}</Text>
-          <Text style={styles.thirdTextBold}>{t('impulseWelcomeScreen.thirdText.second')}</Text>
-          <Text style={styles.thirdText}>{t('impulseWelcomeScreen.thirdText.third')}</Text>
-        </Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button 
-          style={styles.button} 
-          buttonColor="#FDE047"
-          contentStyle={{ flexDirection: 'row-reverse' }}
-          icon="arrow-right"
-          labelStyle={{ color: 'black' }}
-          onPress={handleConfigure}
-        >
-          {t('impulseWelcomeScreen.configureButton')}
-        </Button>
-      </View>
-    </ScrollView>
+    <GestureHandlerRootView>
+      <BottomSheetModalProvider>
+        <ScreenContent />
+        <BottomSheetBlockAndLimit bottomSheetForm="new-limit" onBottomSheetClosed={closedBottomSheet} ref={bottomSheetRef} />
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   )
 }
 
@@ -106,7 +140,7 @@ const styles = StyleSheet.create({
   },
   secondtText: {
     fontFamily: 'Mulish',
-    fontWeight: '700',
+    fontWeight: '400',
     fontSize: RFValue(20, SCREEN_HEIGHT),
     lineHeight: RFValue(30, SCREEN_HEIGHT),
     textAlign: 'center',

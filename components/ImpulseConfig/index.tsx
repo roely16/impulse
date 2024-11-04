@@ -1,0 +1,1 @@
+export { ImpulseConfig } from './ImpulseConfig';

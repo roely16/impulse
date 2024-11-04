@@ -6,12 +6,13 @@ import { useTranslation } from "react-i18next";
 import { LimitType } from "../LimitCard";
 
 export interface ImpulseControlProps {
-  limits: LimitType[]
+  limits: LimitType[],
+  configNewImpulse: () => void
 };
 
 export const ImpulseControl = (props: ImpulseControlProps) => {
 
-  const { limits } = props;
+  const { limits, configNewImpulse } = props;
   const { t } = useTranslation();
 
   const Header = () => {
@@ -25,7 +26,7 @@ export const ImpulseControl = (props: ImpulseControlProps) => {
             {t('impulseControlScreen.message.third')}
           </Text>
         </View>
-        <HeaderLimits showBottomShet={() => null} numberOfLimits={0} />
+        <HeaderLimits showBottomShet={configNewImpulse} numberOfLimits={0} />
       </View>
     )
   };

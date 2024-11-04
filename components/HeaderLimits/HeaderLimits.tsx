@@ -20,10 +20,10 @@ export const HeaderLimits = (props: HeaderLimitsProps) => {
     showBottomShet();
 
     const timeSpent = getTimeOnScreen();
-    // TODO: Update Mixpanel event
+
     MixpanelService.trackEvent('add_limit_app_button_card', {
-      localization: 'Home',
-      type_button: 'add_block_period_button',
+      localization: 'impulse_page',
+      type_button: 'add_limit_app_button',
       time_spent_before_click: timeSpent,
       existing_block_periods: numberOfLimits,
       device_type: 'iOS',
