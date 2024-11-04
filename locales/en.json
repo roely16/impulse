@@ -149,5 +149,20 @@
       "third": "will activate each time you try to open an app you’ve set up, so you can decide whether to continue or not."
     },
     "configureButton": "Configure"
+  },
+  "usageReportScreen": {
+    "title": "Usage Reports",
+    "weeklyUsageTime": {
+      "title": "Weekly Usage Time",
+      "cardLabel": "Daily Average"
+    },
+    "dailyUsageTime": {
+      "title": "Daily Usage Time",
+      "cardLabel": "Daily Average"
+    },
+    "openingAttemps": {
+      "title": "Opening Attempts",
+      "cardLabel": "Daily Average"
+    }
   }
 }

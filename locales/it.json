@@ -149,5 +149,20 @@
       "third": "si attiverà ogni volta che proverai ad aprire un'app che hai configurato, così potrai decidere se vuoi continuare o meno."
     },
     "configureButton": "Configura"
+  },
+  "usageReportScreen": {
+    "title": "Report di utilizzo",
+    "weeklyUsageTime": {
+      "title": "Tempo di utilizzo settimanale",
+      "cardLabel": "Media giornaliera"
+    },
+    "dailyUsageTime": {
+      "title": "Tempo di utilizzo giornaliero",
+      "cardLabel": "Media giornaliera"
+    },
+    "openingAttemps": {
+      "title": "Tentativi di apertura",
+      "cardLabel": "Media giornaliera"
+    }
   }
 }

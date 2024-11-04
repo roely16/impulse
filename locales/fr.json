@@ -149,6 +149,21 @@
         "third": "s'activera chaque fois que tu essaieras d'ouvrir une application que tu as configurée, afin que tu puisses décider si tu souhaites continuer ou non."
       },
       "configureButton": "Configurer"
+    },
+    "usageReportScreen": {
+      "title": "Rapports d'utilisation",
+      "weeklyUsageTime": {
+        "title": "Temps d'utilisation hebdomadaire",
+        "cardLabel": "Moyenne quotidienne"
+      },
+      "dailyUsageTime": {
+        "title": "Temps d'utilisation quotidien",
+        "cardLabel": "Moyenne quotidienne"
+      },
+      "openingAttemps": {
+        "title": "Tentatives d'ouverture",
+        "cardLabel": "Moyenne quotidienne"
+      }
     }
   }
   

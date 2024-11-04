@@ -149,5 +149,20 @@
       "third": "se activará cada vez que intentés entrar en una app que hayas configurado para que decidas si quieres continuar o no."
     },
     "configureButton": "Configurar"
+  },
+  "usageReportScreen": {
+    "title": "Informes de uso",
+    "weeklyUsageTime": {
+      "title": "Tiempo de Uso Semanal",
+      "cardLabel": "Media diaria"
+    },
+    "dailyUsageTime": {
+      "title": "Tiempo de Uso diario",
+      "cardLabel": "Media diaria"
+    },
+    "openingAttemps": {
+      "title": "Intentos de apertura",
+      "cardLabel": "Media diaria"
+    }
   }
 }
