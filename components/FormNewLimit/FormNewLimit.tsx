@@ -7,6 +7,7 @@ import { MixpanelService } from "@/SDK/Mixpanel";
 import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 import { Dropdown } from 'react-native-element-dropdown';
 import { format, toZonedTime } from 'date-fns-tz';
+import { ImpulseConfig } from "../ImpulseConfig";
 import { styles } from "./styles";
 
 interface FormNewLimitProps {
@@ -18,6 +19,7 @@ interface FormNewLimitProps {
   isEmptyLimit?: boolean;
   updateEmptyLimit?: (isEmpty: boolean) => void;
   totalLimits?: number;
+  enableImpulseConfig?: boolean;
 }
 
 interface DayType {
@@ -46,7 +48,18 @@ const data = [
 
 export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((props, ref) => {
 
-  const { refreshLimits, changeForm, closeBottomSheet, isEdit, limitId, isEmptyLimit, updateEmptyLimit, totalLimits = 0 } = props;
+  const { 
+    refreshLimits, 
+    changeForm, 
+    closeBottomSheet, 
+    isEdit, 
+    limitId, 
+    isEmptyLimit, 
+    updateEmptyLimit, 
+    totalLimits = 0,
+    enableImpulseConfig = false
+  } = props;
+
   const [appsSelected, setAppsSelected] = useState(0);
   const [sitesSelected, setSitesSelected] = useState(0);
   const [limitTitle, setLimitTitle] = useState('');
@@ -473,6 +486,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       <TimeConfigurationForm />
       <OpenLimitPicker />
       <Frequency />
+      <ImpulseConfig />
       <View style={styles.buttonContainer}>
         <Button onPress={handleCancel} icon="close" labelStyle={styles.buttonLabel} contentStyle={{ flexDirection: 'row-reverse' }} style={[styles.button, { backgroundColor: '#C6D3DF' }]} mode="contained">
           {t('formNewLimit.cancelButton')}

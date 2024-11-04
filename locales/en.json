@@ -172,5 +172,20 @@
       "second": "impulse mode ",
       "third": "will be activated every time you try to enter an app that you have configured to decide whether you want to continue or not."
     }
+  },
+  "impulseConfigForm": {
+    "title": "Extra Configuration",
+    "impulseControlDuration": {
+      "title": "Impulse Control Duration",
+      "message": "The Continue button will be locked until the countdown ends.",
+      "buttonLabel": "Duration",
+      "buttonPlaceholder": "Select"
+    },
+    "usageWarning": {
+      "title": "Usage Warning",
+      "message": "We will notify you when you reach a certain usage time in an app, so you can decide whether to continue or take a break.",
+      "buttonLabel": "Alert",
+      "buttonPlaceholder": "Select"
+    }
   }
 }

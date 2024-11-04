@@ -172,6 +172,21 @@
       "second": "mode impulsions ",
       "third": "sera activé chaque fois que vous essayez d'entrer dans une application que vous avez configurée pour décider si vous souhaitez continuer ou non."
     }
+  },
+  "impulseConfigForm": {
+    "title": "Configuration Supplémentaire",
+    "impulseControlDuration": {
+      "title": "Durée du Contrôle de l'Impulsion",
+      "message": "Le bouton Continuer sera verrouillé jusqu'à la fin du compte à rebours.",
+      "buttonLabel": "Durée",
+      "buttonPlaceholder": "Sélectionner"
+    },
+    "usageWarning": {
+      "title": "Avertissement d'Utilisation",
+      "message": "Nous vous avertirons lorsque vous aurez atteint un certain temps d'utilisation dans une application, afin que vous puissiez décider de continuer ou de faire une pause.",
+      "buttonLabel": "Alerte",
+      "buttonPlaceholder": "Sélectionner"
+    }
   }
 }
   

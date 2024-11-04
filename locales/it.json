@@ -172,5 +172,20 @@
       "second": "modo impulsi ",
       "third": "verrà attivato ogni volta che proverai ad accedere a un'app che hai configurato per decidere se vuoi continuare o meno."
     }
+  },
+  "impulseConfigForm": {
+    "title": "Configurazione Extra",
+    "impulseControlDuration": {
+      "title": "Durata del Controllo dell'Impulso",
+      "message": "Il pulsante Continua sarà bloccato fino alla fine del conto alla rovescia.",
+      "buttonLabel": "Durata",
+      "buttonPlaceholder": "Seleziona"
+    },
+    "usageWarning": {
+      "title": "Avviso di Utilizzo",
+      "message": "Ti avviseremo quando avrai raggiunto un determinato tempo di utilizzo in un'app, così potrai decidere se continuare o fare una pausa.",
+      "buttonLabel": "Avviso",
+      "buttonPlaceholder": "Seleziona"
+    }
   }
 }

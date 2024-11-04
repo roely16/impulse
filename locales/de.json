@@ -172,5 +172,20 @@
       "second": "Impulsmodus ",
       "third": "wird aktiviert, jedes Mal, wenn du versuchst, eine App zu öffnen, die du so konfiguriert hast, dass du entscheiden kannst, ob du fortfahren möchtest oder nicht."
     }
+  },
+  "impulseConfigForm": {
+    "title": "Zusätzliche Konfiguration",
+    "impulseControlDuration": {
+      "title": "Impulskontroll-Dauer",
+      "message": "Der Weiter-Button bleibt gesperrt, bis der Countdown endet.",
+      "buttonLabel": "Dauer",
+      "buttonPlaceholder": "Auswählen"
+    },
+    "usageWarning": {
+      "title": "Nutzungswarnung",
+      "message": "Wir werden dich benachrichtigen, wenn du eine bestimmte Nutzungszeit in einer App erreicht hast, damit du entscheiden kannst, ob du fortfahren oder eine Pause einlegen möchtest.",
+      "buttonLabel": "Warnung",
+      "buttonPlaceholder": "Auswählen"
+    }
   }
 }

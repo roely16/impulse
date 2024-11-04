@@ -8,11 +8,11 @@ import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typesc
 import { FormNewLimitRef } from './FormNewLimit/FormNewLimit';
 
 interface BottomSheetNewBlockProps {
-  refreshBlocks: () => void;
-  refreshLimits: () => void;
-  onBottomSheetClosed: () => void;
+  refreshBlocks?: () => void;
+  refreshLimits?: () => void;
+  onBottomSheetClosed?: () => void;
   bottomSheetForm?: string;
-  setBottomSheetForm: (form: string) => void;
+  setBottomSheetForm?: (form: string) => void;
   isEdit?: boolean;
   blockId?: string | null;
   limitId?: string | null;
