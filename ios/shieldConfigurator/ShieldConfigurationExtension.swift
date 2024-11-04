@@ -35,7 +35,7 @@ extension UIColor {
 // Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     override func configuration(shielding application: Application) -> ShieldConfiguration {
-      
+            
       return ShieldConfiguration(
         backgroundBlurStyle: UIBlurEffect.Style.light,
         backgroundColor: UIColor(hex: "#FDE047"),  // Una instancia válida de UIColor
