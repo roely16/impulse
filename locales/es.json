@@ -164,5 +164,13 @@
       "title": "Intentos de apertura",
       "cardLabel": "Media diaria"
     }
+  },
+  "impulseControlScreen": {
+    "title": "Control de Impulso",
+    "message": {
+      "first": "El ",
+      "second": "modo impulsos ",
+      "third": "se activará cada vez que intentés entrar en una app que hayas configurado para que decidas si quieres continuar o no."
+    }
   }
 }

@@ -164,5 +164,13 @@
       "title": "Tentativas de Abertura",
       "cardLabel": "Média Diária"
     }
+  },
+  "impulseControlScreen": {
+    "title": "Controle de Impulsos",
+    "message": {
+      "first": "O ",
+      "second": "modo de impulsos ",
+      "third": "será ativado toda vez que você tentar entrar em um aplicativo que você configurou para decidir se deseja continuar ou não."
+    }
   }
 }
