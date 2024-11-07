@@ -3,16 +3,17 @@ import { Text } from "react-native-paper";
 import { HeaderLimits } from "../HeaderLimits";
 import { styles } from "./styles"
 import { useTranslation } from "react-i18next";
-import { LimitType } from "../LimitCard";
+import { LimitType, LimitCard } from "../LimitCard";
 
 export interface ImpulseControlProps {
   limits: LimitType[],
   configNewImpulse: () => void
+  openEditLimit: (key: string) => void
 };
 
 export const ImpulseControl = (props: ImpulseControlProps) => {
 
-  const { limits, configNewImpulse } = props;
+  const { limits, configNewImpulse, openEditLimit } = props;
   const { t } = useTranslation();
 
   const Header = () => {
@@ -33,7 +34,19 @@ export const ImpulseControl = (props: ImpulseControlProps) => {
 
   return (
     <View style={styles.container}>
-      <FlatList ListHeaderComponent={<Header />} renderItem={() => <></>} data={limits} keyExtractor={item => item.id} />
+      <FlatList
+        ListHeaderComponent={<Header />}
+        renderItem={({ item }) => (
+          <LimitCard
+            refreshLimits={() => null}
+            editLimit={key => openEditLimit(key)}
+            total_limits={limits.length}
+            {...item}
+          />
+        )}
+        data={limits}
+        keyExtractor={item => item.id}
+      />
     </View>
-  )
+  );
 }

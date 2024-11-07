@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ScrollView, ActivityIndicator, NativeModules } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useFocusEffect } from "expo-router";
 import { MixpanelService } from "@/SDK/Mixpanel";
@@ -17,10 +17,14 @@ import { BottomSheetBlockAndLimit } from '@/components/BottomSheet';
 
 export default function ImpulseScreen() {
 
+  const { ScreenTimeModule } = NativeModules;
+  
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [loading, setLoading] = useState(false);
   const [limits, setLimits] = useState<LimitType[]>([]);
   const [alreadyConfigured, setAlreadyConfigured] = useState(false);
+  const [limitId, setLimitId] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { t } = useTranslation();
 
   const handleConfigure = async () => {
@@ -37,6 +41,23 @@ export default function ImpulseScreen() {
     }, [])
   );
 
+  const getLimits = async () => {
+    try {
+      const limits = await ScreenTimeModule.getLimits(true);
+      console.log('Limits', limits);
+      setLimits(limits.limits);
+    } catch {
+      console.log('Error getting limits');
+    }
+  }
+
+  const openEditLimit = (limitId: string) => {
+    console.log('Edit limit', limitId);
+    setLimitId(limitId);
+    setIsEditing(true);
+    bottomSheetRef.current?.expand();
+  };
+
   useEffect(() => {
     setLoading(true);
     // Check if user has already configured impulse
@@ -44,6 +65,7 @@ export default function ImpulseScreen() {
       const seeImpulseConfigScreen = await AsyncStorage.getItem('seeImpulseConfigScreen');
       if (seeImpulseConfigScreen) {
         // Load limits 
+        await getLimits();
         setAlreadyConfigured(true);
       }
       setLoading(false);
@@ -66,7 +88,7 @@ export default function ImpulseScreen() {
     };
 
     if (!loading && alreadyConfigured) {
-      return <ImpulseControl configNewImpulse={handleNewImpulse} limits={limits} />
+      return <ImpulseControl openEditLimit={openEditLimit} configNewImpulse={handleNewImpulse} limits={limits} />
     }
 
     return (
@@ -100,17 +122,28 @@ export default function ImpulseScreen() {
   };
 
   const closedBottomSheet = () => {
-
+    setIsEditing(false);
+    setLimitId(null);
   };
   
   return (
     <GestureHandlerRootView>
       <BottomSheetModalProvider>
         <ScreenContent />
-        <BottomSheetBlockAndLimit bottomSheetForm="new-limit" onBottomSheetClosed={closedBottomSheet} ref={bottomSheetRef} />
+        <BottomSheetBlockAndLimit
+          enableImpulseConfig={true}
+          bottomSheetForm="new-limit"
+          isEmptyLimit={true}
+          onBottomSheetClosed={closedBottomSheet}
+          totalLimits={limits.length}
+          refreshLimits={getLimits}
+          limitId={limitId}
+          isEdit={isEditing}
+          ref={bottomSheetRef}
+        />
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

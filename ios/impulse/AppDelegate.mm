@@ -116,10 +116,14 @@ RCT_EXTERN_METHOD(createLimit:(NSString *)name
                   timeLimit:(NSString *)startTime
                   openLimit:(NSString *)endTime
                   weekdays:(NSArray<NSNumber *> *)weekdays
+                  enableImpulseMode:(BOOL)enableImpulseMode
+                  impulseTime:(nonnull NSNumber *)impulseTime
+                  usageWarning:(BOOL)usageWarning
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getLimits:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(getLimits:(BOOL)impulseMode
+                  resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(deleteLimit:(NSString *)limitId
@@ -137,6 +141,9 @@ RCT_EXTERN_METHOD(updateLimit:(NSString *)limitId
                   openLimit:(NSString *)openLimit
                   weekdays:(NSArray<NSNumber *> *)weekdays
                   changeApps:(BOOL)changeApps
+                  enableImpulseMode:(BOOL)enableImpulseMode
+                  impulseTime:(nonnull NSNumber *)impulseTime
+                  usageWarning:(BOOL)usageWarning
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

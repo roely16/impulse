@@ -31,11 +31,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     return try! ModelContainer(for: Block.self, Limit.self, Event.self, LimitHistory.self, configurations: configuration)
   }()
   
-  @MainActor
-  private var context: ModelContext {
-      return container.mainContext
-  }
-  
   @MainActor func getBlock(blockId: String){
     do {
       guard let uuid = UUID(uuidString: blockId) else {
@@ -172,8 +167,24 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(eventId)"))
         
         if let appToken = eventModel?.appToken {
-            store.shield.applications = Set([appToken])
-            await saveLimitHistory()
+          store.shield.applications = Set([appToken])
+          await saveLimitHistory()
+          let encoder = JSONEncoder()
+          let tokenData = try encoder.encode(appToken)
+          
+          let shieldConfigurationData = [
+            "limitName": eventModel?.limit?.name ?? "",
+            "enableImpulseMode": eventModel?.limit?.enableImpulseMode ?? false,
+            "impulseTime": eventModel?.limit?.impulseTime ?? 0,
+            "type": "limit",
+            "eventId": eventId
+          ]
+          
+          let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+          
+          if let tokenString = String(data: tokenData, encoding: .utf8) {
+            sharedDefaults?.set(data, forKey: tokenString)
+          }
         }
       } catch {
         sharedDefaults?.set("Error during eventDidReachThreshold: \(error.localizedDescription)", forKey: "lastActivityLog")

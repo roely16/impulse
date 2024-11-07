@@ -20,20 +20,28 @@
 		4009EC482CB7019D002A0FB4 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4009EBCA2CB65644002A0FB4 /* ManagedSettings.framework */; };
 		4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4009EC4A2CB7019D002A0FB4 /* ShieldActionExtension.swift */; };
 		4009EC502CB7019D002A0FB4 /* shieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4009EC472CB7019D002A0FB4 /* shieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		404164452CDC1DB700380F8F /* impulse-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 404164442CDC1DB700380F8F /* impulse-icon.png */; };
 		40511BE12CC5083400A1D6CA /* lock-shield-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 40511BE02CC5083400A1D6CA /* lock-shield-icon.png */; };
 		40511BE32CC8EBFA00A1D6CA /* Catamaran.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */; };
-		40511BE72CCB88AA00A1D6CA /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BE62CCB88AA00A1D6CA /* LimitModel.swift */; };
 		40511BEE2CCCBDD200A1D6CA /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */; };
-		40511BEF2CCCBDD200A1D6CA /* LimitModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BED2CCCBDD200A1D6CA /* LimitModule.swift */; };
 		40511BF12CCCE9DA00A1D6CA /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF02CCCE9DA00A1D6CA /* EventModel.swift */; };
-		40511BF32CCE172100A1D6CA /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF22CCE172100A1D6CA /* EventModel.swift */; };
 		4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */; };
 		4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */; };
 		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
-		4096DDB22CBA42140070F6D3 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDB12CBA42140070F6D3 /* BlockModel.swift */; };
 		40C91CE12CD3FFAA00021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE02CD3FFA900021668 /* LimitHistory.swift */; };
-		40C91CE32CD407C300021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE22CD407C300021668 /* LimitHistory.swift */; };
+		40C91CFF2CDACAF100021668 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
+		40C91D002CDACB1F00021668 /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */; };
+		40C91D012CDACB2000021668 /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */; };
+		40C91D022CDACB2000021668 /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */; };
+		40C91D032CDACB3D00021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE02CD3FFA900021668 /* LimitHistory.swift */; };
+		40C91D042CDACB3D00021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE02CD3FFA900021668 /* LimitHistory.swift */; };
+		40C91D052CDACB3E00021668 /* LimitHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE02CD3FFA900021668 /* LimitHistory.swift */; };
+		40C91D062CDACB5000021668 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF02CCCE9DA00A1D6CA /* EventModel.swift */; };
+		40C91D072CDACB5000021668 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF02CCCE9DA00A1D6CA /* EventModel.swift */; };
+		40C91D082CDACB5100021668 /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF02CCCE9DA00A1D6CA /* EventModel.swift */; };
+		40C91D092CDACB6100021668 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
+		40C91D0A2CDACB6200021668 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
 		40FC05062CB4966F00FC9C61 /* ScreenTimeModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-impulse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
@@ -79,6 +87,16 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		40C91CF52CDA724C00021668 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -105,22 +123,18 @@
 		4009EC4C2CB7019D002A0FB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4009EC4D2CB7019D002A0FB4 /* shieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = shieldAction.entitlements; sourceTree = "<group>"; };
 		4030B7652CACADFB0042EBF5 /* Impulse-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Impulse-Bridging-Header.h"; sourceTree = "<group>"; };
+		404164442CDC1DB700380F8F /* impulse-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "impulse-icon.png"; sourceTree = "<group>"; };
 		40511BE02CC5083400A1D6CA /* lock-shield-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "lock-shield-icon.png"; path = "impulse/Images.xcassets/lock-shield-icon.imageset/lock-shield-icon.png"; sourceTree = SOURCE_ROOT; };
 		40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Catamaran.ttf; sourceTree = "<group>"; };
-		40511BE62CCB88AA00A1D6CA /* LimitModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitModel.swift; sourceTree = "<group>"; };
 		40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitModel.swift; sourceTree = "<group>"; };
-		40511BED2CCCBDD200A1D6CA /* LimitModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitModule.swift; sourceTree = "<group>"; };
 		40511BF02CCCE9DA00A1D6CA /* EventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
-		40511BF22CCE172100A1D6CA /* EventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
 		4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = monitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
 		4096DDA12CB91D040070F6D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4096DDA22CB91D040070F6D3 /* monitorExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = monitorExtension.entitlements; sourceTree = "<group>"; };
 		4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
-		4096DDB12CBA42140070F6D3 /* BlockModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModel.swift; sourceTree = "<group>"; };
 		40C91CE02CD3FFA900021668 /* LimitHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitHistory.swift; sourceTree = "<group>"; };
-		40C91CE22CD407C300021668 /* LimitHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitHistory.swift; sourceTree = "<group>"; };
 		40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeModule.swift; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-impulse.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-impulse.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-impulse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-impulse.debug.xcconfig"; path = "Target Support Files/Pods-impulse/Pods-impulse.debug.xcconfig"; sourceTree = "<group>"; };
@@ -187,7 +201,6 @@
 				4009EBC32CB605E5002A0FB4 /* FamilyActivityPicker.swift */,
 				4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */,
 				40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */,
-				40511BED2CCCBDD200A1D6CA /* LimitModule.swift */,
 				40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */,
 				40511BF02CCCE9DA00A1D6CA /* EventModel.swift */,
 				40C91CE02CD3FFA900021668 /* LimitHistory.swift */,
@@ -210,6 +223,7 @@
 		4009EC162CB6E7D7002A0FB4 /* shieldConfigurator */ = {
 			isa = PBXGroup;
 			children = (
+				404164442CDC1DB700380F8F /* impulse-icon.png */,
 				40511BE02CC5083400A1D6CA /* lock-shield-icon.png */,
 				4009EC172CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift */,
 				4009EC192CB6E7D7002A0FB4 /* Info.plist */,
@@ -244,10 +258,6 @@
 				4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */,
 				4096DDA12CB91D040070F6D3 /* Info.plist */,
 				4096DDA22CB91D040070F6D3 /* monitorExtension.entitlements */,
-				4096DDB12CBA42140070F6D3 /* BlockModel.swift */,
-				40511BE62CCB88AA00A1D6CA /* LimitModel.swift */,
-				40511BF22CCE172100A1D6CA /* EventModel.swift */,
-				40C91CE22CD407C300021668 /* LimitHistory.swift */,
 			);
 			path = monitorExtension;
 			sourceTree = "<group>";
@@ -339,6 +349,7 @@
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				06726CE61F06CAB89618FBD9 /* [CP] Embed Pods Frameworks */,
 				4009EBD92CB65644002A0FB4 /* Embed Foundation Extensions */,
+				40C91CF52CDA724C00021668 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
@@ -464,6 +475,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				404164452CDC1DB700380F8F /* impulse-icon.png in Resources */,
 				40511BE12CC5083400A1D6CA /* lock-shield-icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -607,7 +619,6 @@
 				40FC05062CB4966F00FC9C61 /* ScreenTimeModule.swift in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				0B2E44F56B0D41F58B2A671D /* noop-file.swift in Sources */,
-				40511BEF2CCCBDD200A1D6CA /* LimitModule.swift in Sources */,
 				40C91CE12CD3FFAA00021668 /* LimitHistory.swift in Sources */,
 				40511BF12CCCE9DA00A1D6CA /* EventModel.swift in Sources */,
 				4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */,
@@ -619,6 +630,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4009EC182CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift in Sources */,
+				40C91CFF2CDACAF100021668 /* BlockModel.swift in Sources */,
+				40C91D002CDACB1F00021668 /* LimitModel.swift in Sources */,
+				40C91D062CDACB5000021668 /* EventModel.swift in Sources */,
+				40C91D032CDACB3D00021668 /* LimitHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,7 +641,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40C91D092CDACB6100021668 /* BlockModel.swift in Sources */,
+				40C91D042CDACB3D00021668 /* LimitHistory.swift in Sources */,
 				4009EC4B2CB7019D002A0FB4 /* ShieldActionExtension.swift in Sources */,
+				40C91D072CDACB5000021668 /* EventModel.swift in Sources */,
+				40C91D012CDACB2000021668 /* LimitModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -634,11 +653,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40511BE72CCB88AA00A1D6CA /* LimitModel.swift in Sources */,
 				4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */,
-				40511BF32CCE172100A1D6CA /* EventModel.swift in Sources */,
-				4096DDB22CBA42140070F6D3 /* BlockModel.swift in Sources */,
-				40C91CE32CD407C300021668 /* LimitHistory.swift in Sources */,
+				40C91D052CDACB3E00021668 /* LimitHistory.swift in Sources */,
+				40C91D022CDACB2000021668 /* LimitModel.swift in Sources */,
+				40C91D082CDACB5100021668 /* EventModel.swift in Sources */,
+				40C91D0A2CDACB6200021668 /* BlockModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

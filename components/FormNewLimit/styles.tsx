@@ -1,17 +1,20 @@
 import { StyleSheet } from "react-native";
+import { SCREEN_HEIGHT } from "@/constants/Device";
+import { RFValue } from "react-native-responsive-fontsize";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export const styles = StyleSheet.create({
   container: {
-    paddingBottom: 30
+    paddingBottom: hp('3%')
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    gap: 10
+    marginBottom: hp('3%'),
+    gap: hp('2%')
   },
   title: {
-    fontSize: 22,
+    fontSize: RFValue(22, SCREEN_HEIGHT),
     fontWeight: '700',
     borderBottomWidth: 1,
     fontFamily: 'Catamaran'
@@ -21,13 +24,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   button: {
-    paddingHorizontal: 18,
-    paddingVertical: 7,
+    paddingHorizontal: hp('2%'),
+    paddingVertical: hp('1%'),
     borderRadius: 6
   },
   formOption: {
     backgroundColor: '#FDE047',
-    padding: 18,
+    padding: hp('2%'),
     borderRadius: 15
   },
   formOptionContent: {
@@ -37,14 +40,15 @@ export const styles = StyleSheet.create({
   labelOptionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10
+    gap: hp('1%')
   },
   selectOptionContainer: {
     flexDirection: 'row',
     alignItems: 'center' 
   },
   timeFormContainer: {
-    marginVertical: 10,
+    marginBottom: hp('1%'),
+    marginTop: hp('2%'),
     flexDirection: 'column',
     gap: 5
   },
@@ -54,30 +58,32 @@ export const styles = StyleSheet.create({
     alignItems: 'center'
   },
   label: {
-    fontSize: 20,
+    fontSize: RFValue(20, SCREEN_HEIGHT),
     fontWeight: '700',
     fontFamily: 'Catamaran'
   },
   timeLabel: {
-    fontSize: 19,
+    fontSize: RFValue(19, SCREEN_HEIGHT),
     fontWeight: '700',
     fontFamily: 'Catamaran'
   },
   selectLabel: {
     color: 'rgba(0, 0, 0, 0.32)',
-    fontSize: 20,
+    fontSize: RFValue(20, SCREEN_HEIGHT),
     fontWeight: '500',
-    fontFamily: 'Catamaran'
+    fontFamily: 'Catamaran',
+    textAlign: 'right',
+    marginRight: 5
   },
   buttonLabel: {
     color: '#203B52',
-    fontSize: 16,
+    fontSize: RFValue(16, SCREEN_HEIGHT),
     fontWeight: '600' 
   },
   daysContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20
+    paddingVertical: hp('2%'),
   },
   dayButton: {
     backgroundColor: '#F2F2F5',
@@ -96,14 +102,14 @@ export const styles = StyleSheet.create({
   deleteButton: {
     fontFamily: 'Catamaran',
     color: '#FF3B3B',
-    fontSize: 18,
+    fontSize: RFValue(18, SCREEN_HEIGHT),
     textDecorationLine: 'underline',
     textAlign: 'center',
     marginTop: 20
   },
   dropdownStyle: {
     height: 34, 
-    width: 140,
+    width: wp('40%'),
     paddingHorizontal: 8
   }
 });

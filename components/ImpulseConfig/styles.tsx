@@ -6,6 +6,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 export const styles = StyleSheet.create({
   container: {
     marginBottom: hp('3%'),
+    marginTop: hp('2%'),
     gap: hp('1%')
   },
   title: {
@@ -53,4 +54,17 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'Catamaran'
   },
+  dropdownStyle: {
+    height: 34, 
+    width: wp('40%'),
+    paddingHorizontal: 8,
+  },
+  selectLabel: {
+    color: 'rgba(0, 0, 0, 0.32)',
+    fontSize: 20,
+    fontWeight: '500',
+    fontFamily: 'Catamaran',
+    textAlign: 'right',
+    marginRight: 5
+  }
 });

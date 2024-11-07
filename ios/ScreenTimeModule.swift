@@ -176,14 +176,23 @@ class ScreenTimeModule: NSObject {
   }
   
   @MainActor @objc
-  func createLimit(_ name: String, timeLimit: String, openLimit: String, weekdays: [Int], resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+  func createLimit(
+    _ name: String, 
+    timeLimit: String,
+    openLimit: String,
+    weekdays: [Int],
+    enableImpulseMode: Bool = false,
+    impulseTime: NSNumber = 0,
+    usageWarning: Bool = false,
+    resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) {
     
     let deviceActivityCenter = DeviceActivityCenter();
     
     do {
       let context = try getContext()
       
-      print("Context Limit: \(context)")
       // Create limit
       let limit = Limit(
         name: name,
@@ -192,7 +201,10 @@ class ScreenTimeModule: NSObject {
         timeLimit: timeLimit,
         openLimit: openLimit,
         enable: true,
-        weekdays: weekdays
+        weekdays: weekdays,
+        enableImpulseMode: enableImpulseMode,
+        impulseTime: Int(truncating: impulseTime),
+        usageWarning: usageWarning
       )
       context.insert(limit)
       try context.save()
@@ -238,8 +250,8 @@ class ScreenTimeModule: NSObject {
     }
   }
   
-  @MainActor @objc
-  func getLimits(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+  @MainActor
+  func findLimits() -> [Limit]{
     
     do {
       let context = try getContext()
@@ -247,7 +259,21 @@ class ScreenTimeModule: NSObject {
       let fetchDescriptor = FetchDescriptor<Limit>()
       let limits = try context.fetch(fetchDescriptor)
       
-      let limitArray = limits.map { limit -> [String: Any] in
+      return limits
+    
+    } catch {
+      print("Error trying to get limits")
+      return []
+    }
+  }
+  
+  @MainActor @objc
+  func getLimits(_ impulseMode: Bool = false, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+    do {
+      let limits = findLimits()
+      let onlyLimits = try limits.filter(#Predicate{ $0.enableImpulseMode == impulseMode })
+      
+      let limitArray = onlyLimits.map { limit -> [String: Any] in
         return [
             "id": limit.id.uuidString, // Asegúrate de que 'id' sea un UUID
             "title": limit.name, // Reemplaza con los campos de tu modelo
@@ -259,10 +285,14 @@ class ScreenTimeModule: NSObject {
         ]
       }
       resolve(["status": "success", "limits" : limitArray])
-
     } catch {
-      print("Error trying to get limits")
+      print("Error finding limits")
     }
+  }
+  
+  @MainActor @objc
+  func getLimitsWithImpulse(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+    
   }
   
   @MainActor
@@ -447,14 +477,29 @@ class ScreenTimeModule: NSObject {
       "timeLimit": limit?.timeLimit,
       "openTime": limit?.openLimit,
       "apps": limit?.appsTokens.count,
-      "weekdays": limit?.weekdays
+      "weekdays": limit?.weekdays,
+      "enableImpulseMode": limit?.enableImpulseMode,
+      "impulseTime": limit?.impulseTime,
+      "usageWarning": limit?.usageWarning
     ] as [String : Any]
     
     resolve(["status": "success", "limit" : limitData])
   }
   
   @MainActor @objc
-  func updateLimit(_ limitId: String, name: String, timeLimit: String, openLimit: String, weekdays: [Int], changeApps: Bool, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
+  func updateLimit(
+    _ limitId: String,
+    name: String,
+    timeLimit: String,
+    openLimit: String,
+    weekdays: [Int],
+    changeApps: Bool,
+    enableImpulseMode: Bool = false,
+    impulseTime: NSNumber = 0,
+    usageWarning: Bool = false,
+    resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ){
     do {
       guard let uuid = UUID(uuidString: limitId) else {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
@@ -473,6 +518,9 @@ class ScreenTimeModule: NSObject {
         limit?.familySelection = self.familySelection
       }
       limit?.weekdays = weekdays
+      limit?.enableImpulseMode = enableImpulseMode
+      limit?.impulseTime = Int(truncating: impulseTime)
+      limit?.usageWarning = usageWarning
       
       try limit?.modelContext?.save()
       
