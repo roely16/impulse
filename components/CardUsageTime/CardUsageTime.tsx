@@ -8,13 +8,12 @@ export interface CardUsageTimeProps {
   title?: string;
   averageTime?: string;
   percentageChange?: number;
-  chartData?: [];
 };
 
 export const CardUsageTime = (props: CardUsageTimeProps) => {
 
   const { sectionTitle, title, averageTime, percentageChange = 0 } = props;
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{sectionTitle}</Text>
@@ -34,9 +33,9 @@ export const CardUsageTime = (props: CardUsageTimeProps) => {
               </View>
             </View>
             <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Image style={{ width: '100%', height: 50 }} source={require('@/assets/images/demo-chart.png')} resizeMode="contain" />
-              </View>
+              <Image style={{ width: '100%', height: 50 }} source={require('@/assets/images/demo-chart.png')} resizeMode="contain" />
             </View>
+          </View>
         </Card.Content>
       </Card>
     </View>

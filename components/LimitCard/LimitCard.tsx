@@ -66,25 +66,39 @@ export const LimitCard = (props: LimitCardProps) => {
     });
   }
 
+  const openLimitText = () => {
+    if (!openLimit) {
+      return '';
+    }
+    return `• ${openLimit} ${t('cardLimit.maxOpenLabel')}`;
+  }
+
   return (
     <Card style={styles.card} mode="elevated" elevation={1}>
       <Card.Content style={styles.cardContent}>
         <View style={styles.rowContainer}>
           <Text style={styles.title}>{title}</Text>
           <TouchableOpacity onPress={handleEditBlock}>
-            <Text style={styles.subtitle}>
-              {t('cardBlock.editButton')}
-            </Text>
+            <Text style={styles.subtitle}>{t('cardBlock.editButton')}</Text>
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.subtitle}>{`${timeLimit}${t('cardLimit.timeLabel')} • ${openLimit} ${t('cardLimit.maxOpenLabel')}`}</Text>
+          <Text style={styles.subtitle}>{`${timeLimit}${t(
+            'cardLimit.timeLabel'
+          )} ${openLimitText()}`}</Text>
         </View>
         <View style={styles.rowContainer}>
-          <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps}</Text>
-          <Switch onValueChange={value => updateLimitStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
+          <Text style={styles.subtitle}>
+            {t('cardBlock.appsLabel')}: {apps}
+          </Text>
+          <Switch
+            onValueChange={value => updateLimitStatus(value)}
+            value={enable}
+            thumbColor={enable ? '#203B52' : '#f4f3f4'}
+            trackColor={{ false: '#767577', true: '#FDE047' }}
+          />
         </View>
       </Card.Content>
     </Card>
-  )
+  );
 };

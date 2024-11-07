@@ -6,6 +6,7 @@ import { FormNewBlock, FormNewBlockRef } from './FormNewBlock';
 import { FormNewLimit } from './FormNewLimit';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import { FormNewLimitRef } from './FormNewLimit/FormNewLimit';
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 interface BottomSheetNewBlockProps {
   refreshBlocks?: () => void;
@@ -22,11 +23,28 @@ interface BottomSheetNewBlockProps {
   updateEmptyLimit?: (isEmpty: boolean) => void;
   totalBlocks?: number;
   totalLimits?: number;
+  enableImpulseConfig?: boolean;
 }
 
 export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBlockProps>((_props, ref) => {
 
-  const { refreshBlocks, refreshLimits, onBottomSheetClosed, bottomSheetForm, setBottomSheetForm, isEdit, blockId, limitId, isEmptyBlock, isEmptyLimit, updateEmptyBlock, updateEmptyLimit, totalBlocks = 0, totalLimits = 0 } = _props
+  const {
+    refreshBlocks,
+    refreshLimits,
+    onBottomSheetClosed,
+    bottomSheetForm,
+    setBottomSheetForm,
+    isEdit,
+    blockId,
+    limitId,
+    isEmptyBlock,
+    isEmptyLimit,
+    updateEmptyBlock,
+    updateEmptyLimit,
+    totalBlocks = 0,
+    totalLimits = 0,
+    enableImpulseConfig = false
+  } = _props;
 
   const formNewBlockRef = useRef<FormNewBlockRef>(null);
   const formNewLimitRef = useRef<FormNewLimitRef>(null);
@@ -44,9 +62,34 @@ export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBl
 
   const renderBottomSheetContent = () => {
     if (bottomSheetForm === 'new-block') {
-      return <FormNewBlock ref={formNewBlockRef} totalBlocks={totalBlocks} updateEmptyBlock={updateEmptyBlock} isEmptyBlock={isEmptyBlock} blockId={blockId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshBlocks={refreshBlocks} changeForm={setBottomSheetForm} />;
+      return (
+        <FormNewBlock
+          ref={formNewBlockRef}
+          totalBlocks={totalBlocks}
+          updateEmptyBlock={updateEmptyBlock}
+          isEmptyBlock={isEmptyBlock}
+          blockId={blockId}
+          isEdit={isEdit}
+          closeBottomSheet={closeBottomSheet}
+          refreshBlocks={refreshBlocks}
+          changeForm={setBottomSheetForm}
+        />
+      );
     } else if (bottomSheetForm === 'new-limit') {
-      return <FormNewLimit ref={formNewLimitRef} totalLimits={totalLimits} updateEmptyLimit={updateEmptyLimit} isEmptyLimit={isEmptyLimit} limitId={limitId} isEdit={isEdit} closeBottomSheet={closeBottomSheet} refreshLimits={refreshLimits} changeForm={setBottomSheetForm} />;
+      return (
+        <FormNewLimit
+          enableImpulseConfig={enableImpulseConfig}
+          ref={formNewLimitRef}
+          totalLimits={totalLimits}
+          updateEmptyLimit={updateEmptyLimit}
+          isEmptyLimit={isEmptyLimit}
+          limitId={limitId}
+          isEdit={isEdit}
+          closeBottomSheet={closeBottomSheet}
+          refreshLimits={refreshLimits}
+          changeForm={setBottomSheetForm}
+        />
+      );
     }
 
     return <OptionsConfigNewBlock totalBlocks={totalBlocks} changeForm={setBottomSheetForm} />;
@@ -77,6 +120,7 @@ export const BottomSheetBlockAndLimit = forwardRef<BottomSheet, BottomSheetNewBl
       enablePanDownToClose={true}
       enableDynamicSizing={true}
       onChange={handleOnChange}
+      maxDynamicContentSize={hp('75%')}
     >
       <BottomSheetScrollView style={styles.contentContainer}>
         {renderBottomSheetContent()}
@@ -91,9 +135,11 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     backgroundColor: 'grey',
+    height: '80%',
   },
   contentContainer: {
     paddingHorizontal: 20,
-    marginTop: 10
+    marginTop: 10,
+    height: '80%',
   },
 });
