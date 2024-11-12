@@ -9,11 +9,12 @@ export interface ImpulseControlProps {
   limits: LimitType[],
   configNewImpulse: () => void
   openEditLimit: (key: string) => void
+  getLimits: () => void
 };
 
 export const ImpulseControl = (props: ImpulseControlProps) => {
 
-  const { limits, configNewImpulse, openEditLimit } = props;
+  const { limits, configNewImpulse, openEditLimit, getLimits } = props;
   const { t } = useTranslation();
 
   const Header = () => {
@@ -38,7 +39,7 @@ export const ImpulseControl = (props: ImpulseControlProps) => {
         ListHeaderComponent={<Header />}
         renderItem={({ item }) => (
           <LimitCard
-            refreshLimits={() => null}
+            refreshLimits={getLimits}
             editLimit={key => openEditLimit(key)}
             total_limits={limits.length}
             {...item}

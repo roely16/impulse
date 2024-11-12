@@ -21,6 +21,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   private var block: Block?
   private var limit: Limit?
   private var eventModel: Event?
+  private var logger: Logger = Logger()
   
   private lazy var container: ModelContainer = {
     let configuration = ModelConfiguration(
@@ -122,25 +123,45 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       return activityRawValue
   }
   
-  func extractEventId(from eventRawValue: String) -> String {
-      let eventIdentifier = "-event"
-
-      // Verifica si el string contiene el identificador
-      if let range = eventRawValue.range(of: eventIdentifier) {
-          // Si se encuentra, extrae la parte anterior
-          return String(eventRawValue[..<range.lowerBound])
-      }
-      
-      // Si no se encuentra, devolver el string original
-      return eventRawValue
+  func extractEventId(from eventRawValue: String) -> (value: String, identifier: String?) {
+    let eventIdentifier = "-event"
+    let impulseWarningIdentifier = "-usage-warning"
+    
+    // Verifica si el string contiene el identificador
+    if let range = eventRawValue.range(of: eventIdentifier) {
+      // Si se encuentra, extrae la parte anterior
+      return (String(eventRawValue[..<range.lowerBound]), "event")
+    } else if let impulseWarningRange = eventRawValue.range(of: impulseWarningIdentifier) {
+      return (String(eventRawValue[..<impulseWarningRange.lowerBound]), "usage-warning")
+    }
+    
+    // Si no se encuentra, devolver el string original
+    return (eventRawValue, nil)
   }
   
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
     Task {
+      
       let activityId = extractId(from: activity.rawValue)
       await getBlock(blockId: activityId)
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
+      
+      let shieldConfigurationData = [
+        "type": "block",
+        "blockName": block?.name
+      ]
+      
+      let encoder = JSONEncoder()
+      
+      // Save share defaults for each app
+      try block?.appsTokens.forEach{ appToken in
+        let tokenData = try encoder.encode(appToken)
+        let tokenString = String(data: tokenData, encoding: .utf8)
+        let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+        sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block")
+      }
+      
       store.shield.applications = block?.appsTokens
       sharedDefaults?.set("Activity started: \(activityId) \(activity.rawValue)", forKey: "lastActivityLog")
     }
@@ -161,30 +182,64 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     Task {
       do {
         
-        let eventId = extractEventId(from: event.rawValue)
+        // Validate if threshold is for a impulse warning or a full time time
+        logger.info("Event did reach threshold with eventId \(event.rawValue, privacy: .public)")
+        
+        let result = self.extractEventId(from: event.rawValue)
+        let eventId = result.value
+        let identifier = result.identifier
+        
+        logger.info("Event did reach threshold identifier \(identifier ?? "", privacy: .public)")
+        
+        // Check identifier
         try await getEvent(eventId: eventId)
         
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(eventId)"))
         
         if let appToken = eventModel?.appToken {
-          store.shield.applications = Set([appToken])
-          await saveLimitHistory()
+          
           let encoder = JSONEncoder()
           let tokenData = try encoder.encode(appToken)
           
-          let shieldConfigurationData = [
-            "limitName": eventModel?.limit?.name ?? "",
-            "enableImpulseMode": eventModel?.limit?.enableImpulseMode ?? false,
-            "impulseTime": eventModel?.limit?.impulseTime ?? 0,
-            "type": "limit",
-            "eventId": eventId
-          ]
-          
-          let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
-          
-          if let tokenString = String(data: tokenData, encoding: .utf8) {
-            sharedDefaults?.set(data, forKey: tokenString)
+          // Validate type of shield
+          if identifier == "usage-warning" {
+            logger.info("Configure share data for usage warning")
+            // Save shield data
+            
+            let shieldConfigurationData = [
+              "limitName": self.eventModel?.limit?.name ?? "",
+              "enableImpulseMode": self.eventModel?.limit?.enableImpulseMode ?? false,
+              "impulseTime": self.eventModel?.limit?.impulseTime ?? 0,
+              "type": "limit",
+              "eventId": eventId,
+              "blockIdentifier": identifier ?? "",
+              "openLimit": self.eventModel?.limit?.openLimit ?? "",
+              "shieldButtonEnable": true,
+              "usageWarning": self.eventModel?.limit?.usageWarning ?? 0
+            ]
+            
+            let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+            
+            if let tokenString = String(data: tokenData, encoding: .utf8) {
+              sharedDefaults?.set(data, forKey: tokenString)
+            }
+          } else {
+            logger.info("Configure share data for block")
+            let shieldConfigurationData = [
+              "type": "block",
+              "blockName": self.eventModel?.limit?.name ?? ""
+            ]
+            let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+            if let tokenString = String(data: tokenData, encoding: .utf8) {
+              logger.info("block key for shared data \(tokenString, privacy: .public)-block")
+              sharedDefaults?.set(shareData, forKey: "\(tokenString)-block")
+            }
           }
+          
+          // Shield app and save history
+          store.shield.applications = Set([appToken])
+          await saveLimitHistory()
+          
         }
       } catch {
         sharedDefaults?.set("Error during eventDidReachThreshold: \(error.localizedDescription)", forKey: "lastActivityLog")

@@ -183,7 +183,7 @@ class ScreenTimeModule: NSObject {
     weekdays: [Int],
     enableImpulseMode: Bool = false,
     impulseTime: NSNumber = 0,
-    usageWarning: Bool = false,
+    usageWarning: NSNumber = 0,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) {
@@ -204,7 +204,7 @@ class ScreenTimeModule: NSObject {
         weekdays: weekdays,
         enableImpulseMode: enableImpulseMode,
         impulseTime: Int(truncating: impulseTime),
-        usageWarning: usageWarning
+        usageWarning: Int(truncating: usageWarning)
       )
       context.insert(limit)
       try context.save()
@@ -225,28 +225,79 @@ class ScreenTimeModule: NSObject {
         // Create array with events for monitoring
         let threshold = DateComponents(minute: minutesToBlock)
         let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
+        
+        // This limite represent the principal limit time
         let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
         
         eventsArray[eventName] = activityEvent
+        
+        // Validate if usage warning is enable
+        let intUsageWarning = Int(truncating: usageWarning)
+        if intUsageWarning > 0 {
+          // Create event
+          let usageWarningEvent = Event(
+            limit: limit,
+            appToken: appSelected
+          )
+          context.insert(usageWarningEvent)
+          try context.save()
+          
+          let threshold = DateComponents(minute: intUsageWarning)
+          let eventName = DeviceActivityEvent.Name(rawValue: "\(usageWarningEvent.id.uuidString)-usage-warning")
+          let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
+          eventsArray[eventName] = activityEvent
+        }
 
       }
       
       print("Events arrays: \(eventsArray)")
       
-      // Start monitoring
-      try deviceActivityCenter.startMonitoring(
-        DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit"),
-        during: DeviceActivitySchedule(
-          intervalStart: DateComponents(hour: 0, minute: 0),
-          intervalEnd: DateComponents(hour: 23, minute: 59),
-          repeats: true
-        ),
-        events: eventsArray
-      )
+      /*
+       If weekdays is upper 0 then
+        create monitoring with format limitId-limit-day-weekday
+       else
+        create monitoring with format limitId-limit
+      */
+      
+      // Validate if frecuency exist
+      if weekdays.count > 0 {
+        logger.info("Create frecuency")
+        for weekday in weekdays {
+          logger.info("Create monitoring with weekday: \(weekday)")
+          
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit-day-\(weekday)"),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
+              intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
+              repeats: true
+            ),
+            events: eventsArray
+          )
+        }
+      } else {
+        // Start monitoring
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit"),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59),
+            repeats: false
+          ),
+          events: eventsArray
+        )
+      }
       
       resolve(["status": "success", "appsWithLimit": self.appsSelected.count])
     } catch {
       print("Error trying to create limit")
+    }
+  }
+  
+  @MainActor
+  func createUsageWarning(usageWarning: Int = 0){
+    do {
+      
     }
   }
   
@@ -307,7 +358,17 @@ class ScreenTimeModule: NSObject {
       
       // Stop monitoring
       let deviceActivityCenter = DeviceActivityCenter();
-      deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(String(describing: limitId.uuidString))-limit")])
+
+      // Validate if weekdays is upper 0
+      if limit?.weekdays.count ?? 0 > 0 {
+        // Remove for each day
+        limit?.weekdays.forEach { weekday in
+          let deviceActivityCenter = DeviceActivityCenter();
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(limitId.uuidString)-limit-day-\(weekday)")])
+        }
+      } else {
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(String(describing: limitId.uuidString))-limit")])
+      }
       
       // Update limit status
       if updateStore {
@@ -358,16 +419,35 @@ class ScreenTimeModule: NSObject {
       
       print("current activities \(activities)")
       
-      try deviceActivityCenter.startMonitoring(
-        DeviceActivityName(rawValue: "\(limitId.uuidString)-limit"),
-        during: DeviceActivitySchedule(
-          intervalStart: DateComponents(hour: 0, minute: 0),
-          intervalEnd: DateComponents(hour: 23, minute: 59),
-          repeats: true
-        ),
-        events: eventsArray
-      )
+      let weekdays: [Int] = limit?.weekdays ?? []
       
+      // Validate if weekdays is upper 0
+      if weekdays.count > 0 {
+        logger.info("Enable frecuency")
+        try weekdays.forEach { weekday in
+          logger.info("Create monitoring with weekday: \(weekday)")
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: "\(limit?.id.uuidString)-limit-day-\(weekday)"),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
+              intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
+              repeats: true
+            ),
+            events: eventsArray
+          )
+        }
+      } else {
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: "\(limitId.uuidString)-limit"),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59),
+            repeats: false
+          ),
+          events: eventsArray
+        )
+      }
+
       // Update limit status
       if updateStore {
         limit?.enable = true
@@ -431,8 +511,17 @@ class ScreenTimeModule: NSObject {
       }
       
       // Stop monitoring
-       let deviceActivityCenter = DeviceActivityCenter();
-       deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit")])
+      let deviceActivityCenter = DeviceActivityCenter();
+
+      // Validate if weekdays is upper 0
+      if (limit?.weekdays.count)! > 0 {
+        // Remove for each day
+        limit?.weekdays.forEach { weekday in
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit-day-\(weekday)")])
+        }
+      } else {
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit")])
+      }
             
       // Delete limit and events
       try context.delete(model: Limit.self, where: #Predicate { $0.id == uuid })
@@ -496,7 +585,7 @@ class ScreenTimeModule: NSObject {
     changeApps: Bool,
     enableImpulseMode: Bool = false,
     impulseTime: NSNumber = 0,
-    usageWarning: Bool = false,
+    usageWarning: NSNumber = 0,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ){
@@ -520,7 +609,7 @@ class ScreenTimeModule: NSObject {
       limit?.weekdays = weekdays
       limit?.enableImpulseMode = enableImpulseMode
       limit?.impulseTime = Int(truncating: impulseTime)
-      limit?.usageWarning = usageWarning
+      limit?.usageWarning = Int(truncating: usageWarning)
       
       try limit?.modelContext?.save()
       

@@ -22,6 +22,7 @@ export default function HomeScreen() {
 
   const handleScreenTimeAccess = async () => {
     try {
+      setIsLoading(true);
       const defaultBlockName = t('testBlockName');
       const response = await ScreenTimeModule.requestAuthorization(defaultBlockName);
       const timeSpent = getTimeOnScreen();
@@ -36,6 +37,7 @@ export default function HomeScreen() {
         });
         router.replace('/(tabs)')
         await saveScreenTimeAccess();
+        setIsLoading(false);
         return;
       }
 
@@ -48,6 +50,7 @@ export default function HomeScreen() {
       });
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   }
   
@@ -59,12 +62,8 @@ export default function HomeScreen() {
     }
   }
 
-  if (isLoading) {
-    return <></>
-  }
-
   return (
-    <OnboardingContainer onPress={handleScreenTimeAccess} buttonLabel={t('screenTimeAccess.startButton')}>
+    <OnboardingContainer isLoading={isLoading} onPress={handleScreenTimeAccess} buttonLabel={t('screenTimeAccess.startButton')}>
       <Text style={styles.title}>
         {t('screenTimeAccess.title')}
       </Text>
@@ -81,7 +80,7 @@ export default function HomeScreen() {
         </View>
       </View>
       <View style={{ alignItems: 'center' }}>
-        <PermissionImage />
+        <PermissionImage updateIsLoading={setIsLoading} />
       </View>
     </OnboardingContainer>
   );

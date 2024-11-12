@@ -73,7 +73,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const [openLimit, setOpenLimit] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [usageWarning, setUsageWarning] = useState(false);
+  const [usageWarning, setUsageWarning] = useState<string>('');
   const [impulseDuration, setImpulseDuration] = useState('5');
 
   const { t } = useTranslation();
@@ -302,6 +302,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       };
       
       const impulseTime = enableImpulseConfig ? parseInt(impulseDuration) : 0;
+      const warningTime = usageWarning ? parseInt(usageWarning) : 0;
+
       const response = await ScreenTimeModule.createLimit(
         data.name,
         data.timeLimit,
@@ -309,7 +311,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         data.weekDays,
         data.enableImpulseMode,
         impulseTime,
-        data.usageWarning
+        warningTime
       );
       if (response.status === 'success') {
         refreshLimits();
@@ -370,6 +372,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     .filter(day => day.selected)
     .map(day => day.value)
     .sort((a, b) => a - b);
+
   const formFilled = !emptySelected && limitTimeRef && daysSelected.length > 0;
 
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
@@ -441,7 +444,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     // Valide if impulse mode is enable
     if (limit.enableImpulseMode) {
       setImpulseDuration(limit.impulseTime.toString());
-      setUsageWarning(limit.usageWarning);
+      setUsageWarning(limit.usageWarning.toString());
     }
   };
 
@@ -452,6 +455,9 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     setAppsSelected(0);
     setSitesSelected(0);
     setDays(initialDays);
+    setOpenLimit('');
+    setImpulseDuration('5');
+    setUsageWarning('');
   };
 
   const handleIconPress = () => {
@@ -563,7 +569,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         </Button>
         <Button
           loading={isSaving}
-          disabled={!formFilled && isSaving}
+          disabled={!formFilled || isSaving}
           onPress={handleSaveButton}
           icon="check"
           labelStyle={styles.buttonLabel}

@@ -88,7 +88,7 @@ export default function ImpulseScreen() {
     };
 
     if (!loading && alreadyConfigured) {
-      return <ImpulseControl openEditLimit={openEditLimit} configNewImpulse={handleNewImpulse} limits={limits} />
+      return <ImpulseControl getLimits={getLimits} openEditLimit={openEditLimit} configNewImpulse={handleNewImpulse} limits={limits} />
     }
 
     return (

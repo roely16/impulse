@@ -9,6 +9,8 @@ import ManagedSettings
 import Foundation
 import OSLog
 import ManagedSettings
+import FamilyControls
+import DeviceActivity
 
 
 // Override the functions below to customize the shield actions used in various situations.
@@ -22,23 +24,48 @@ class ShieldActionExtension: ShieldActionDelegate {
         // Handle the action as needed.
         switch action {
         case .primaryButtonPressed:
-          completionHandler(.close)
-        case .secondaryButtonPressed:
           do {
-            completionHandler(.defer)
-            self.logger.info("Secondary action click")
-            let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
+            // Convert token to String
             let encoder = JSONEncoder()
             let tokenData = try encoder.encode(application)
             let tokenString = String(data: tokenData, encoding: .utf8)
-            self.logger.info("Token string \(tokenString ?? "null")")
             
+            logger.info("Token string \(tokenString ?? "", privacy: .public)")
+            
+            let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
+            
+            // Check if is block
+            // Validate if shareDefaultData is for block
+            if let data = sharedDefaults?.data(forKey:  "\(tokenString ?? "")-block") {
+              // If block data exists
+              if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                let type = shieldConfigurationData["type"] as? String ?? ""
+                
+                if type == "block" {
+                  completionHandler(.close)
+                  return
+                }
+              }
+            }
+                        
             // Find event with app token
             if let data = sharedDefaults?.data(forKey: tokenString ?? "") {
-              if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-               
+              if var shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                
+                // Update shield with disable style button
+                shieldConfigurationData["shieldButtonEnable"] = false
+                let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+                if let tokenString = String(data: tokenData, encoding: .utf8) {
+                  sharedDefaults?.set(data, forKey: tokenString)
+                }
+                
+                completionHandler(.defer)
+
                 let eventId = shieldConfigurationData["eventId"] as? String ?? ""
                 let impulseTime = shieldConfigurationData["impulseTime"] as? Int ?? 0
+                let usageWarning = shieldConfigurationData["usageWarning"] as? Int ?? 0
+                
+                // let isImpulseWarning = blockIdentifier == "usage-warning"
                 
                 self.logger.info("Event id \(eventId, privacy: .public)")
                 self.logger.info("impulse time \(impulseTime, privacy: .public)")
@@ -49,7 +76,30 @@ class ShieldActionExtension: ShieldActionDelegate {
                   DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(impulseTime)) {
                     store.shield.applications = nil
                     self.logger.info("Aplicaciones desbloqueadas después de \(impulseTime) segundos")
+                    sharedDefaults?.removeObject(forKey: tokenString ?? "")
                   }
+                  
+                  // Create again the usage warning
+                  var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
+                  
+                  let threshold = DateComponents(minute: usageWarning)
+                  let eventName = DeviceActivityEvent.Name(rawValue: "\(eventId)-usage-warning")
+                  let activityEvent = DeviceActivityEvent(applications: [application], threshold: threshold)
+                  
+                  eventsArray[eventName] = activityEvent
+                  
+                  let deviceActivityCenter = DeviceActivityCenter();
+                  
+                  try deviceActivityCenter.startMonitoring(
+                    DeviceActivityName(rawValue: "\(eventId)-limit"),
+                    during: DeviceActivitySchedule(
+                      intervalStart: DateComponents(hour: 0, minute: 0),
+                      intervalEnd: DateComponents(hour: 23, minute: 59),
+                      repeats: false
+                    ),
+                    events: eventsArray
+                  )
+                  
                 }else {
                   store.shield.applications = nil
                   self.logger.info("Without impulse time")
@@ -59,6 +109,8 @@ class ShieldActionExtension: ShieldActionDelegate {
           } catch {
             self.logger.error("Error in secondary action \(error.localizedDescription)")
           }
+        case .secondaryButtonPressed:
+          completionHandler(.close)
         @unknown default:
             fatalError()
         }
