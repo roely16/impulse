@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Dropdown } from 'react-native-element-dropdown';
 import { styles } from "./styles";
 import { useState } from "react";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import {Picker} from '@react-native-picker/picker';
+import SelectDropdown from 'react-native-select-dropdown'
 
 interface ImpulseConfigProps {
   impulseDuration: string;
@@ -16,13 +18,13 @@ interface ImpulseConfigProps {
 export const ImpulseConfig = (props: ImpulseConfigProps) => {
 
   const { impulseDuration, onChangeDuration, usageWarning, onChangeUsageWarning } = props;
+  const [selectedLanguage, setSelectedLanguage] = useState();
 
   const { t } = useTranslation();
 
   const InputDuration = () => {
     
     const data = [
-      { label: '0', value: '0' },
       { label: '5', value: '5' },
       { label: '10', value: '10' },
       { label: '15', value: '15' },
@@ -54,19 +56,31 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
               </Text>
             </View>
             <View style={styles.selectOptionContainer}>
-              <Dropdown 
-                renderRightIcon={() => <Icon source="chevron-right" 
-                size={25} />} 
-                placeholder={t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')} 
-                data={updatedData} 
-                labelField="label" 
-                valueField="value" 
-                onChange={handleSetDuration}
-                style={styles.dropdownStyle}
-                placeholderStyle={styles.selectLabel}
-                selectedTextStyle={styles.selectLabel}
-                maxHeight={hp('30%')}
-                value={impulseDuration}
+              <SelectDropdown
+                data={updatedData}
+                renderButton={(selectedItem) => {
+                  return (
+                    <View style={[styles.selectOptionContainer, { width: wp('35%'), justifyContent: 'flex-end' }]}>
+                      <Text style={styles.selectLabel}>
+                        {selectedItem ? selectedItem.label : t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')}
+                      </Text>
+                      <Icon source="chevron-right" size={25} />
+                    </View>
+                  )
+                }}
+                renderItem={(item, _, isSelected) => {
+                  return (
+                    <View style={[styles.dropdownItemStyle, isSelected && { backgroundColor: '#D2D9DF' }]}>
+                      { isSelected ? <Icon source="check" size={20} /> : <View style={{ paddingLeft: wp('5%') }}></View> }
+                      <Text style={styles.dropDownText}>{item.label}</Text>
+                    </View>
+                  )
+                }}
+                onSelect={(selectedItem, index) => {
+                  onChangeDuration(selectedItem.value);
+                }}
+                dropdownStyle={styles.dropdownMenuStyle}
+                defaultValue={{ value: impulseDuration, label: `${impulseDuration} seg` }}
               />
             </View>
           </View>
@@ -113,19 +127,31 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
               <Text style={styles.label}>{t('impulseConfigForm.usageWarning.buttonLabel')}</Text>
             </View>
             <View style={styles.selectOptionContainer}>
-              <Dropdown 
-                renderRightIcon={() => <Icon source="chevron-right" 
-                size={25} />} 
-                placeholder={t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')} 
-                data={updatedData} 
-                labelField="label" 
-                valueField="value" 
-                onChange={handleSetUsageWarning}
-                style={styles.dropdownStyle}
-                placeholderStyle={styles.selectLabel}
-                selectedTextStyle={styles.selectLabel}
-                maxHeight={hp('30%')}
-                value={usageWarning}
+              <SelectDropdown
+                data={updatedData}
+                renderButton={(selectedItem) => {
+                  return (
+                    <View style={[styles.selectOptionContainer, { width: wp('35%'), justifyContent: 'flex-end' }]}>
+                      <Text style={styles.selectLabel}>
+                        {selectedItem ? selectedItem.label : t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')}
+                      </Text>
+                      <Icon source="chevron-right" size={25} />
+                    </View>
+                  )
+                }}
+                renderItem={(item, _, isSelected) => {
+                  return (
+                    <View style={[styles.dropdownItemStyle, isSelected && { backgroundColor: '#D2D9DF' }]}>
+                      { isSelected ? <Icon source="check" size={20} /> : <View style={{ paddingLeft: wp('5%') }}></View> }
+                      <Text style={styles.dropDownText}>{item.label}</Text>
+                    </View>
+                  )
+                }}
+                onSelect={(selectedItem) => {
+                  onChangeUsageWarning(selectedItem.value);
+                }}
+                dropdownStyle={styles.dropdownMenuStyle}
+                defaultValue={{ value: usageWarning, label: `${usageWarning} min` }}
               />
             </View>
           </View>

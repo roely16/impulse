@@ -8,8 +8,9 @@ import SwiftData
 
 @objc(ScreenTimeModule)
 class ScreenTimeModule: NSObject {
-    
+  
   var appsSelected: Set<ApplicationToken> = []
+  var websDomainSelected: Set<WebDomainToken> = []
   var familySelection: FamilyActivitySelection = FamilyActivitySelection()
   
   private var container: ModelContainer?
@@ -53,6 +54,7 @@ class ScreenTimeModule: NSObject {
           let block = Block(
             name: "Bloqueo de prueba",
             appsTokens: [],
+            webDomainTokens: [],
             familySelection: self.familySelection,
             startTime: "09:00",
             endTime: "16:00",
@@ -87,9 +89,10 @@ class ScreenTimeModule: NSObject {
           saveButtonText: saveButtonText,
           titleText: titleText
         ) { updatedSelection in
-          let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
+          self.websDomainSelected = updatedSelection.webDomainTokens
           self.familySelection = updatedSelection
+                    
           print("Apps selected: \(updatedSelection.applications.count)")
           print("Categories selected: \(updatedSelection.categories.count)")
           print("Sites selected: \(updatedSelection.webDomains.count)")
@@ -121,6 +124,7 @@ class ScreenTimeModule: NSObject {
       let block = Block(
         name: name,
         appsTokens: self.appsSelected,
+        webDomainTokens: self.websDomainSelected,
         familySelection: self.familySelection,
         startTime: startTime,
         endTime: endTime,
@@ -664,6 +668,7 @@ class ScreenTimeModule: NSObject {
             "title": block.name, // Reemplaza con los campos de tu modelo
             "subtitle": "\(block.startTime)-\(block.endTime)",
             "apps": block.appsTokens.count,
+            "sites": block.webDomainTokens.count,
             "weekdays": block.weekdays,
             "enable": block.enable
         ]
@@ -695,16 +700,17 @@ class ScreenTimeModule: NSObject {
       let deviceActivityCenter = DeviceActivityCenter();
       
       if block?.weekdays.count == 0 {
-        try deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
       } else {
         let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
-        try deviceActivityCenter.stopMonitoring(deviceActivityNames)
+        deviceActivityCenter.stopMonitoring(deviceActivityNames)
         print(deviceActivityNames)
       }
       
       // Remove restriction
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
       store.shield.applications = nil
+      store.shield.webDomains = nil
       
       // Delete from store
       try context.delete(model: Block.self, where: #Predicate { $0.id == uuid })

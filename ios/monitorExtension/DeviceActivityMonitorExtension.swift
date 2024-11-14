@@ -162,7 +162,24 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block")
       }
       
+      let webBlockedKey = "webs-blocked"
+      var currentBlockedWebs = sharedDefaults?.array(forKey: webBlockedKey) as? [String] ?? [String]()
+
+      // Save share defaults for each web domain
+      try block?.webDomainTokens.forEach{ webToken in
+        let encoder = JSONEncoder()
+        let tokenData = try encoder.encode(webToken.self)
+        let tokenString = String(data: tokenData, encoding: .utf8)
+        let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+        logger.info("Set data for web site block \(tokenString ?? "", privacy: .public)")
+        sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block-web")
+        
+        currentBlockedWebs.append(tokenString ?? "")
+        sharedDefaults?.set(currentBlockedWebs, forKey: webBlockedKey)
+      }
+      
       store.shield.applications = block?.appsTokens
+      store.shield.webDomains = block?.webDomainTokens
       sharedDefaults?.set("Activity started: \(activityId) \(activity.rawValue)", forKey: "lastActivityLog")
     }
   }
