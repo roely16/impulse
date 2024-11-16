@@ -5,7 +5,6 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { useTranslation } from 'react-i18next';
 import { MixpanelService } from '@/SDK/Mixpanel';
 import useTimeOnScreen from '@/hooks/useTimeOnScreen';
-import { Dropdown } from 'react-native-element-dropdown';
 import { format, toZonedTime } from 'date-fns-tz';
 import { ImpulseConfig } from '../ImpulseConfig';
 import { styles } from './styles';
@@ -216,18 +215,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         <View style={styles.formOption}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>{t('formNewLimit.maxOpenDaily')}</Text>
-            {/* <Dropdown
-              placeholderStyle={styles.selectLabel}
-              selectedTextStyle={[styles.selectLabel, { textAlign: 'right', marginRight: 10 }]}
-              renderRightIcon={() => <Icon source="chevron-right" size={25} />}
-              value={openLimit}
-              style={styles.dropdownStyle}
-              placeholder={t('formNewLimit.selectTimeLabel')}
-              data={data}
-              labelField="label"
-              valueField="value"
-              onChange={handleOnChange}
-            /> */}
             <SelectDropdown
                 data={data}
                 renderButton={(selectedItem) => {
@@ -319,16 +306,22 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         .filter(day => day.selected)
         .map(day => day.value)
         .sort((a, b) => a - b);
+
+      const impulseTime = parseInt(impulseDurationRef.current);
+      console.log('warning time', usageWarningRef.current);
+      const warningTime = parseInt(usageWarningRef.current);
+
       const data = {
         name: newLimitTitle,
         timeLimit: limitTimeString.current,
         appsSelected,
         weekDays,
-        enableImpulseMode: enableImpulseConfig
+        enableImpulseMode: enableImpulseConfig,
+        impulseTime,
+        warningTime
       };
-      
-      const impulseTime = parseInt(impulseDurationRef.current);
-      const warningTime = parseInt(usageWarningRef.current);
+
+      console.log('Create limit data', data);
 
       const response = await ScreenTimeModule.createLimit(
         data.name,
@@ -346,7 +339,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       }
       setIsSaving(false);
     } catch (error) {
-      console.log('error', error);
       setIsSaving(false);
     }
   };
@@ -481,7 +473,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     setDays(initialDays);
     openLimitRef.current = '';
     impulseDurationRef.current = '5';
-    usageWarningRef.current = '';
+    usageWarningRef.current = '5';
   };
 
   const handleIconPress = () => {

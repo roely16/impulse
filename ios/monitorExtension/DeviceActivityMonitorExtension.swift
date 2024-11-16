@@ -124,13 +124,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   }
   
   func extractEventId(from eventRawValue: String) -> (value: String, identifier: String?) {
-    let eventIdentifier = "-event"
+    let eventIdentifier = "-limit-time"
     let impulseWarningIdentifier = "-usage-warning"
     
     // Verifica si el string contiene el identificador
     if let range = eventRawValue.range(of: eventIdentifier) {
       // Si se encuentra, extrae la parte anterior
-      return (String(eventRawValue[..<range.lowerBound]), "event")
+      return (String(eventRawValue[..<range.lowerBound]), "limit-time")
     } else if let impulseWarningRange = eventRawValue.range(of: impulseWarningIdentifier) {
       return (String(eventRawValue[..<impulseWarningRange.lowerBound]), "usage-warning")
     }
@@ -142,6 +142,23 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
     Task {
+      logger.info("Impulse: interval did start for activity \(activity.rawValue, privacy: .public)")
+      
+      // Validate if activity is for limit
+      if activity.rawValue.lowercased().contains("limit") {
+        logger.info("Impulse: interval did start, find limit info")
+        let limitId = extractLimitId(from: activity.rawValue)
+        logger.info("Impulse: limit id \(limitId, privacy: .public)")
+        do {
+          try await getLimit(limitId: limitId)
+          let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "limit-start-block"))
+          store.shield.applications = limit?.appsTokens
+        } catch {
+          logger.error("Impulse: error trying to find limit")
+        }
+        
+        return;
+      }
       
       let activityId = extractId(from: activity.rawValue)
       await getBlock(blockId: activityId)
@@ -198,16 +215,12 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
     Task {
       do {
-        
-        // Validate if threshold is for a impulse warning or a full time time
-        logger.info("Event did reach threshold with eventId \(event.rawValue, privacy: .public)")
+        logger.info("Impulse: event did reach threshold with event id \(event.rawValue, privacy: .public)")
         
         let result = self.extractEventId(from: event.rawValue)
         let eventId = result.value
         let identifier = result.identifier
-        
-        logger.info("Event did reach threshold identifier \(identifier ?? "", privacy: .public)")
-        
+                
         // Check identifier
         try await getEvent(eventId: eventId)
         
@@ -220,36 +233,61 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           
           // Validate type of shield
           if identifier == "usage-warning" {
-            logger.info("Configure share data for usage warning")
-            // Save shield data
+            logger.info("Impulse: Configure share data for usage warning")
             
+            let newOpenLimit = Int((self.eventModel?.limit!.openLimit)!)! - 1
+            
+            if self.eventModel?.opens ?? 0 == newOpenLimit{
+              logger.info("Impulse: block app because opens is equal to open limit")
+              let shieldConfigurationData = [
+                "blockName": self.eventModel?.limit?.name ?? ""
+              ]
+              let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+              if let tokenString = String(data: tokenData, encoding: .utf8) {
+                let sharedDefaultKey = "\(tokenString)-block"
+                logger.info("Impulse: block key for shared data \(sharedDefaultKey, privacy: .public)-block")
+                sharedDefaults?.set(shareData, forKey: sharedDefaultKey)
+                sharedDefaults?.removeObject(forKey: "\(tokenString)-limit")
+              }
+              store.shield.applications = Set([appToken])
+              await saveLimitHistory()
+              return
+            }
+            
+            // Save shield data
             let shieldConfigurationData = [
               "limitName": self.eventModel?.limit?.name ?? "",
-              "enableImpulseMode": self.eventModel?.limit?.enableImpulseMode ?? false,
               "impulseTime": self.eventModel?.limit?.impulseTime ?? 0,
-              "type": "limit",
-              "eventId": eventId,
-              "blockIdentifier": identifier ?? "",
               "openLimit": self.eventModel?.limit?.openLimit ?? "",
+              "usageWarning": self.eventModel?.limit?.usageWarning ?? 0,
+              "eventId": eventId,
               "shieldButtonEnable": true,
-              "usageWarning": self.eventModel?.limit?.usageWarning ?? 0
+              "opens": self.eventModel?.opens ?? 0
             ]
             
             let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
             
             if let tokenString = String(data: tokenData, encoding: .utf8) {
-              sharedDefaults?.set(data, forKey: tokenString)
+              let sharedDefaultKey = "\(tokenString)-limit"
+              sharedDefaults?.set(data, forKey: sharedDefaultKey)
+              sharedDefaults?.removeObject(forKey: "\(tokenString)-block")
             }
+            
+            // Add one to event counter
+            eventModel?.opens += 1
+            try eventModel?.modelContext?.save()
+            
           } else {
-            logger.info("Configure share data for block")
+            logger.info("Impulse: Configure share data for limit block")
             let shieldConfigurationData = [
-              "type": "block",
               "blockName": self.eventModel?.limit?.name ?? ""
             ]
             let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
             if let tokenString = String(data: tokenData, encoding: .utf8) {
-              logger.info("block key for shared data \(tokenString, privacy: .public)-block")
-              sharedDefaults?.set(shareData, forKey: "\(tokenString)-block")
+              let sharedDefaultKey = "\(tokenString)-block"
+              logger.info("Impulse: block key for shared data \(sharedDefaultKey, privacy: .public)-block")
+              sharedDefaults?.set(shareData, forKey: sharedDefaultKey)
+              sharedDefaults?.removeObject(forKey: "\(tokenString)-limit")
             }
           }
           

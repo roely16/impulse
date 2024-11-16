@@ -1,11 +1,8 @@
-import { Switch, TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-import { Dropdown } from 'react-native-element-dropdown';
 import { styles } from "./styles";
-import { useState } from "react";
-import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
-import {Picker} from '@react-native-picker/picker';
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import SelectDropdown from 'react-native-select-dropdown'
 
 interface ImpulseConfigProps {
@@ -18,7 +15,6 @@ interface ImpulseConfigProps {
 export const ImpulseConfig = (props: ImpulseConfigProps) => {
 
   const { impulseDuration, onChangeDuration, usageWarning, onChangeUsageWarning } = props;
-  const [selectedLanguage, setSelectedLanguage] = useState();
 
   const { t } = useTranslation();
 
@@ -39,10 +35,6 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
       ...item,
       label: `${item.label} seg`
     }));
-
-    const handleSetDuration = (item: {value: string}) => {
-      onChangeDuration(item.value);
-    };
 
     return (
       <View style={{ gap: 5 }}>
@@ -91,10 +83,6 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
 
   const InputUsageWarning = () => {
     
-    const handleSetUsageWarning = (item: {value: string}) => {
-      onChangeUsageWarning(item.value);
-    };
-
     const data = [
       { label: '1', value: '1' },
       { label: '2', value: '2' },

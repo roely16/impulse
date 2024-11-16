@@ -42,9 +42,16 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
   private var eventModel: Event?
   private var logger = Logger()
   
-  func limitShield(applicationName: String = "", eventName: String = "", enableImpulseMode: Bool = false, impulseTime: Int = 0, openLimite: String = "", shieldButtonEnable: Bool = true) -> ShieldConfiguration{
+  func limitShield(
+    applicationName: String = "",
+    eventName: String = "",
+    impulseTime: Int = 0,
+    openLimite: String = "",
+    opens: Int = 0,
+    shieldButtonEnable: Bool = true
+  ) -> ShieldConfiguration{
     
-    let secondaryButtonText = enableImpulseMode ? "Continuar en \(impulseTime) seg" : "Continuar"
+    let secondaryButtonText = "Continuar en \(impulseTime) seg"
     
     let disableButtonColorBack = UIColor(hex: "#e6e6e6")
     let disableButtonColotText = UIColor.black
@@ -52,18 +59,22 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     let enableButtonColorBack = UIColor.black
     let enableButtonColorText = UIColor(hex: "#FDE047")
     
-    
     let buttonBackground = shieldButtonEnable ? enableButtonColorBack : disableButtonColorBack
     let buttonTextColor = shieldButtonEnable ? enableButtonColorText : disableButtonColotText
+    
+    let numberOfOpenLimite = Int(openLimite)
+  
+    let openLimiteText = numberOfOpenLimite ?? 0 > 0 ? "\(opens)/\(numberOfOpenLimite ?? 0)" : "\(opens)"
+    let subtitle = "Tienes configurado bloquear \(applicationName) durante \(eventName) \n\n\n Intentos de apertura: \(openLimiteText)"
     
     return ShieldConfiguration(
       backgroundBlurStyle: UIBlurEffect.Style.light,
       backgroundColor: UIColor(hex: "#FDE047"),
       icon: UIImage(named: "impulse-icon"),
       title: ShieldConfiguration.Label(text: "\n\n¿Quieres\ncontinuar?", color: UIColor.black),
-      subtitle: ShieldConfiguration.Label(text: "Tienes configurado bloquear \(applicationName) durante \(eventName)", color: UIColor.black),
-      primaryButtonLabel: ShieldConfiguration.Label(text: secondaryButtonText, color: buttonTextColor),
-      primaryButtonBackgroundColor: buttonBackground,
+      subtitle: ShieldConfiguration.Label(text: subtitle, color: UIColor.black),
+      primaryButtonLabel: ShieldConfiguration.Label(text: secondaryButtonText, color: enableButtonColorText),
+      primaryButtonBackgroundColor: enableButtonColorBack,
       secondaryButtonLabel: ShieldConfiguration.Label(text: "Cerrar App", color: UIColor.black)
     )
     
@@ -84,6 +95,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
   override func configuration(shielding application: Application) -> ShieldConfiguration {
     
     do {
+      logger.info("Impulse: start shield configuration")
       let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
       
       // Conver token to String
@@ -91,50 +103,49 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
       let tokenData = try encoder.encode(application.token)
       let tokenString = String(data: tokenData, encoding: .utf8)
       
-      logger.info("Token string \(tokenString ?? "", privacy: .public)")
+      logger.info("Impulse: application token string \(tokenString ?? "", privacy: .public)")
       
       // Validate if shareDefaultData is for block
       if let data = sharedDefaults?.data(forKey:  "\(tokenString ?? "")-block") {
         // If block data exists
         if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-          let type = shieldConfigurationData["type"] as? String ?? ""
           let blockName = shieldConfigurationData["blockName"] as? String ?? ""
           
-          if type == "block" {
-            logger.info("Shield for block  \(type, privacy: .public)")
-            return blockShield(applicationName: application.localizedDisplayName ?? "", eventName: blockName)
-          }
-          
+          logger.info("Impulse: shield for block  \(blockName, privacy: .public)")
+          return blockShield(applicationName: application.localizedDisplayName ?? "", eventName: blockName)
         }
       }
             
-      if let data = sharedDefaults?.data(forKey: tokenString ?? "") {
+      if let data = sharedDefaults?.data(forKey: "\(tokenString ?? "")-limit") {
+        logger.info("Impulse: find data on share default for limit")
         if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
           
-          logger.info("Shield for impulse mode")
+          logger.info("Impulse: configure shield for limit with data")
 
           let limitName = shieldConfigurationData["limitName"] as? String ?? ""
-          let enableImpulseMode = shieldConfigurationData["enableImpulseMode"] as? Bool ?? false
           let impulseTime = shieldConfigurationData["impulseTime"] as? Int ?? 0
-          let type = shieldConfigurationData["type"] as? String ?? "block"
-          let blockIdentifier = shieldConfigurationData["blockIdentifier"] as? String ?? "block"
           let openLimit = shieldConfigurationData["openLimit"] as? String ?? ""
           let shieldButtonEnable = shieldConfigurationData["shieldButtonEnable"] as? Bool ?? true
+          let opens = shieldConfigurationData["opens"] as? Int ?? 0
           
-          let isUsageWarning = blockIdentifier == "usage-warning"
+          logger.info("Impulse: configure shield with primary button \(shieldButtonEnable)")
           
-          if type == "limit" && isUsageWarning {
-            // Show limit shield
-            return limitShield(applicationName: application.localizedDisplayName ?? "", eventName: limitName, enableImpulseMode: enableImpulseMode, impulseTime: impulseTime, openLimite: openLimit, shieldButtonEnable: shieldButtonEnable)
-          }
-          
+          // Show limit shield
+          return limitShield(
+            applicationName: application.localizedDisplayName ?? "",
+            eventName: limitName,
+            impulseTime: impulseTime,
+            openLimite: openLimit,
+            opens: opens,
+            shieldButtonEnable: shieldButtonEnable
+          )
         }
       }
     } catch {
-      logger.error("Error making shield \(error.localizedDescription)")
+      logger.error("Impulse: error configuring shield \(error.localizedDescription)")
     }
     
-    logger.info("Default shield")
+    logger.info("Impulse: render default shield")
     // Default shield
     return ShieldConfiguration()
   }
@@ -205,7 +216,13 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             
             if type == "limit" && isUsageWarning {
               // Show limit shield
-              return limitShield(applicationName: webDomain.domain ?? "", eventName: limitName, enableImpulseMode: enableImpulseMode, impulseTime: impulseTime, openLimite: openLimit, shieldButtonEnable: shieldButtonEnable)
+              return limitShield(
+                applicationName: webDomain.domain ?? "",
+                eventName: limitName,
+                impulseTime: impulseTime,
+                openLimite: openLimit,
+                shieldButtonEnable: shieldButtonEnable
+              )
             }
             
           }

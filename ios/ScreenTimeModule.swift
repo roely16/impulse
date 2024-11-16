@@ -9,12 +9,20 @@ import SwiftData
 @objc(ScreenTimeModule)
 class ScreenTimeModule: NSObject {
   
+  let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
+
   var appsSelected: Set<ApplicationToken> = []
   var websDomainSelected: Set<WebDomainToken> = []
   var familySelection: FamilyActivitySelection = FamilyActivitySelection()
   
   private var container: ModelContainer?
   private var logger = Logger()
+  private var encoder = JSONEncoder()
+  
+  enum TokenType {
+      case application(ApplicationToken)
+      case webDomain(WebDomainToken)
+  }
   
   override init() {
     super.init()
@@ -43,7 +51,24 @@ class ScreenTimeModule: NSObject {
       let errorMessage = "Failed to request authorization: \(error.localizedDescription)"
       reject(finalErrorCode, errorMessage, error)
   }
-
+    
+  func createTokenString(token: TokenType) -> String{
+    do {
+      let tokenData: Data
+      switch token {
+      case .application(let appToken):
+          tokenData = try encoder.encode(appToken)
+      case .webDomain(let webToken):
+          tokenData = try encoder.encode(webToken)
+      }
+      let tokenString = String(data: tokenData, encoding: .utf8)
+      return tokenString ?? ""
+    } catch {
+      logger.error("Impulse: Error trying to enconde app or web token")
+    }
+    return ""
+  }
+  
   @MainActor @objc
   func requestAuthorization(_ testBlockName: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     if #available(iOS 16.0, *) {
@@ -195,9 +220,10 @@ class ScreenTimeModule: NSObject {
     let deviceActivityCenter = DeviceActivityCenter();
     
     do {
+      logger.info("Impulse: start create limit")
       let context = try getContext()
       
-      // Create limit
+      // Save limit on store
       let limit = Limit(
         name: name,
         appsTokens: self.appsSelected,
@@ -213,6 +239,7 @@ class ScreenTimeModule: NSObject {
       context.insert(limit)
       try context.save()
       
+      // Create event for each app or web
       var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
       
       let minutesToBlock = getLimitTime(time: timeLimit);
@@ -221,37 +248,45 @@ class ScreenTimeModule: NSObject {
       try self.appsSelected.forEach{appSelected in
         let event = Event(
           limit: limit,
-          appToken: appSelected
+          appToken: appSelected,
+          opens: 0
         )
         context.insert(event)
         try context.save()
 
+        let eventRawName = "\(event.id.uuidString)-limit-time"
+        
+        logger.info("Impulse: create event \(eventRawName)")
+        
         // Create array with events for monitoring
         let threshold = DateComponents(minute: minutesToBlock)
-        let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
+        let eventName = DeviceActivityEvent.Name(rawValue: eventRawName)
         
         // This limite represent the principal limit time
         let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
         
         eventsArray[eventName] = activityEvent
         
-        // Validate if usage warning is enable
-        let intUsageWarning = Int(truncating: usageWarning)
-        if intUsageWarning > 0 {
-          // Create event
-          let usageWarningEvent = Event(
-            limit: limit,
-            appToken: appSelected
-          )
-          context.insert(usageWarningEvent)
-          try context.save()
-          
-          let threshold = DateComponents(minute: intUsageWarning)
-          let eventName = DeviceActivityEvent.Name(rawValue: "\(usageWarningEvent.id.uuidString)-usage-warning")
-          let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
-          eventsArray[eventName] = activityEvent
-        }
-
+        // Create share data for each app
+        let tokenString = createTokenString(token: .application(appSelected))
+        let sharedDefaultKey = "\(tokenString)-limit"
+        
+        logger.info("Impulse: create shared default with key \(sharedDefaultKey)")
+        
+        let shieldConfigurationData = [
+          "limitName": limit.name,
+          "impulseTime": limit.impulseTime,
+          "openLimit": limit.openLimit,
+          "usageWarning": limit.usageWarning,
+          "shieldButtonEnable": true,
+          "eventId": event.id.uuidString,
+          "startBlocking": true,
+          "opens": event.opens
+        ]
+        
+        let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+        sharedDefaults?.set(data, forKey: sharedDefaultKey)
+        
       }
       
       print("Events arrays: \(eventsArray)")
@@ -645,7 +680,6 @@ class ScreenTimeModule: NSObject {
   
   @objc
   func readLastLog(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-    let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
 
     if let lastActivityLog = sharedDefaults?.string(forKey: "lastActivityLog") {
         print("Última actividad registrada: \(lastActivityLog)")
