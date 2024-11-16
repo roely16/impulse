@@ -22,7 +22,7 @@ struct ActivityPickerView: View {
       VStack {
         FamilyActivityPicker(selection: $selection)
 
-        Text("Apps: \(selection.applications.count)")
+        Text("Apps: \(selection.applications.count) Webs: \(selection.webDomains.count)")
               .padding()
               .font(.headline)
 

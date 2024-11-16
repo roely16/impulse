@@ -111,5 +111,40 @@ export const styles = StyleSheet.create({
     height: 34, 
     width: wp('40%'),
     paddingHorizontal: 8
+  },
+  dropDownText: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: '500',
+    fontFamily: 'Catamaran',
+    textAlign: 'right',
+    marginRight: 5,
+    marginLeft: 5
+  },
+  dropdownButtonStyle: {
+    width: 200,
+    height: 50,
+    backgroundColor: '#E9ECEF',
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+  dropdownMenuStyle: {
+    backgroundColor: '#E9ECEF',
+    borderRadius: 8,
+    marginBottom: 100
+  },
+  dropdownItemStyle: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderColor: '#E9ECEF',
+    paddingVertical: 5
   }
 });

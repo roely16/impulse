@@ -23,7 +23,7 @@ final class Limit {
   var weekdays: [Int] = []
   var enableImpulseMode: Bool = false
   var impulseTime: Int = 0
-  var usageWarning: Bool = false
+  var usageWarning: Int = 0
   
   @Relationship(deleteRule: .cascade, inverse: \Event.limit)
   var events = [Event]()
@@ -38,7 +38,7 @@ final class Limit {
     weekdays: [Int] = [],
     enableImpulseMode: Bool = false,
     impulseTime: Int = 0,
-    usageWarning: Bool = false
+    usageWarning: Int = 0
   ) {
     self.id = UUID()
     self.name = name

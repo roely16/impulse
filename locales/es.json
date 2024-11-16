@@ -79,7 +79,7 @@
     "selectTime": "Tiempo límite por día",
     "selectTimeTitle": "Tiempo Límite",
     "selectTimeLabel": "Seleccionar",
-    "maxOpenDailyTitle": "Límite aperturas diarías",
+    "maxOpenDailyTitle": "Límite aperturas diarias",
     "maxOpenDaily": "Límite Aperturas",
     "maxOpenDailyLabel": "Seleccionar",
     "frequency": "Frecuencia",
@@ -104,7 +104,8 @@
   },
   "cardBlock": {
     "editButton": "Editar",
-    "appsLabel": "Apps"
+    "appsLabel": "Apps",
+    "sitesLabel": "Sitios"
   },
   "cardLimit": {
     "editButton": "Editar",

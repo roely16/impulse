@@ -14,13 +14,15 @@ final class Event {
   var id: UUID = UUID()
   var limit: Limit?
   var appToken: ApplicationToken
+  var opens: Int = 0
   
   @Relationship(deleteRule: .cascade, inverse: \LimitHistory.event)
   var history = [LimitHistory]()
   
-  init(limit: Limit, appToken: ApplicationToken){
+  init(limit: Limit, appToken: ApplicationToken, opens: Int = 0){
     self.id = UUID()
     self.appToken = appToken
     self.limit = limit
+    self.opens = opens
   }
 }

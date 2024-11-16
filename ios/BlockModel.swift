@@ -16,6 +16,7 @@ final class Block {
   var id: UUID = UUID()      // SwiftData gestionará este ID como clave primaria
   var name: String
   var appsTokens: Set<ApplicationToken> = []
+  var webDomainTokens: Set<WebDomainToken> = []
   var familySelection: FamilyActivitySelection?
   var startTime: String
   var endTime: String
@@ -25,6 +26,7 @@ final class Block {
   init(
     name: String = "",
     appsTokens: Set<ApplicationToken> = [],
+    webDomainTokens: Set<WebDomainToken> = [],
     familySelection: FamilyActivitySelection = FamilyActivitySelection(includeEntireCategory: true),
     startTime: String = "",
     endTime: String = "",
@@ -34,6 +36,8 @@ final class Block {
     self.id = UUID()
     self.name = name
     self.appsTokens = appsTokens
+    self.webDomainTokens = webDomainTokens
+//    self.webDomains = webDomains
     self.familySelection = familySelection
     self.startTime = startTime
     self.endTime = endTime

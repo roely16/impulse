@@ -8,12 +8,21 @@ import SwiftData
 
 @objc(ScreenTimeModule)
 class ScreenTimeModule: NSObject {
-    
+  
+  let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
+
   var appsSelected: Set<ApplicationToken> = []
+  var websDomainSelected: Set<WebDomainToken> = []
   var familySelection: FamilyActivitySelection = FamilyActivitySelection()
   
   private var container: ModelContainer?
   private var logger = Logger()
+  private var encoder = JSONEncoder()
+  
+  enum TokenType {
+      case application(ApplicationToken)
+      case webDomain(WebDomainToken)
+  }
   
   override init() {
     super.init()
@@ -42,7 +51,24 @@ class ScreenTimeModule: NSObject {
       let errorMessage = "Failed to request authorization: \(error.localizedDescription)"
       reject(finalErrorCode, errorMessage, error)
   }
-
+    
+  func createTokenString(token: TokenType) -> String{
+    do {
+      let tokenData: Data
+      switch token {
+      case .application(let appToken):
+          tokenData = try encoder.encode(appToken)
+      case .webDomain(let webToken):
+          tokenData = try encoder.encode(webToken)
+      }
+      let tokenString = String(data: tokenData, encoding: .utf8)
+      return tokenString ?? ""
+    } catch {
+      logger.error("Impulse: Error trying to enconde app or web token")
+    }
+    return ""
+  }
+  
   @MainActor @objc
   func requestAuthorization(_ testBlockName: String = "", resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
     if #available(iOS 16.0, *) {
@@ -53,6 +79,7 @@ class ScreenTimeModule: NSObject {
           let block = Block(
             name: "Bloqueo de prueba",
             appsTokens: [],
+            webDomainTokens: [],
             familySelection: self.familySelection,
             startTime: "09:00",
             endTime: "16:00",
@@ -87,9 +114,10 @@ class ScreenTimeModule: NSObject {
           saveButtonText: saveButtonText,
           titleText: titleText
         ) { updatedSelection in
-          let applications = updatedSelection.applications
           self.appsSelected = updatedSelection.applicationTokens
+          self.websDomainSelected = updatedSelection.webDomainTokens
           self.familySelection = updatedSelection
+                    
           print("Apps selected: \(updatedSelection.applications.count)")
           print("Categories selected: \(updatedSelection.categories.count)")
           print("Sites selected: \(updatedSelection.webDomains.count)")
@@ -121,6 +149,7 @@ class ScreenTimeModule: NSObject {
       let block = Block(
         name: name,
         appsTokens: self.appsSelected,
+        webDomainTokens: self.websDomainSelected,
         familySelection: self.familySelection,
         startTime: startTime,
         endTime: endTime,
@@ -183,7 +212,7 @@ class ScreenTimeModule: NSObject {
     weekdays: [Int],
     enableImpulseMode: Bool = false,
     impulseTime: NSNumber = 0,
-    usageWarning: Bool = false,
+    usageWarning: NSNumber = 0,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) {
@@ -191,9 +220,10 @@ class ScreenTimeModule: NSObject {
     let deviceActivityCenter = DeviceActivityCenter();
     
     do {
+      logger.info("Impulse: start create limit")
       let context = try getContext()
       
-      // Create limit
+      // Save limit on store
       let limit = Limit(
         name: name,
         appsTokens: self.appsSelected,
@@ -204,11 +234,12 @@ class ScreenTimeModule: NSObject {
         weekdays: weekdays,
         enableImpulseMode: enableImpulseMode,
         impulseTime: Int(truncating: impulseTime),
-        usageWarning: usageWarning
+        usageWarning: Int(truncating: usageWarning)
       )
       context.insert(limit)
       try context.save()
       
+      // Create event for each app or web
       var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
       
       let minutesToBlock = getLimitTime(time: timeLimit);
@@ -217,36 +248,95 @@ class ScreenTimeModule: NSObject {
       try self.appsSelected.forEach{appSelected in
         let event = Event(
           limit: limit,
-          appToken: appSelected
+          appToken: appSelected,
+          opens: 0
         )
         context.insert(event)
         try context.save()
 
+        let eventRawName = "\(event.id.uuidString)-limit-time"
+        
+        logger.info("Impulse: create event \(eventRawName)")
+        
         // Create array with events for monitoring
         let threshold = DateComponents(minute: minutesToBlock)
-        let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
+        let eventName = DeviceActivityEvent.Name(rawValue: eventRawName)
+        
+        // This limite represent the principal limit time
         let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
         
         eventsArray[eventName] = activityEvent
-
+        
+        // Create share data for each app
+        let tokenString = createTokenString(token: .application(appSelected))
+        let sharedDefaultKey = "\(tokenString)-limit"
+        
+        logger.info("Impulse: create shared default with key \(sharedDefaultKey)")
+        
+        let shieldConfigurationData = [
+          "limitName": limit.name,
+          "impulseTime": limit.impulseTime,
+          "openLimit": limit.openLimit,
+          "usageWarning": limit.usageWarning,
+          "shieldButtonEnable": true,
+          "eventId": event.id.uuidString,
+          "startBlocking": true,
+          "opens": event.opens
+        ]
+        
+        let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+        sharedDefaults?.set(data, forKey: sharedDefaultKey)
+        
       }
       
       print("Events arrays: \(eventsArray)")
       
-      // Start monitoring
-      try deviceActivityCenter.startMonitoring(
-        DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit"),
-        during: DeviceActivitySchedule(
-          intervalStart: DateComponents(hour: 0, minute: 0),
-          intervalEnd: DateComponents(hour: 23, minute: 59),
-          repeats: true
-        ),
-        events: eventsArray
-      )
+      /*
+       If weekdays is upper 0 then
+        create monitoring with format limitId-limit-day-weekday
+       else
+        create monitoring with format limitId-limit
+      */
+      
+      // Validate if frecuency exist
+      if weekdays.count > 0 {
+        logger.info("Create frecuency")
+        for weekday in weekdays {
+          logger.info("Create monitoring with weekday: \(weekday)")
+          
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit-day-\(weekday)"),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
+              intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
+              repeats: true
+            ),
+            events: eventsArray
+          )
+        }
+      } else {
+        // Start monitoring
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit"),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59),
+            repeats: false
+          ),
+          events: eventsArray
+        )
+      }
       
       resolve(["status": "success", "appsWithLimit": self.appsSelected.count])
     } catch {
       print("Error trying to create limit")
+    }
+  }
+  
+  @MainActor
+  func createUsageWarning(usageWarning: Int = 0){
+    do {
+      
     }
   }
   
@@ -307,7 +397,17 @@ class ScreenTimeModule: NSObject {
       
       // Stop monitoring
       let deviceActivityCenter = DeviceActivityCenter();
-      deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(String(describing: limitId.uuidString))-limit")])
+
+      // Validate if weekdays is upper 0
+      if limit?.weekdays.count ?? 0 > 0 {
+        // Remove for each day
+        limit?.weekdays.forEach { weekday in
+          let deviceActivityCenter = DeviceActivityCenter();
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(limitId.uuidString)-limit-day-\(weekday)")])
+        }
+      } else {
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(String(describing: limitId.uuidString))-limit")])
+      }
       
       // Update limit status
       if updateStore {
@@ -358,16 +458,35 @@ class ScreenTimeModule: NSObject {
       
       print("current activities \(activities)")
       
-      try deviceActivityCenter.startMonitoring(
-        DeviceActivityName(rawValue: "\(limitId.uuidString)-limit"),
-        during: DeviceActivitySchedule(
-          intervalStart: DateComponents(hour: 0, minute: 0),
-          intervalEnd: DateComponents(hour: 23, minute: 59),
-          repeats: true
-        ),
-        events: eventsArray
-      )
+      let weekdays: [Int] = limit?.weekdays ?? []
       
+      // Validate if weekdays is upper 0
+      if weekdays.count > 0 {
+        logger.info("Enable frecuency")
+        try weekdays.forEach { weekday in
+          logger.info("Create monitoring with weekday: \(weekday)")
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: "\(limit?.id.uuidString)-limit-day-\(weekday)"),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
+              intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
+              repeats: true
+            ),
+            events: eventsArray
+          )
+        }
+      } else {
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: "\(limitId.uuidString)-limit"),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59),
+            repeats: false
+          ),
+          events: eventsArray
+        )
+      }
+
       // Update limit status
       if updateStore {
         limit?.enable = true
@@ -431,8 +550,17 @@ class ScreenTimeModule: NSObject {
       }
       
       // Stop monitoring
-       let deviceActivityCenter = DeviceActivityCenter();
-       deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit")])
+      let deviceActivityCenter = DeviceActivityCenter();
+
+      // Validate if weekdays is upper 0
+      if (limit?.weekdays.count)! > 0 {
+        // Remove for each day
+        limit?.weekdays.forEach { weekday in
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit-day-\(weekday)")])
+        }
+      } else {
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit")])
+      }
             
       // Delete limit and events
       try context.delete(model: Limit.self, where: #Predicate { $0.id == uuid })
@@ -496,7 +624,7 @@ class ScreenTimeModule: NSObject {
     changeApps: Bool,
     enableImpulseMode: Bool = false,
     impulseTime: NSNumber = 0,
-    usageWarning: Bool = false,
+    usageWarning: NSNumber = 0,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ){
@@ -520,7 +648,7 @@ class ScreenTimeModule: NSObject {
       limit?.weekdays = weekdays
       limit?.enableImpulseMode = enableImpulseMode
       limit?.impulseTime = Int(truncating: impulseTime)
-      limit?.usageWarning = usageWarning
+      limit?.usageWarning = Int(truncating: usageWarning)
       
       try limit?.modelContext?.save()
       
@@ -552,7 +680,6 @@ class ScreenTimeModule: NSObject {
   
   @objc
   func readLastLog(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-    let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
 
     if let lastActivityLog = sharedDefaults?.string(forKey: "lastActivityLog") {
         print("Última actividad registrada: \(lastActivityLog)")
@@ -575,6 +702,7 @@ class ScreenTimeModule: NSObject {
             "title": block.name, // Reemplaza con los campos de tu modelo
             "subtitle": "\(block.startTime)-\(block.endTime)",
             "apps": block.appsTokens.count,
+            "sites": block.webDomainTokens.count,
             "weekdays": block.weekdays,
             "enable": block.enable
         ]
@@ -606,16 +734,17 @@ class ScreenTimeModule: NSObject {
       let deviceActivityCenter = DeviceActivityCenter();
       
       if block?.weekdays.count == 0 {
-        try deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
       } else {
         let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
-        try deviceActivityCenter.stopMonitoring(deviceActivityNames)
+        deviceActivityCenter.stopMonitoring(deviceActivityNames)
         print(deviceActivityNames)
       }
       
       // Remove restriction
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
       store.shield.applications = nil
+      store.shield.webDomains = nil
       
       // Delete from store
       try context.delete(model: Block.self, where: #Predicate { $0.id == uuid })

@@ -7,11 +7,12 @@ interface OnboardingContainerProps {
   onPress: () => void;
   buttonLabel: string;
   scrollEnabled?: boolean;
+  isLoading?: boolean;
 }  
 
 export const OnboardingContainer = (props: OnboardingContainerProps) => {
 
-  const { children, onPress, buttonLabel, scrollEnabled = true } = props;
+  const { children, onPress, buttonLabel, scrollEnabled = true, isLoading = false } = props;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,6 +28,8 @@ export const OnboardingContainer = (props: OnboardingContainerProps) => {
             onPress={onPress}
             contentStyle={{ flexDirection: 'row-reverse' }}
             icon="arrow-right"
+            loading={isLoading}
+            disabled={isLoading}
           >
             {buttonLabel}
           </Button>

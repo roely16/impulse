@@ -9,6 +9,8 @@ import ManagedSettings
 import Foundation
 import OSLog
 import ManagedSettings
+import FamilyControls
+import DeviceActivity
 
 
 // Override the functions below to customize the shield actions used in various situations.
@@ -22,43 +24,98 @@ class ShieldActionExtension: ShieldActionDelegate {
         // Handle the action as needed.
         switch action {
         case .primaryButtonPressed:
-          completionHandler(.close)
-        case .secondaryButtonPressed:
           do {
-            completionHandler(.defer)
-            self.logger.info("Secondary action click")
-            let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
+            logger.info("Impulse: pulse primary button")
+            // Convert token to String
             let encoder = JSONEncoder()
             let tokenData = try encoder.encode(application)
             let tokenString = String(data: tokenData, encoding: .utf8)
-            self.logger.info("Token string \(tokenString ?? "null")")
+                        
+            let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
             
-            // Find event with app token
-            if let data = sharedDefaults?.data(forKey: tokenString ?? "") {
-              if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-               
+            // Check if is block
+            // Validate if shareDefaultData is for block
+            if (sharedDefaults?.data(forKey:  "\(tokenString ?? "")-block")) != nil {
+              logger.info("Impulse: resolve action for block")
+              completionHandler(.close)
+              return
+            }
+                        
+            // Find data for limit
+            if let data = sharedDefaults?.data(forKey: "\(tokenString ?? "")-limit") {
+              if var shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                logger.info("Impulse: resolve action for limit")
+                
+                // Update shield with disable style button
+                shieldConfigurationData["shieldButtonEnable"] = false
+                shieldConfigurationData["opens"] = shieldConfigurationData["opens"] as! Int + 1
+                let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
+                if let tokenString = String(data: tokenData, encoding: .utf8) {
+                  let sharedDefaultKey = "\(tokenString)-limit"
+                  sharedDefaults?.set(data, forKey: sharedDefaultKey)
+                }
+                
+                completionHandler(.defer)
+                
                 let eventId = shieldConfigurationData["eventId"] as? String ?? ""
                 let impulseTime = shieldConfigurationData["impulseTime"] as? Int ?? 0
+                let startBlocking = shieldConfigurationData["startBlocking"] as? Bool ?? false
+                let usageWarning = shieldConfigurationData["usageWarning"] as? Int ?? 0
                 
-                self.logger.info("Event id \(eventId, privacy: .public)")
-                self.logger.info("impulse time \(impulseTime, privacy: .public)")
+                self.logger.info("Impulse: Event id \(eventId, privacy: .public)")
+                self.logger.info("Impulse: impulse time \(impulseTime, privacy: .public)")
                 
-                let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(eventId)"))
-
+                let storeName = startBlocking ? "limit-start-block" : "event-\(eventId)"
+                
+                // TO-DO
+                // Add 1 open to event if is limit-start-block
+                
+                let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: storeName))
+                
                 if impulseTime > 0 {
                   DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(impulseTime)) {
                     store.shield.applications = nil
-                    self.logger.info("Aplicaciones desbloqueadas después de \(impulseTime) segundos")
+                    self.logger.info("Impulse: Aplicaciones desbloqueadas después de \(impulseTime) segundos")
+                    completionHandler(.close)
                   }
-                }else {
+                  
+                } else {
                   store.shield.applications = nil
                   self.logger.info("Without impulse time")
                 }
+                
+                // Create again the usage warning
+                
+                var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
+                
+                let threshold = DateComponents(minute: usageWarning)
+                let eventName = DeviceActivityEvent.Name(rawValue: "\(eventId)-usage-warning")
+                let activityEvent = DeviceActivityEvent(applications: [application], threshold: threshold)
+                
+                eventsArray[eventName] = activityEvent
+                
+                let deviceActivityCenter = DeviceActivityCenter();
+                
+                try deviceActivityCenter.startMonitoring(
+                  DeviceActivityName(rawValue: "\(eventId)-usage-warning"),
+                  during: DeviceActivitySchedule(
+                    intervalStart: DateComponents(hour: 0, minute: 0),
+                    intervalEnd: DateComponents(hour: 23, minute: 59),
+                    repeats: false
+                  ),
+                  events: eventsArray
+                )
+                
               }
+              return
             }
+            logger.info("Impulse: shield action without block or limit")
+            completionHandler(.close)
           } catch {
             self.logger.error("Error in secondary action \(error.localizedDescription)")
           }
+        case .secondaryButtonPressed:
+          completionHandler(.close)
         @unknown default:
             fatalError()
         }

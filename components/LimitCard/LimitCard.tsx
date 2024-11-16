@@ -30,7 +30,20 @@ export interface LimitType {
 }
 
 export const LimitCard = (props: LimitCardProps) => {
-  const { id, title, timeLimit, openLimit, apps, enable, refreshLimits, editLimit , weekdays = [], total_active_limits = 0, total_inactive_limits = 0, total_limits = 0} = props;
+  const {
+    id,
+    title,
+    timeLimit,
+    openLimit,
+    apps,
+    enable,
+    refreshLimits,
+    editLimit,
+    weekdays = [],
+    total_active_limits = 0,
+    total_inactive_limits = 0,
+    total_limits = 0
+  } = props;
 
   const { ScreenTimeModule } = NativeModules;
 

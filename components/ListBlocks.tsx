@@ -40,7 +40,7 @@ export const ListBlocks = (_props: ListBlocksProps) => {
         refreshing={isLoading}
         onRefresh={refreshBlocks}
       />
-    } style={styles.container} data={blocks} renderItem={({item}) => <BlockCard total_blocks={blocks.length} total_active_limits={totalOfBlocks.active} total_inactive_limits={totalOfBlocks.inactive} editBlock={(key) => editBlock(key)} refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
+    } style={styles.container} data={blocks} renderItem={({item}) => <BlockCard sites={20} total_blocks={blocks.length} total_active_limits={totalOfBlocks.active} total_inactive_limits={totalOfBlocks.inactive} editBlock={(key) => editBlock(key)} refreshBlocks={refreshBlocks} {...item} />} keyExtractor={item => item.id}></FlatList>
   )
 };
 

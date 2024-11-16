@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { View, StyleSheet, NativeModules } from "react-native";
 import { Text } from "react-native-paper";
 import { router } from 'expo-router';
@@ -9,14 +10,23 @@ import { SCREEN_HEIGHT } from "@/constants/Device";
 import { MixpanelService } from "@/SDK/Mixpanel";
 import useTimeOnScreen from "@/hooks/useTimeOnScreen";
 
-export const PermissionImage = () => {
+interface PermissionImageProps {
+  updateIsLoading: (value: boolean) => void;
+}
+
+export const PermissionImage = (props: PermissionImageProps) => {
   
+  const { updateIsLoading } = props;
+
   const { ScreenTimeModule } = NativeModules;
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
   const getTimeOnScreen = useTimeOnScreen();
 
   const handleScreenTimeAccess = async () => {
     try {
+      setIsLoading(true);
+      updateIsLoading(true);
       const testBlockName = t('testBlockName');
       const response = await ScreenTimeModule.requestAuthorization(testBlockName);
       const timeSpent = getTimeOnScreen();
@@ -30,6 +40,8 @@ export const PermissionImage = () => {
         });
         router.replace('/(tabs)')
         await saveScreenTimeAccess();
+        setIsLoading(false);
+        updateIsLoading(false);
         return;
       }
 
@@ -42,6 +54,8 @@ export const PermissionImage = () => {
       });
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
+      updateIsLoading(false);
     }
   }
 
@@ -64,7 +78,7 @@ export const PermissionImage = () => {
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Text onPress={handleScreenTimeAccess} style={styles.buttonText}>
+          <Text onPress={handleScreenTimeAccess} disabled={isLoading} style={styles.buttonText}>
             {t('screenTimeAccess.permissionButton.allowButton')}
           </Text>
           <View style={styles.verticalDivider} />

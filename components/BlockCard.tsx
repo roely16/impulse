@@ -8,6 +8,7 @@ interface BlockCardProps {
   title: string;
   subtitle: string;
   apps: number;
+  sites: number;
   enable: boolean;
   weekdays: number[];
   refreshBlocks: () => void;
@@ -18,7 +19,20 @@ interface BlockCardProps {
 }
 
 export const BlockCard = (props: BlockCardProps) => {
-  const { id, title, subtitle, apps, enable, refreshBlocks, editBlock , weekdays = [], total_active_limits = 0, total_inactive_limits = 0, total_blocks = 0} = props;
+  const {
+    id,
+    title,
+    subtitle,
+    apps,
+    sites,
+    enable,
+    refreshBlocks,
+    editBlock,
+    weekdays = [],
+    total_active_limits = 0,
+    total_inactive_limits = 0,
+    total_blocks = 0
+  } = props;
 
   const { ScreenTimeModule } = NativeModules;
 
@@ -137,7 +151,7 @@ export const BlockCard = (props: BlockCardProps) => {
           <Text style={styles.subtitle}>{convertTimeRange(subtitle)}</Text>
         </View>
         <View style={styles.rowContainer}>
-          <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps}</Text>
+          <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps} {t('cardBlock.sitesLabel')}: {sites}</Text>
           <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>
       </Card.Content>
