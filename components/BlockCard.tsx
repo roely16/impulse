@@ -118,7 +118,7 @@ export const BlockCard = (props: BlockCardProps) => {
     const allValues = WEEKDAYS.map(day => day.value);
 
     if (allValues.every(val => values.includes(val))) {
-      return t('everyday');
+      return t('everyDay');
     }
 
     const isConsecutive = values.every((val, idx) => idx === 0 || val === values[idx - 1] + 1);
