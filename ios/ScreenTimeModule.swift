@@ -302,10 +302,12 @@ class ScreenTimeModule: NSObject {
       if weekdays.count > 0 {
         logger.info("Create frecuency")
         for weekday in weekdays {
-          logger.info("Create monitoring with weekday: \(weekday)")
+          let monitoringName = "\(limit.id.uuidString)-limit-day-\(weekday)"
+
+          logger.info("Impulse: Create limit with weekday: \(monitoringName)")
           
           try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: "\(limit.id.uuidString)-limit-day-\(weekday)"),
+            DeviceActivityName(rawValue: monitoringName),
             during: DeviceActivitySchedule(
               intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
