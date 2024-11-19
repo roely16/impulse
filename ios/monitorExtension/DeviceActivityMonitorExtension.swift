@@ -139,6 +139,30 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     return (eventRawValue, nil)
   }
   
+  func findLimitByActiviyId(activiyId: String = "") async {
+    logger.info("Impulse: interval did start, find limit info")
+    let limitId = extractLimitId(from: activiyId)
+    logger.info("Impulse: limit id \(limitId, privacy: .public)")
+    
+    do {
+      try await getLimit(limitId: limitId)
+    } catch {
+      logger.error("Impulse: error trying to find limit by activity id")
+    }
+  }
+  
+  func getLimitIdentifier(activiyId: String = "") -> String? {
+    logger.info("Impulse: detect kind of limit")
+    
+    // Buscar la posición de "-limit"
+    guard let range = activiyId.range(of: "-limit") else {
+       return nil
+    }
+    
+    // Obtener la porción del string desde "-limit"
+    return String(activiyId[range.lowerBound...])
+  }
+  
   override func intervalDidStart(for activity: DeviceActivityName) {
     super.intervalDidStart(for: activity)
     Task {
@@ -204,6 +228,43 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   override func intervalDidEnd(for activity: DeviceActivityName) {
     super.intervalDidEnd(for: activity)
     Task {
+      
+      // Validate if activity is for a limit type
+      logger.info("Impulse: interval did end for activity \(activity.rawValue, privacy: .public)")
+      
+      if activity.rawValue.lowercased().contains("limit") {
+        let activityId = activity.rawValue
+
+        let activityLimitIdentifier = getLimitIdentifier(activiyId: activityId)
+                        
+        await findLimitByActiviyId(activiyId: activityId)
+        let limitId = limit?.id.uuidString
+        
+        let managedStoreName = "\(limitId ?? "")\(activityLimitIdentifier ?? "")"
+        
+        logger.info("Impulse: managed stored name \(managedStoreName)")
+        
+        /**
+         Clean stores for
+         - Event
+         - Usage Warning
+         - Limit
+         */
+        
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedStoreName))
+        store.shield.applications = nil
+        
+        let events = limit?.events
+        events?.forEach{event in
+          let eventStoreName = "event-\(event.id.uuidString)"
+          let eventStore = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: eventStoreName))
+          eventStore.shield.applications = nil
+          logger.info("Impulse: remove shield for event \(eventStoreName)")
+        }
+        
+        logger.info("Impulse: apps in limit are unlocked when interval did end")
+        return;
+      }
       let activityId = extractId(from: activity.rawValue)
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
       store.shield.applications = nil
