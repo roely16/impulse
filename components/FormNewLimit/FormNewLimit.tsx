@@ -72,7 +72,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const inputRef = useRef<TextInput>(null);
   const openLimitRef = useRef<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const isSavingRef = useRef<boolean>(false);
 
   // Impulse mode
   const usageWarningRef = useRef<string>('5');
@@ -296,7 +296,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const handleSaveLimit = async () => {
     try {
 
-      setIsSaving(true);
+      isSavingRef.current = true;
       const haveLimitTitle = limitTitle.length > 0;
       const newLimitTitle = haveLimitTitle
         ? limitTitle
@@ -337,15 +337,15 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         closeBottomSheet();
         changeForm('');
       }
-      setIsSaving(false);
+      isSavingRef.current = false;
     } catch (error) {
-      setIsSaving(false);
+      isSavingRef.current = false;
     }
   };
 
   const handleEditBlock = async () => {
     try {
-      setIsSaving(true);
+      isSavingRef.current = true;
       const haveLimitTitle = limitTitle.length > 0;
       const newLimitTitle = haveLimitTitle
         ? limitTitle
@@ -380,9 +380,9 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       refreshLimits();
       closeBottomSheet();
       changeForm('');
-      setIsSaving(false);
+      isSavingRef.current = false;
     } catch (error) {
-      setIsSaving(false);
+      isSavingRef.current = false;
     }
   };
 
@@ -589,8 +589,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
           {t('formNewLimit.cancelButton')}
         </Button>
         <Button
-          loading={isSaving}
-          disabled={!formFilled || isSaving}
+          loading={isSavingRef.current}
+          disabled={!formFilled || isSavingRef.current}
           onPress={handleSaveButton}
           icon="check"
           labelStyle={styles.buttonLabel}
