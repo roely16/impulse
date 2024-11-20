@@ -105,13 +105,13 @@ export const BlockCard = (props: BlockCardProps) => {
   const convertDaysToText = (selectedDays: number[]): string => {
 
     const WEEKDAYS = [
-      { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false },
-      { day: t('weekdaysLetters.tuesday'), value: 3, name: t('weekdays.tuesday'), selected: false },
-      { day: t('weekdaysLetters.wednesday'), value: 4, name: t('weekdays.wednesday'), selected: false },
-      { day: t('weekdaysLetters.thursday'), value: 5, name: t('weekdays.thursday'), selected: false },
-      { day: t('weekdaysLetters.friday'), value: 6, name: t('weekdays.friday'), selected: false },
-      { day: t('weekdaysLetters.saturday'), value: 7, name: t('weekdays.saturday'), selected: false },
-      { day: t('weekdaysLetters.sunday'), value: 1, name: t('weekdays.sunday'), selected: false }
+      { day: t('weekdaysLetters.monday'), value: 2, name: t('weekdays.monday'), selected: false, position: 1 },
+      { day: t('weekdaysLetters.tuesday'), value: 3, name: t('weekdays.tuesday'), selected: false, position: 2 },
+      { day: t('weekdaysLetters.wednesday'), value: 4, name: t('weekdays.wednesday'), selected: false, position: 3 },
+      { day: t('weekdaysLetters.thursday'), value: 5, name: t('weekdays.thursday'), selected: false, position: 4 },
+      { day: t('weekdaysLetters.friday'), value: 6, name: t('weekdays.friday'), selected: false, position: 5 },
+      { day: t('weekdaysLetters.saturday'), value: 7, name: t('weekdays.saturday'), selected: false, position: 6 },
+      { day: t('weekdaysLetters.sunday'), value: 1, name: t('weekdays.sunday'), selected: false, position: 7 }
     ];
 
     const values = selectedDays.sort((a, b) => a - b);
@@ -130,7 +130,12 @@ export const BlockCard = (props: BlockCardProps) => {
         return `${firstDay.name} - ${lastDay.name}`;
       }
     }
-    const days = values.map(val => WEEKDAYS.find(day => day.value === val)?.day);
+    const days = values
+    .map(val => WEEKDAYS.find(day => day.value === val))
+    .filter(Boolean)
+    .sort((a, b) => a!.position - b!.position)
+    .map(day => day!.day);
+    
     return days.join(', ');
   };
 
