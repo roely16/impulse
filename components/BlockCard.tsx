@@ -139,6 +139,14 @@ export const BlockCard = (props: BlockCardProps) => {
     return days.join(', ');
   };
 
+  const SitesAndWebsText = () => {
+    const AppsText = apps > 0 ? `${t('cardBlock.appsLabel')}: ${apps}` : null;
+    const SitesText = sites > 0 ? `${t('cardBlock.sitesLabel')}: ${sites}` : null;
+    return (
+      <Text style={styles.subtitle}>{AppsText} {SitesText}</Text>
+    )
+  }
+
   return (
     <Card style={styles.card} mode="elevated" elevation={1}>
       <Card.Content style={styles.cardContent}>
@@ -156,7 +164,8 @@ export const BlockCard = (props: BlockCardProps) => {
           <Text style={styles.subtitle}>{convertTimeRange(subtitle)}</Text>
         </View>
         <View style={styles.rowContainer}>
-          <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps} {t('cardBlock.sitesLabel')}: {sites}</Text>
+          {/* <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps} {t('cardBlock.sitesLabel')}: {sites}</Text> */}
+          <SitesAndWebsText />
           <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>
       </Card.Content>
