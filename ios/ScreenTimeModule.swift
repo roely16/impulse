@@ -779,6 +779,7 @@ class ScreenTimeModule: NSObject {
         "startTime": block?.startTime,
         "endTime": block?.endTime,
         "apps": block?.appsTokens.count,
+        "sites": block?.webDomainTokens.count,
         "weekdays": block?.weekdays
       ] as [String : Any]
 
@@ -921,6 +922,7 @@ class ScreenTimeModule: NSObject {
       if changeApps {
         block?.appsTokens = self.appsSelected
         block?.familySelection = self.familySelection
+        block?.webDomainTokens = self.websDomainSelected
       }
       block?.startTime = startTime
       block?.endTime = endTime

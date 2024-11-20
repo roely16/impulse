@@ -160,6 +160,7 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
       const titleText = t('appPicker.title');
       const result = await ScreenTimeModule.showAppPicker(isEmptyBlock, blockId, null, buttonText, titleText);
       if (result.status === 'success') {
+        console.log('result', result);
         setAppsSelected(result.appsSelected);
         setSitesSelected(result.sitesSelected);
         updateEmptyBlock && updateEmptyBlock(false);
@@ -190,8 +191,12 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
     const selectedItems = [];
 
     if (appsSelected > 0) {
+      console.log('appsSelected', appsSelected);
       selectedItems.push(`${appsSelected} apps`);
-    } else if (sitesSelected > 0) {
+    } 
+    
+    if (sitesSelected > 0) {
+      console.log('sitesSelected', sitesSelected);
       selectedItems.push(`${sitesSelected} sites`);
     }
 
@@ -316,12 +321,14 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
     return date;
   }
   const setBlockData = (block) => {
+    console.log('block', block);
     setBlockTitle(block.name);
     const startTime = timeStringToDate(block.startTime);
     startTimeRef.current = startTime;
     const endTime = timeStringToDate(block.endTime);
     endTimeRef.current = endTime;
     setAppsSelected(block.apps);
+    setSitesSelected(block.sites);
 
     const updatedDays = initialDays.map(day => {
         if (block.weekdays.includes(day.value)) {
@@ -333,7 +340,6 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
   }
 
   const clearData = () => {
-    console.log('clearData');
     setBlockTitle('');
     startTimeRef.current = currentTime;
     endTimeRef.current = new Date(currentTime.getTime() + 15 * 60000);
@@ -377,7 +383,6 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
   }
 
   useLayoutEffect(() => {
-    console.log('useLayoutEffect');
     const loadBlockData = async () => {
       const result = await ScreenTimeModule.getBlock(blockId);
       if (result.status === 'success') {

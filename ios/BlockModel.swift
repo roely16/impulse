@@ -37,7 +37,6 @@ final class Block {
     self.name = name
     self.appsTokens = appsTokens
     self.webDomainTokens = webDomainTokens
-//    self.webDomains = webDomains
     self.familySelection = familySelection
     self.startTime = startTime
     self.endTime = endTime
