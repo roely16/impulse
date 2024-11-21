@@ -235,23 +235,16 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         let activityLimitIdentifier = getLimitIdentifier(activiyId: activityId)
                         
         await findLimitByActiviyId(activiyId: activityId)
-        let limitId = limit?.id.uuidString
+        let limitId = self.limit?.id.uuidString
         
         let managedStoreName = "\(limitId ?? "")\(activityLimitIdentifier ?? "")"
         
         logger.info("Impulse: managed stored name \(managedStoreName)")
         
-        /**
-         Clean stores for
-         - Event
-         - Usage Warning
-         - Limit
-         */
-        
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedStoreName))
         store.shield.applications = nil
         
-        let events = limit?.events
+        let events = self.limit?.events
         events?.forEach{event in
           let eventStoreName = "event-\(event.id.uuidString)"
           let eventStore = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: eventStoreName))
@@ -262,9 +255,35 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         logger.info("Impulse: apps in limit are unlocked when interval did end")
         return;
       }
-      let activityId = extractId(from: activity.rawValue)
+      
+      // When block end
+      let activityId = self.extractId(from: activity.rawValue)
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
       store.shield.applications = nil
+      store.shield.webDomains = nil
+      store.clearAllSettings()
+      
+      await getBlock(blockId: activityId)
+      block?.appsTokens.forEach{appToken in
+        do {
+          let tokenData = try JSONEncoder().encode(appToken.self)
+          let tokenString = String(data: tokenData, encoding: .utf8)
+          sharedDefaults?.removeObject(forKey: "\(tokenString ?? "")-block")
+        } catch {
+          logger.error("Impulse: error trying to remove shared default for app")
+        }
+      }
+      
+      block?.webDomainTokens.forEach{webToken in
+        do {
+          let tokenData = try JSONEncoder().encode(webToken.self)
+          let tokenString = String(data: tokenData, encoding: .utf8)
+          sharedDefaults?.removeObject(forKey: "\(tokenString ?? "")-block-web")
+        } catch {
+          logger.error("Impulse: error trying to remove shared default for web")
+        }
+      }
+      
     }
   }
     
