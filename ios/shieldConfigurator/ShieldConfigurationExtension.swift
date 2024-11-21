@@ -11,6 +11,8 @@ import UIKit
 import Foundation
 import SwiftData
 import OSLog
+import DeviceActivity
+import FamilyControls
 
 extension UIColor {
     convenience init(hex: String, alpha: CGFloat = 1.0) {
@@ -156,25 +158,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     }
     
     override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
+
       let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
-      
-      let blockedWebs = sharedDefaults?.array(forKey: "webs-blocked") as? [String] ?? [String]()
-      blockedWebs.forEach { web in
-        if let tokenData = web.data(using: .utf8) {
-          do {
-            let token = try JSONDecoder().decode(WebDomainToken.self, from: tokenData)
-            let newDomain = WebDomain(token: token)
-            logger.info("Domain \(newDomain.domain ?? "Empty domain", privacy: .public)")
-            
-            // Validate tokens
-            if token == webDomain.token {
-              logger.info("Match token")
-            }
-          } catch {
-            logger.info("Error trying to get domain")
-          }
-        }
-      }
       
       do {
         // Conver token to String

@@ -184,6 +184,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         return;
       }
       
+      logger.info("Impulse: interval did start for activity \(activity.rawValue, privacy: .public)")
+
       let activityId = extractId(from: activity.rawValue)
       await getBlock(blockId: activityId)
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
@@ -202,21 +204,16 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
         sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block")
       }
-      
-      let webBlockedKey = "webs-blocked"
-      var currentBlockedWebs = sharedDefaults?.array(forKey: webBlockedKey) as? [String] ?? [String]()
-
+          
       // Save share defaults for each web domain
       try block?.webDomainTokens.forEach{ webToken in
-        let encoder = JSONEncoder()
-        let tokenData = try encoder.encode(webToken.self)
+        let tokenData = try JSONEncoder().encode(webToken.self)
+        
         let tokenString = String(data: tokenData, encoding: .utf8)
         let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
-        logger.info("Set data for web site block \(tokenString ?? "", privacy: .public)")
+        logger.info("Impulse: set data for web site block \(tokenString ?? "", privacy: .public)")
         sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block-web")
-        
-        currentBlockedWebs.append(tokenString ?? "")
-        sharedDefaults?.set(currentBlockedWebs, forKey: webBlockedKey)
+
       }
       
       store.shield.applications = block?.appsTokens
