@@ -145,7 +145,7 @@ class ScreenTimeModule: NSObject {
     do {
       
       let context = try getContext()
-      print("Contex Blockt: \(context)")
+
       let block = Block(
         name: name,
         appsTokens: self.appsSelected,
@@ -171,7 +171,6 @@ class ScreenTimeModule: NSObject {
             repeats: false
           )
         )
-        print("Only one time \(block.id.uuidString)")
       } else {
         for weekday in weekdays {
           try deviceActivityCenter.startMonitoring(
@@ -182,7 +181,6 @@ class ScreenTimeModule: NSObject {
               repeats: true
             )
           )
-          print("Repeat on \(weekday) \(block.id.uuidString)")
         }
       }
       
@@ -335,12 +333,6 @@ class ScreenTimeModule: NSObject {
     }
   }
   
-  @MainActor
-  func createUsageWarning(usageWarning: Int = 0){
-    do {
-      
-    }
-  }
   
   @MainActor
   func findLimits() -> [Limit]{
@@ -382,10 +374,6 @@ class ScreenTimeModule: NSObject {
     }
   }
   
-  @MainActor @objc
-  func getLimitsWithImpulse(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
-    
-  }
   
   @MainActor
   func disableLimit(limitId: UUID, updateStore: Bool = false){
@@ -820,6 +808,7 @@ class ScreenTimeModule: NSObject {
         
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
         store.shield.applications = nil
+        store.shield.webDomains = nil
       } else {
         let startTimeComponents = block?.startTime.split(separator: ":") ?? []
         let endTimeComponents = block?.endTime.split(separator: ":") ?? []
@@ -878,16 +867,16 @@ class ScreenTimeModule: NSObject {
       let deviceActivityCenter = DeviceActivityCenter();
       
       if block?.weekdays.count == 0 {
-        try deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
       } else {
         let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
-        try deviceActivityCenter.stopMonitoring(deviceActivityNames)
-        print(deviceActivityNames)
+        deviceActivityCenter.stopMonitoring(deviceActivityNames)
       }
       
       // Remove shield from apps
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
       store.shield.applications = nil
+      store.shield.webDomains = nil
       
       // Create again monitoring
       let startTimeComponents = startTime.split(separator: ":")
