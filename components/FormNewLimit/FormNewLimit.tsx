@@ -10,6 +10,8 @@ import { ImpulseConfig } from '../ImpulseConfig';
 import { styles } from './styles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import SelectDropdown from 'react-native-select-dropdown'
+import { Picker } from '@react-native-picker/picker';
+
 
 interface FormNewLimitProps {
   changeForm: (form: string) => void;
@@ -35,6 +37,7 @@ export interface FormNewLimitRef {
 }
 
 const data = [
+  { label: 'No', value: '' },
   { label: '1', value: '1' },
   { label: '2', value: '2' },
   { label: '3', value: '3' },
@@ -67,6 +70,10 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   currentTime.setHours(0, 0, 0, 0);
   const startTimeRef = useRef(currentTime);
   const endTimeRef = useRef(new Date(new Date(currentTime.getTime() + 15 * 60000)));
+  const [openLimit, setOpenLimit] = useState<string>('');
+  const [impulseDuration, setImpulseDuration] = useState<string>('5');
+  const [usageWarning, setUsageWarning] = useState<string>('5');
+
   const limitTimeRef = useRef(currentTime);
   const limitTimeString = useRef<string>('');
   const inputRef = useRef<TextInput>(null);
@@ -195,13 +202,13 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   };
 
   const OpenLimitPicker = () => {
-    const handleOnChange = (item: { value: string }) => {
-      openLimitRef.current = item.value;
+    const handleOnChange = (value: string ) => {
+      setOpenLimit(value);
       const timeSpent = getTimeOnScreen();
       MixpanelService.trackEvent('max_open_daily_selected', {
         type_block: 'limit_app',
         opening_limit_added: true,
-        limit_openings: item.value,
+        limit_openings: value,
         default_openings_used: false,
         time_spent_on_openings_selection: timeSpent,
         error_occurred: false,
@@ -212,10 +219,21 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     return (
       <View style={styles.timeFormContainer}>
         <Text style={styles.timeLabel}>{t('formNewLimit.maxOpenDailyTitle')}</Text>
-        <View style={styles.formOption}>
+        <View style={[styles.formOption, { paddingVertical: 0 }]}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>{t('formNewLimit.maxOpenDaily')}</Text>
-            <SelectDropdown
+            <Picker 
+              itemStyle={{ paddingHorizontal: 0, height: 120, width: 150 }}
+              onValueChange={(itemValue: string) => handleOnChange(itemValue)}
+              selectedValue={openLimit}
+            >
+              {
+                data.map((item, index) => {
+                  return <Picker.Item label={item.label} value={item.value} key={index} />
+                })
+              }
+            </Picker>
+            {/* <SelectDropdown
                 data={data}
                 renderButton={(selectedItem) => {
                   return (
@@ -240,7 +258,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
                 }}
                 dropdownStyle={styles.dropdownMenuStyle}
                 defaultValue={{ value: openLimitRef.current, label: `${openLimitRef.current}` }}
-              />
+              /> */}
           </View>
         </View>
       </View>
@@ -307,9 +325,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         .map(day => day.value)
         .sort((a, b) => a - b);
 
-      const impulseTime = parseInt(impulseDurationRef.current);
-      console.log('warning time', usageWarningRef.current);
-      const warningTime = parseInt(usageWarningRef.current);
+      const impulseTime = parseInt(impulseDuration);
+      const warningTime = parseInt(usageWarning);
 
       const data = {
         name: newLimitTitle,
@@ -363,8 +380,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         appsSelected,
         weekDays
       };
-      const impulseTime = parseInt(impulseDurationRef.current);
-      const usageWarning = parseInt(usageWarningRef.current);
+      const impulseTime = parseInt(impulseDuration);
+      const warningTime = parseInt(usageWarning);
 
       await ScreenTimeModule.updateLimit(
         data.id,
@@ -375,7 +392,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         !isEmptyLimit,
         enableImpulseConfig,
         impulseTime,
-        usageWarning
+        warningTime
       );
       refreshLimits();
       closeBottomSheet();
@@ -449,7 +466,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
     limitTimeRef.current = new Date(guatemalaTime);
     setAppsSelected(limit.apps);
-    openLimitRef.current = limit.openTime;
+    // openLimitRef.current = limit.openTime;
+    setOpenLimit(limit.openTime);
     limitTimeString.current = limit.timeLimit;
     const updatedDays = initialDays.map(day => {
       if (limit.weekdays.includes(day.value)) {
@@ -459,8 +477,10 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     });
     setDays(updatedDays);
 
-    impulseDurationRef.current = limit.impulseTime.toString();
-    usageWarningRef.current = limit.usageWarning.toString();
+    setImpulseDuration(limit.impulseTime.toString());
+    setUsageWarning(limit.usageWarning.toString());
+    // impulseDurationRef.current = limit.impulseTime.toString();
+    // usageWarningRef.current = limit.usageWarning.toString();
     
   };
 
@@ -472,8 +492,10 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     setSitesSelected(0);
     setDays(initialDays);
     openLimitRef.current = '';
-    impulseDurationRef.current = '5';
-    usageWarningRef.current = '5';
+    // impulseDurationRef.current = '5';
+    // usageWarningRef.current = '5';
+    setImpulseDuration('5');
+    setUsageWarning('5');
   };
 
   const handleIconPress = () => {
@@ -512,18 +534,19 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     });
   };
 
-  const setImpulseDurationRef = (item: string) => {
-    impulseDurationRef.current = item;
-  };
+  // const setImpulseDurationRef = (item: string) => {
+  //   impulseDurationRef.current = item;
+  // };
 
-  const setUsageWarningRef = (item: string) => {
-    usageWarningRef.current = item;
-  }
+  // const setUsageWarningRef = (item: string) => {
+  //   usageWarningRef.current = item;
+  // }
 
   useLayoutEffect(() => {
     const localLimitData = async () => {
       setIsLoading(true);
       const result = await ScreenTimeModule.getLimitDetail(limitId);
+      console.log('result', result);
       if (result.status === 'success') {
         setLimitData(result.limit);
       }
@@ -573,10 +596,10 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       <OpenLimitPicker />
       <Frequency />
       <ImpulseConfig
-        impulseDuration={impulseDurationRef.current}
-        onChangeDuration={setImpulseDurationRef}
-        onChangeUsageWarning={setUsageWarningRef}
-        usageWarning={impulseDurationRef.current}
+        impulseDuration={impulseDuration}
+        onChangeDuration={setImpulseDuration}
+        onChangeUsageWarning={setUsageWarning}
+        usageWarning={usageWarning}
       />
       <View style={styles.buttonContainer}>
         <Button

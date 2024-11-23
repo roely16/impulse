@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { styles } from "./styles";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import SelectDropdown from 'react-native-select-dropdown'
+import { Picker } from '@react-native-picker/picker';
 
 interface ImpulseConfigProps {
   impulseDuration: string;
@@ -40,7 +41,7 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
       <View style={{ gap: 5 }}>
         <Text style={styles.optionTitle}>{t('impulseConfigForm.impulseControlDuration.title')}</Text>
         <Text style={styles.optionMessage}>{t('impulseConfigForm.impulseControlDuration.message')}</Text>
-        <View style={styles.formOption}>
+        <View style={[styles.formOption, { paddingVertical: 0 }]}>
           <View style={styles.formOptionContent}>
             <View style={styles.labelOptionContainer}>
               <Text style={styles.label}>
@@ -48,7 +49,18 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
               </Text>
             </View>
             <View style={styles.selectOptionContainer}>
-              <SelectDropdown
+              <Picker 
+                itemStyle={{ paddingHorizontal: 0, height: 120, width: 150 }}
+                onValueChange={(itemValue: string) => onChangeDuration(itemValue)}
+                selectedValue={impulseDuration}
+              >
+                {
+                  updatedData.map((item, index) => {
+                    return <Picker.Item label={item.label} value={item.value} key={index} />
+                  })
+                }
+              </Picker>
+              {/* <SelectDropdown
                 data={updatedData}
                 renderButton={(selectedItem) => {
                   return (
@@ -73,7 +85,7 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
                 }}
                 dropdownStyle={styles.dropdownMenuStyle}
                 defaultValue={{ value: impulseDuration, label: `${impulseDuration} seg` }}
-              />
+              /> */}
             </View>
           </View>
         </View>
@@ -109,13 +121,24 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
       <View style={{ gap: 5 }}>
         <Text style={styles.optionTitle}>{t('impulseConfigForm.usageWarning.title')}</Text>
         <Text style={styles.optionMessage}>{t('impulseConfigForm.usageWarning.message')}</Text>
-        <View style={styles.formOption}>
+        <View style={[styles.formOption, { paddingVertical: 0 }]}>
           <View style={styles.formOptionContent}>
             <View style={styles.labelOptionContainer}>
               <Text style={styles.label}>{t('impulseConfigForm.usageWarning.buttonLabel')}</Text>
             </View>
             <View style={styles.selectOptionContainer}>
-              <SelectDropdown
+              <Picker 
+                itemStyle={{ paddingHorizontal: 0, height: 120, width: 150 }}
+                onValueChange={(itemValue: string) => onChangeUsageWarning(itemValue)}
+                selectedValue={usageWarning}
+              >
+                {
+                  updatedData.map((item, index) => {
+                    return <Picker.Item label={item.label} value={item.value} key={index} />
+                  })
+                }
+              </Picker>
+              {/* <SelectDropdown
                 data={updatedData}
                 renderButton={(selectedItem) => {
                   return (
@@ -140,7 +163,7 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
                 }}
                 dropdownStyle={styles.dropdownMenuStyle}
                 defaultValue={{ value: usageWarning, label: `${usageWarning} min` }}
-              />
+              /> */}
             </View>
           </View>
         </View>
