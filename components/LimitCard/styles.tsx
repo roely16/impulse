@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     lineHeight: 20.4,
-    color: '#C6D3DF',
+    color: '#3F5B74',
     fontFamily: 'Mulish'
   }
 });
