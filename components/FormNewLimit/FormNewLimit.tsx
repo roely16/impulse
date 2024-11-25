@@ -9,9 +9,7 @@ import { format, toZonedTime } from 'date-fns-tz';
 import { ImpulseConfig } from '../ImpulseConfig';
 import { styles } from './styles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import SelectDropdown from 'react-native-select-dropdown'
 import { Picker } from '@react-native-picker/picker';
-
 
 interface FormNewLimitProps {
   changeForm: (form: string) => void;
@@ -80,10 +78,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const openLimitRef = useRef<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const isSavingRef = useRef<boolean>(false);
-
-  // Impulse mode
-  const usageWarningRef = useRef<string>('5');
-  const impulseDurationRef = useRef<string>('5');
 
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
@@ -233,32 +227,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
                 })
               }
             </Picker>
-            {/* <SelectDropdown
-                data={data}
-                renderButton={(selectedItem) => {
-                  return (
-                    <View style={[styles.selectOptionContainer, { width: wp('35%'), justifyContent: 'flex-end' }]}>
-                      <Text style={styles.selectLabel}>
-                        {selectedItem ? selectedItem.label : t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')}
-                      </Text>
-                      <Icon source="chevron-right" size={25} />
-                    </View>
-                  )
-                }}
-                renderItem={(item, _, isSelected) => {
-                  return (
-                    <View style={[styles.dropdownItemStyle, isSelected && { backgroundColor: '#D2D9DF' }]}>
-                      { isSelected ? <Icon source="check" size={20} /> : <View style={{ paddingLeft: wp('5%') }}></View> }
-                      <Text style={styles.dropDownText}>{item.label}</Text>
-                    </View>
-                  )
-                }}
-                onSelect={(selectedItem) => {
-                  handleOnChange(selectedItem);
-                }}
-                dropdownStyle={styles.dropdownMenuStyle}
-                defaultValue={{ value: openLimitRef.current, label: `${openLimitRef.current}` }}
-              /> */}
           </View>
         </View>
       </View>
@@ -466,7 +434,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
     limitTimeRef.current = new Date(guatemalaTime);
     setAppsSelected(limit.apps);
-    // openLimitRef.current = limit.openTime;
     setOpenLimit(limit.openTime);
     limitTimeString.current = limit.timeLimit;
     const updatedDays = initialDays.map(day => {
@@ -479,9 +446,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
     setImpulseDuration(limit.impulseTime.toString());
     setUsageWarning(limit.usageWarning.toString());
-    // impulseDurationRef.current = limit.impulseTime.toString();
-    // usageWarningRef.current = limit.usageWarning.toString();
-    
+
   };
 
   const clearData = () => {
@@ -492,8 +457,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     setSitesSelected(0);
     setDays(initialDays);
     openLimitRef.current = '';
-    // impulseDurationRef.current = '5';
-    // usageWarningRef.current = '5';
     setImpulseDuration('5');
     setUsageWarning('5');
   };
@@ -533,14 +496,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       timestamp: new Date().toISOString
     });
   };
-
-  // const setImpulseDurationRef = (item: string) => {
-  //   impulseDurationRef.current = item;
-  // };
-
-  // const setUsageWarningRef = (item: string) => {
-  //   usageWarningRef.current = item;
-  // }
 
   useLayoutEffect(() => {
     const localLimitData = async () => {

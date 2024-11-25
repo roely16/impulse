@@ -1,9 +1,7 @@
 import { View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 import { styles } from "./styles";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import SelectDropdown from 'react-native-select-dropdown'
 import { Picker } from '@react-native-picker/picker';
 
 interface ImpulseConfigProps {
@@ -60,32 +58,6 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
                   })
                 }
               </Picker>
-              {/* <SelectDropdown
-                data={updatedData}
-                renderButton={(selectedItem) => {
-                  return (
-                    <View style={[styles.selectOptionContainer, { width: wp('35%'), justifyContent: 'flex-end' }]}>
-                      <Text style={styles.selectLabel}>
-                        {selectedItem ? selectedItem.label : t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')}
-                      </Text>
-                      <Icon source="chevron-right" size={25} />
-                    </View>
-                  )
-                }}
-                renderItem={(item, _, isSelected) => {
-                  return (
-                    <View style={[styles.dropdownItemStyle, isSelected && { backgroundColor: '#D2D9DF' }]}>
-                      { isSelected ? <Icon source="check" size={20} /> : <View style={{ paddingLeft: wp('5%') }}></View> }
-                      <Text style={styles.dropDownText}>{item.label}</Text>
-                    </View>
-                  )
-                }}
-                onSelect={(selectedItem, index) => {
-                  onChangeDuration(selectedItem.value);
-                }}
-                dropdownStyle={styles.dropdownMenuStyle}
-                defaultValue={{ value: impulseDuration, label: `${impulseDuration} seg` }}
-              /> */}
             </View>
           </View>
         </View>
@@ -138,32 +110,6 @@ export const ImpulseConfig = (props: ImpulseConfigProps) => {
                   })
                 }
               </Picker>
-              {/* <SelectDropdown
-                data={updatedData}
-                renderButton={(selectedItem) => {
-                  return (
-                    <View style={[styles.selectOptionContainer, { width: wp('35%'), justifyContent: 'flex-end' }]}>
-                      <Text style={styles.selectLabel}>
-                        {selectedItem ? selectedItem.label : t('impulseConfigForm.impulseControlDuration.buttonPlaceholder')}
-                      </Text>
-                      <Icon source="chevron-right" size={25} />
-                    </View>
-                  )
-                }}
-                renderItem={(item, _, isSelected) => {
-                  return (
-                    <View style={[styles.dropdownItemStyle, isSelected && { backgroundColor: '#D2D9DF' }]}>
-                      { isSelected ? <Icon source="check" size={20} /> : <View style={{ paddingLeft: wp('5%') }}></View> }
-                      <Text style={styles.dropDownText}>{item.label}</Text>
-                    </View>
-                  )
-                }}
-                onSelect={(selectedItem) => {
-                  onChangeUsageWarning(selectedItem.value);
-                }}
-                dropdownStyle={styles.dropdownMenuStyle}
-                defaultValue={{ value: usageWarning, label: `${usageWarning} min` }}
-              /> */}
             </View>
           </View>
         </View>
