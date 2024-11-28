@@ -41,7 +41,7 @@ extension UIColor {
 
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     
-  private var eventModel: Event?
+  private var eventModel: AppEvent?
   private var logger = Logger()
   
   func limitShield(
