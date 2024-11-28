@@ -93,11 +93,7 @@ struct ActivityPickerView: View {
         return
       }
 
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self,
-        configurations: configuration
-      )
+      let container = try ModelConfigurationManager.makeConfiguration()
       let context = container.mainContext
       var fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate{ $0.id == uuid }
@@ -118,11 +114,7 @@ struct ActivityPickerView: View {
         return
       }
 
-      let configuration = ModelConfiguration(groupContainer: ( .identifier("group.com.impulsecontrolapp.impulse.share") ))
-      let container = try ModelContainer(
-        for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self,
-        configurations: configuration
-      )
+      let container = try ModelConfigurationManager.makeConfiguration()
       let context = container.mainContext
       var fetchDescriptor = FetchDescriptor<Limit>(
         predicate: #Predicate{ $0.id == uuid }

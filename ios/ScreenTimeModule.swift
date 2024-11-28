@@ -27,12 +27,7 @@ class ScreenTimeModule: NSObject {
   override init() {
     super.init()
     do {
-      let configuration = ModelConfiguration(
-        isStoredInMemoryOnly: false,
-        allowsSave: true,
-        groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
-      )
-      container = try ModelContainer(for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self, configurations: configuration)
+      container = try ModelConfigurationManager.makeConfiguration()
     } catch {
       print("Error initializing ModelContainer: \(error)")
     }
