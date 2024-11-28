@@ -11,7 +11,7 @@ import OSLog
 import ManagedSettings
 import FamilyControls
 import DeviceActivity
-
+import SwiftData
 
 // Override the functions below to customize the shield actions used in various situations.
 // The system provides a default response for any functions that your subclass doesn't override.
@@ -19,18 +19,46 @@ import DeviceActivity
 class ShieldActionExtension: ShieldActionDelegate {
   
   private var logger = Logger()
+  private var eventModel: AppEvent?
+
+  private lazy var container: ModelContainer = {
+    let configuration = ModelConfiguration(
+        isStoredInMemoryOnly: false,
+        allowsSave: true,
+        groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
+    )
+    return try! ModelContainer(for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self, configurations: configuration)
+  }()
   
-    override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
-        // Handle the action as needed.
-        switch action {
-        case .primaryButtonPressed:
+  @MainActor func getEvent(eventId: String) throws {
+    do {
+      guard let uuid = UUID(uuidString: eventId) else {
+        throw NSError(domain: "Invalid UUID", code: 1, userInfo: nil)
+      }
+
+      let context = container.mainContext
+      let fetchDescriptor = FetchDescriptor<AppEvent>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      let result = try context.fetch(fetchDescriptor)
+      eventModel = result.first
+    } catch {
+      throw error
+    }
+  }
+  
+  override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
+      // Handle the action as needed.
+      switch action {
+      case .primaryButtonPressed:
+        Task {
           do {
             logger.info("Impulse: pulse primary button")
             // Convert token to String
             let encoder = JSONEncoder()
             let tokenData = try encoder.encode(application)
             let tokenString = String(data: tokenData, encoding: .utf8)
-                        
+            
             let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
             
             // Check if is block
@@ -40,13 +68,12 @@ class ShieldActionExtension: ShieldActionDelegate {
               completionHandler(.close)
               return
             }
-                        
+            
             // Find data for limit
             if let data = sharedDefaults?.data(forKey: "\(tokenString ?? "")-limit") {
               if var shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                 logger.info("Impulse: resolve action for limit")
                 
-                // Update shield with disable style button
                 shieldConfigurationData["shieldButtonEnable"] = false
                 shieldConfigurationData["opens"] = shieldConfigurationData["opens"] as! Int + 1
                 let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
@@ -68,7 +95,8 @@ class ShieldActionExtension: ShieldActionDelegate {
                 let storeName = startBlocking ? "limit-start-block" : "event-\(eventId)"
                 
                 // TO-DO
-                // Add 1 open to event if is limit-start-block
+                
+                
                 
                 let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: storeName))
                 
@@ -82,6 +110,17 @@ class ShieldActionExtension: ShieldActionDelegate {
                 } else {
                   store.shield.applications = nil
                   self.logger.info("Without impulse time")
+                }
+                
+                // Add 1 open to event if is limit-start-block
+                
+                self.logger.info("Impulse: shield action add one to event")
+                do {
+                  try await getEvent(eventId: eventId)
+                  eventModel?.opens += 1
+                  try eventModel?.modelContext?.save()
+                } catch {
+                  self.logger.info("Impulse: error trying to add one to event \(error.localizedDescription)")
                 }
                 
                 // Create again the usage warning
@@ -114,11 +153,12 @@ class ShieldActionExtension: ShieldActionDelegate {
           } catch {
             self.logger.error("Error in secondary action \(error.localizedDescription)")
           }
-        case .secondaryButtonPressed:
-          completionHandler(.close)
-        @unknown default:
-            fatalError()
         }
+      case .secondaryButtonPressed:
+        completionHandler(.close)
+      @unknown default:
+          fatalError()
+      }
     }
     
     override func handle(action: ShieldAction, for webDomain: WebDomainToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {

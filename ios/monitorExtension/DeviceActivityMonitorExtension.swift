@@ -1,10 +1,3 @@
-//
-//  DeviceActivityMonitorExtension.swift
-//  monitorExtension
-//
-//  Created by Chur Herson on 11/10/24.
-//
-
 import DeviceActivity
 import os.log
 import UserNotifications
@@ -20,7 +13,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   
   private var block: Block?
   private var limit: Limit?
-  private var eventModel: Event?
+  private var eventModel: AppEvent?
   private var logger: Logger = Logger()
   
   private lazy var container: ModelContainer = {
@@ -29,7 +22,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         allowsSave: true,
         groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
     )
-    return try! ModelContainer(for: Block.self, Limit.self, Event.self, LimitHistory.self, configurations: configuration)
+    return try! ModelContainer(for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self, configurations: configuration)
   }()
   
   @MainActor func getBlock(blockId: String){
@@ -73,7 +66,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       }
 
       let context = container.mainContext
-      let fetchDescriptor = FetchDescriptor<Event>(
+      let fetchDescriptor = FetchDescriptor<AppEvent>(
         predicate: #Predicate{ $0.id == uuid }
       )
       let result = try context.fetch(fetchDescriptor)
@@ -87,8 +80,9 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     do {
       let context = container.mainContext
       // Save history
-      let history = LimitHistory(
-        event: eventModel!
+      let history = AppEventHistory(
+        event: eventModel!,
+        status: .warning
       )
       context.insert(history)
       try context.save()
@@ -174,6 +168,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         let limitId = extractLimitId(from: activity.rawValue)
         logger.info("Impulse: limit id \(limitId, privacy: .public)")
         do {
+          logger.info("Impulse: block apps when interval did start")
           try await getLimit(limitId: limitId)
           let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "limit-start-block"))
           store.shield.applications = limit?.appsTokens
@@ -244,7 +239,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedStoreName))
         store.shield.applications = nil
         
-        let events = self.limit?.events
+        let events = self.limit?.appsEvents
         events?.forEach{event in
           let eventStoreName = "event-\(event.id.uuidString)"
           let eventStore = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: eventStoreName))
@@ -351,8 +346,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             }
             
             // Add one to event counter
-            eventModel?.opens += 1
-            try eventModel?.modelContext?.save()
+            // eventModel?.opens += 1
+            // try eventModel?.modelContext?.save()
             
           } else {
             logger.info("Impulse: Configure share data for limit block")

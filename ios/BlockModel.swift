@@ -1,11 +1,3 @@
-
-//
-//  BlockModel.swift
-//  impulse
-//
-//  Created by Chur Herson on 11/10/24.
-//
-
 import SwiftData
 import Foundation
 import ManagedSettings
@@ -44,4 +36,3 @@ final class Block {
     self.weekdays = weekdays
   }
 }
-

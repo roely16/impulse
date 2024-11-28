@@ -1,24 +1,18 @@
-//
-//  EventModel.swift
-//  impulse
-//
-//  Created by Chur Herson on 26/10/24.
-//
-
 import Foundation
 import SwiftData
 import ManagedSettings
 
 @Model
-final class LimitHistory {
+final class WebEventHistory {
   var id: UUID = UUID()
-  var event: Event
+  var event: WebEvent
   var date: Date
+  var status: EventStatus = EventStatus.warning
   
-  init(event: Event){
+  init(event: WebEvent, status: EventStatus){
     self.id = UUID()
     self.date = Date()
     self.event = event
+    self.status = status
   }
 }
-

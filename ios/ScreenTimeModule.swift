@@ -32,7 +32,7 @@ class ScreenTimeModule: NSObject {
         allowsSave: true,
         groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
       )
-      container = try ModelContainer(for: Block.self, Limit.self, Event.self, LimitHistory.self, configurations: configuration)
+      container = try ModelContainer(for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self, configurations: configuration)
     } catch {
       print("Error initializing ModelContainer: \(error)")
     }
@@ -230,7 +230,6 @@ class ScreenTimeModule: NSObject {
         openLimit: openLimit,
         enable: true,
         weekdays: weekdays,
-        enableImpulseMode: enableImpulseMode,
         impulseTime: Int(truncating: impulseTime),
         usageWarning: Int(truncating: usageWarning)
       )
@@ -244,7 +243,7 @@ class ScreenTimeModule: NSObject {
       
       // Create events
       try self.appsSelected.forEach{appSelected in
-        let event = Event(
+        let event = AppEvent(
           limit: limit,
           appToken: appSelected,
           opens: 0
@@ -355,9 +354,8 @@ class ScreenTimeModule: NSObject {
   func getLimits(_ impulseMode: Bool = false, resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock){
     do {
       let limits = findLimits()
-      let onlyLimits = try limits.filter(#Predicate{ $0.enableImpulseMode == impulseMode })
       
-      let limitArray = onlyLimits.map { limit -> [String: Any] in
+      let limitArray = limits.map { limit -> [String: Any] in
         return [
             "id": limit.id.uuidString, // Asegúrate de que 'id' sea un UUID
             "title": limit.name, // Reemplaza con los campos de tu modelo
@@ -380,7 +378,7 @@ class ScreenTimeModule: NSObject {
     do {
       // Remove shields
       let limit = findLimit(limitId: limitId)
-      limit?.events.forEach{event in
+      limit?.appsEvents.forEach{event in
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
         store.shield.applications = nil
       }
@@ -421,7 +419,7 @@ class ScreenTimeModule: NSObject {
       let minutesToBlock = getLimitTime(time: limit?.timeLimit ?? "");
       
       var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
-      limit?.events.forEach{event in
+      limit?.appsEvents.forEach{event in
         if minutesToBlock != nil {
           let threshold = DateComponents(minute: minutesToBlock)
           let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
@@ -488,7 +486,7 @@ class ScreenTimeModule: NSObject {
   }
   
   @MainActor
-  func findLimitHistory(event: Event) -> Int? {
+  func findLimitHistory(event: AppEvent) -> Int? {
     do {
       
       let calendar = Calendar.current
@@ -533,7 +531,7 @@ class ScreenTimeModule: NSObject {
       let limit = findLimit(limitId: uuid)
       let context = try getContext()
       
-      limit?.events.forEach{event in
+      limit?.appsEvents.forEach{event in
         // Remove restrictions for every app
         let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id)"))
         store.shield.applications = nil
@@ -596,7 +594,6 @@ class ScreenTimeModule: NSObject {
       "openTime": limit?.openLimit,
       "apps": limit?.appsTokens.count,
       "weekdays": limit?.weekdays,
-      "enableImpulseMode": limit?.enableImpulseMode,
       "impulseTime": limit?.impulseTime,
       "usageWarning": limit?.usageWarning
     ] as [String : Any]
@@ -636,7 +633,6 @@ class ScreenTimeModule: NSObject {
         limit?.familySelection = self.familySelection
       }
       limit?.weekdays = weekdays
-      limit?.enableImpulseMode = enableImpulseMode
       limit?.impulseTime = Int(truncating: impulseTime)
       limit?.usageWarning = Int(truncating: usageWarning)
       
@@ -646,12 +642,12 @@ class ScreenTimeModule: NSObject {
       if changeApps {
         let context = try getContext()
 
-        limit?.events.forEach{event in
+        limit?.appsEvents.forEach{event in
           context.delete(event)
         }
         // Create events
         try self.appsSelected.forEach{appSelected in
-          let event = Event(
+          let event = AppEvent(
             limit: limit!,
             appToken: appSelected
           )
