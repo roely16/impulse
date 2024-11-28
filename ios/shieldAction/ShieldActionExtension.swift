@@ -20,15 +20,16 @@ class ShieldActionExtension: ShieldActionDelegate {
   
   private var logger = Logger()
   private var eventModel: AppEvent?
-
-  private lazy var container: ModelContainer = {
-    let configuration = ModelConfiguration(
-        isStoredInMemoryOnly: false,
-        allowsSave: true,
-        groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
-    )
-    return try! ModelContainer(for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self, configurations: configuration)
-  }()
+  private var container: ModelContainer
+  
+  override init() {
+    do {
+      container = try ModelConfigurationManager.makeConfiguration()
+    } catch {
+      fatalError("Error initializing ModelContainer: \(error)")
+    }
+    super.init()
+  }
   
   @MainActor func getEvent(eventId: String) throws {
     do {

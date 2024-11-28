@@ -7,23 +7,22 @@ import Foundation
 
 let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
 
-// Optionally override any of the functions below.
-// Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   
   private var block: Block?
   private var limit: Limit?
   private var eventModel: AppEvent?
   private var logger: Logger = Logger()
+  private var container: ModelContainer
   
-  private lazy var container: ModelContainer = {
-    let configuration = ModelConfiguration(
-        isStoredInMemoryOnly: false,
-        allowsSave: true,
-        groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share")
-    )
-    return try! ModelContainer(for: Block.self, Limit.self, AppEvent.self, AppEventHistory.self, configurations: configuration)
-  }()
+  override init() {
+    do {
+      container = try ModelConfigurationManager.makeConfiguration()
+    } catch {
+      fatalError("Error initializing ModelContainer: \(error)")
+    }
+    super.init()
+  }
   
   @MainActor func getBlock(blockId: String){
     do {
