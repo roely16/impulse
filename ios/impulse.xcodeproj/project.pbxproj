@@ -47,6 +47,7 @@
 		40AFAEDE2CF9230700EF6488 /* ModelConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40AFAEDA2CF9230700EF6488 /* ModelConfigurationManager.swift */; };
 		40AFAEE02CF9865D00EF6488 /* BlockModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40AFAEDF2CF9865D00EF6488 /* BlockModule.swift */; };
 		40AFAEE52CF999FF00EF6488 /* LimitModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40AFAEE42CF999FF00EF6488 /* LimitModule.swift */; };
+		40AFAEE72CFA457300EF6488 /* MonitorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40AFAEE62CFA457300EF6488 /* MonitorUtils.swift */; };
 		40C91CE12CD3FFAA00021668 /* AppEventHistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C91CE02CD3FFA900021668 /* AppEventHistoryModel.swift */; };
 		40C91CFF2CDACAF100021668 /* BlockModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DDAC2CBA2DDB0070F6D3 /* BlockModel.swift */; };
 		40C91D002CDACB1F00021668 /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */; };
@@ -159,6 +160,7 @@
 		40AFAEDA2CF9230700EF6488 /* ModelConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelConfigurationManager.swift; sourceTree = "<group>"; };
 		40AFAEDF2CF9865D00EF6488 /* BlockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockModule.swift; sourceTree = "<group>"; };
 		40AFAEE42CF999FF00EF6488 /* LimitModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitModule.swift; sourceTree = "<group>"; };
+		40AFAEE62CFA457300EF6488 /* MonitorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitorUtils.swift; sourceTree = "<group>"; };
 		40C91CE02CD3FFA900021668 /* AppEventHistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEventHistoryModel.swift; sourceTree = "<group>"; };
 		40FC05052CB4966F00FC9C61 /* ScreenTimeModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeModule.swift; sourceTree = "<group>"; };
 		77F8C28FFDDF422C996D2B28 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "impulse/noop-file.swift"; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				40AFAEDA2CF9230700EF6488 /* ModelConfigurationManager.swift */,
 				40AFAEDF2CF9865D00EF6488 /* BlockModule.swift */,
 				40AFAEE42CF999FF00EF6488 /* LimitModule.swift */,
+				40AFAEE62CFA457300EF6488 /* MonitorUtils.swift */,
 			);
 			name = impulse;
 			sourceTree = "<group>";
@@ -645,6 +648,7 @@
 				4009EBC42CB605E5002A0FB4 /* FamilyActivityPicker.swift in Sources */,
 				40AFAEE52CF999FF00EF6488 /* LimitModule.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				40AFAEE72CFA457300EF6488 /* MonitorUtils.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				40511BEE2CCCBDD200A1D6CA /* LimitModel.swift in Sources */,
 				40FC05062CB4966F00FC9C61 /* ScreenTimeModule.swift in Sources */,
