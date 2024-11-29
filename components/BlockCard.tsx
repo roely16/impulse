@@ -34,13 +34,13 @@ export const BlockCard = (props: BlockCardProps) => {
     total_blocks = 0
   } = props;
 
-  const { ScreenTimeModule } = NativeModules;
+  const { BlockModule } = NativeModules;
 
   const { t } = useTranslation();
 
   const updateBlockStatus = async (status: boolean) => {
     try {
-      const response = await ScreenTimeModule.updateBlockStatus(id, status);
+      await BlockModule.updateBlockStatus(id, status);
       MixpanelService.trackEvent('block_period_activated', {
         localizacion: "home",
         total_block_periods: total_blocks,
@@ -164,7 +164,6 @@ export const BlockCard = (props: BlockCardProps) => {
           <Text style={styles.subtitle}>{convertTimeRange(subtitle)}</Text>
         </View>
         <View style={styles.rowContainer}>
-          {/* <Text style={styles.subtitle}>{t('cardBlock.appsLabel')}: {apps} {t('cardBlock.sitesLabel')}: {sites}</Text> */}
           <SitesAndWebsText />
           <Switch onValueChange={value => updateBlockStatus(value)} value={enable} thumbColor={enable ? '#203B52' : '#f4f3f4'} trackColor={{false: '#767577', true: '#FDE047'}} />
         </View>

@@ -83,25 +83,6 @@ RCT_EXTERN_METHOD(createBlock:(NSString *)name
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(readLastLog:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(getBlocks:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(deleteBlock:(NSString *)blockId
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(getBlock:(NSString *)blockId
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(updateBlockStatus:(NSString *)blockId
-                  isEnable:(BOOL)isEnable
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(updateBlock:(NSString *)blockId
                   name:(NSString *)name
                   startTime:(NSString *)startTime
@@ -122,19 +103,6 @@ RCT_EXTERN_METHOD(createLimit:(NSString *)name
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getLimits:(BOOL)impulseMode
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(deleteLimit:(NSString *)limitId
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(updateLimitStatus:(NSString *)limitId
-                  enable:(BOOL)isEnable
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(updateLimit:(NSString *)limitId
                   name:(NSString *)name
                   timeLimit:(NSString *)timeLimit
@@ -147,7 +115,44 @@ RCT_EXTERN_METHOD(updateLimit:(NSString *)limitId
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+@end
+
+
+@interface RCT_EXTERN_MODULE(BlockModule, NSObject)
+
+RCT_EXTERN_METHOD(getBlocks:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(deleteBlock:(NSString *)blockId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getBlock:(NSString *)blockId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateBlockStatus:(NSString *)blockId
+                  isEnable:(BOOL)isEnable
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+@end
+
+@interface RCT_EXTERN_MODULE(LimitModule, NSObject)
+
 RCT_EXTERN_METHOD(getLimitDetail:(NSString *)limitId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(deleteLimit:(NSString *)limitId
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getLimits:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(updateLimitStatus:(NSString *)limitId
+                  enable:(BOOL)isEnable
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

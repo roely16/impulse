@@ -17,7 +17,7 @@ import { BottomSheetBlockAndLimit } from '@/components/BottomSheet';
 
 export default function ImpulseScreen() {
 
-  const { ScreenTimeModule } = NativeModules;
+  const { LimitModule } = NativeModules;
   
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ export default function ImpulseScreen() {
 
   const getLimits = async () => {
     try {
-      const limits = await ScreenTimeModule.getLimits(true);
+      const limits = await LimitModule.getLimits();
       console.log('Limits', limits);
       setLimits(limits.limits);
     } catch {
