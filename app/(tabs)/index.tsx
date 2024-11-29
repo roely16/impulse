@@ -33,7 +33,7 @@ export default function HomeScreen() {
 
   const getTimeOnScreen = useTimeOnScreen();
 
-  const { ScreenTimeModule } = NativeModules;
+  const { BlockModule, LimitModule } = NativeModules;
   const openBottonSheet = () => {
     bottomSheetRef.current?.expand();
     setBottomSheetForm('config-block');
@@ -89,14 +89,18 @@ export default function HomeScreen() {
 
   const getBlocks = async () => {
     setLoading(true);
-    const blocks = await ScreenTimeModule.getBlocks();
-    setBlocks(blocks.blocks);
-    setLoading(false);
+    try {
+      const blocks = await BlockModule.getBlocks();
+      setBlocks(blocks.blocks);
+      setLoading(false);
+    } catch (error) {
+      console.log("Error trying to get list of blocks", error)
+    }
   };
 
   const getLimits = async () => {
     try {
-      const limits = await ScreenTimeModule.getLimits(false);
+      const limits = await LimitModule.getLimits();
       setLimits(limits.limits);
     } catch {
       console.log('Error getting limits');

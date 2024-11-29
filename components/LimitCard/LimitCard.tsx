@@ -45,13 +45,13 @@ export const LimitCard = (props: LimitCardProps) => {
     total_limits = 0
   } = props;
 
-  const { ScreenTimeModule } = NativeModules;
+  const { LimitModule } = NativeModules;
 
   const { t } = useTranslation();
 
   const updateLimitStatus = async (status: boolean) => {
     try {
-      await ScreenTimeModule.updateLimitStatus(id, status);
+      await LimitModule.updateLimitStatus(id, status);
 
       MixpanelService.trackEvent('limit_app_activated', {
         localizacion: "home",

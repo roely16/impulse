@@ -60,7 +60,7 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
 
   const [days, setDays] = useState(initialDays);
 
-  const { ScreenTimeModule } = NativeModules;
+  const { ScreenTimeModule, BlockModule } = NativeModules;
 
   const Frequency = (): React.ReactElement => {
 
@@ -269,7 +269,7 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
 
     const confirmDeleteBlock = async () => {
       try {
-        await ScreenTimeModule.deleteBlock(blockId);
+        await BlockModule.deleteBlock(blockId);
         refreshBlocks();
         closeBottomSheet()
       } catch (error) {
@@ -384,7 +384,7 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
 
   useLayoutEffect(() => {
     const loadBlockData = async () => {
-      const result = await ScreenTimeModule.getBlock(blockId);
+      const result = await BlockModule.getBlock(blockId);
       if (result.status === 'success') {
         setBlockData(result.block);
       }

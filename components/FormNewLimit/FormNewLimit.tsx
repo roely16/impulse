@@ -105,7 +105,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
   const [days, setDays] = useState(initialDays);
 
-  const { ScreenTimeModule } = NativeModules;
+  const { ScreenTimeModule, LimitModule } = NativeModules;
 
   const Frequency = (): React.ReactElement => {
     const toggleSelected = (selectedDay: DayType) => {
@@ -383,7 +383,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const DeleteButton = (): React.ReactElement => {
     const confirmDeleteLimit = async () => {
       try {
-        await ScreenTimeModule.deleteLimit(limitId);
+        await LimitModule.deleteLimit(limitId);
         refreshLimits();
         closeBottomSheet();
       } catch (error) {
@@ -500,7 +500,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   useLayoutEffect(() => {
     const localLimitData = async () => {
       setIsLoading(true);
-      const result = await ScreenTimeModule.getLimitDetail(limitId);
+      const result = await LimitModule.getLimitDetail(limitId);
       console.log('result', result);
       if (result.status === 'success') {
         setLimitData(result.limit);
