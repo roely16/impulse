@@ -179,28 +179,17 @@ class ScreenTimeModule: NSObject {
       
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
+      let monitorUtils = MonitorUtils()
       
-      if weekdays.count == 0 {
-        try deviceActivityCenter.startMonitoring(
-          DeviceActivityName(rawValue: block.id.uuidString),
-          during: DeviceActivitySchedule(
-            intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
-            intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
-            repeats: false
-          )
-        )
-      } else {
-        for weekday in weekdays {
-          try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: "\(block.id.uuidString)-day-\(weekday)"),
-            during: DeviceActivitySchedule(
-              intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1]), weekday: weekday),
-              intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1]), weekday: weekday),
-              repeats: true
-            )
-          )
-        }
-      }
+      let activityName = block.id.uuidString
+      
+      let activitySchedule = DeviceActivitySchedule(
+        intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
+        intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
+        repeats: false
+      )
+      
+      monitorUtils.startMonitoring(activityName: activityName, duration: activitySchedule, weekdays: weekdays)
       
       resolve(["status": "success", "appsBlocked": self.appsSelected.count])
 

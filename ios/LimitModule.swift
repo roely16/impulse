@@ -116,7 +116,7 @@ class LimitModule: NSObject {
           
           // Find if the event has history
           let numberOfEvents = findLimitHistory(event: event)
-          print("Number of events: \(numberOfEvents)")
+
           if numberOfEvents! > 0 {
             // Block app if the event has history
             let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
@@ -141,7 +141,7 @@ class LimitModule: NSObject {
         try weekdays.forEach { weekday in
           logger.info("Create monitoring with weekday: \(weekday)")
           try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: "\(limit?.id.uuidString)-limit-day-\(weekday)"),
+            DeviceActivityName(rawValue: "\(limit?.id.uuidString ?? "")-limit-day-\(weekday)"),
             during: DeviceActivitySchedule(
               intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
