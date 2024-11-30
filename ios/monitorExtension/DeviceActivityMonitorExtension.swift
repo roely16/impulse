@@ -90,19 +90,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
   }
   
-  func extractId(from activityRawValue: String) -> String {
-      let dayIdentifier = "-day-"
-
-      // Verifica si el string contiene el identificador
-      if let range = activityRawValue.range(of: dayIdentifier) {
-          // Si se encuentra, extrae la parte anterior
-          return String(activityRawValue[..<range.lowerBound])
-      }
-      
-      // Si no se encuentra, devolver el string original
-      return activityRawValue
-  }
-  
   func extractLimitId(from activityRawValue: String) -> String {
       let limitIdentifier = "-limit"
 
@@ -180,7 +167,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       
       logger.info("Impulse: interval did start for activity \(activity.rawValue, privacy: .public)")
 
-      let activityId = extractId(from: activity.rawValue)
+      let activityId = Constants.extractIdForBlock(from: activity.rawValue)
       await getBlock(blockId: activityId)
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
       
@@ -212,7 +199,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       
       store.shield.applications = block?.appsTokens
       store.shield.webDomains = block?.webDomainTokens
-      sharedDefaults?.set("Activity started: \(activityId) \(activity.rawValue)", forKey: "lastActivityLog")
     }
   }
   
@@ -251,7 +237,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       }
       
       // When block end
-      let activityId = self.extractId(from: activity.rawValue)
+      let activityId = Constants.extractIdForBlock(from: activity.rawValue)
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
       store.shield.applications = nil
       store.shield.webDomains = nil
@@ -283,6 +269,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     
   override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
     super.eventDidReachThreshold(event, activity: activity)
+    
+    logger.info("Impulse: event did reach threshold \(event.rawValue, privacy: .public) \(activity.rawValue, privacy: .public)")
     
     Task {
       do {

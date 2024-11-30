@@ -157,9 +157,7 @@ class ScreenTimeModule: NSObject {
     weekdays: [Int],
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
-  ) {
-    let deviceActivityCenter = DeviceActivityCenter();
-    
+  ) {    
     do {
       
       let context = try getContext()

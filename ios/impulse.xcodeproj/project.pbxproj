@@ -25,6 +25,8 @@
 		40511BE32CC8EBFA00A1D6CA /* Catamaran.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */; };
 		40511BEE2CCCBDD200A1D6CA /* LimitModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */; };
 		40511BF12CCCE9DA00A1D6CA /* AppEventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF02CCCE9DA00A1D6CA /* AppEventModel.swift */; };
+		405F80572CFADB8D00764B5D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F80562CFADB8D00764B5D /* Constants.swift */; };
+		405F80582CFADFA800764B5D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F80562CFADB8D00764B5D /* Constants.swift */; };
 		4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */; };
 		4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */; };
 		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -148,6 +150,7 @@
 		40511BE22CC8EBFA00A1D6CA /* Catamaran.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Catamaran.ttf; sourceTree = "<group>"; };
 		40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitModel.swift; sourceTree = "<group>"; };
 		40511BF02CCCE9DA00A1D6CA /* AppEventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEventModel.swift; sourceTree = "<group>"; };
+		405F80562CFADB8D00764B5D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = monitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
@@ -237,6 +240,7 @@
 				40AFAEDF2CF9865D00EF6488 /* BlockModule.swift */,
 				40AFAEE42CF999FF00EF6488 /* LimitModule.swift */,
 				40AFAEE62CFA457300EF6488 /* MonitorUtils.swift */,
+				405F80562CFADB8D00764B5D /* Constants.swift */,
 			);
 			name = impulse;
 			sourceTree = "<group>";
@@ -662,6 +666,7 @@
 				40511BF12CCCE9DA00A1D6CA /* AppEventModel.swift in Sources */,
 				40AFAED12CF91BF200EF6488 /* WebEventHistoryModel.swift in Sources */,
 				4096DDAD2CBA2DDB0070F6D3 /* BlockModel.swift in Sources */,
+				405F80572CFADB8D00764B5D /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +711,7 @@
 				40AFAED92CF91C1500EF6488 /* EventStatus.swift in Sources */,
 				40AFAEDE2CF9230700EF6488 /* ModelConfigurationManager.swift in Sources */,
 				40C91D022CDACB2000021668 /* LimitModel.swift in Sources */,
+				405F80582CFADFA800764B5D /* Constants.swift in Sources */,
 				40C91D082CDACB5100021668 /* AppEventModel.swift in Sources */,
 				40AFAED42CF91BF300EF6488 /* WebEventHistoryModel.swift in Sources */,
 				40C91D0A2CDACB6200021668 /* BlockModel.swift in Sources */,
