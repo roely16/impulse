@@ -27,6 +27,9 @@
 		40511BF12CCCE9DA00A1D6CA /* AppEventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40511BF02CCCE9DA00A1D6CA /* AppEventModel.swift */; };
 		405F80572CFADB8D00764B5D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F80562CFADB8D00764B5D /* Constants.swift */; };
 		405F80582CFADFA800764B5D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F80562CFADB8D00764B5D /* Constants.swift */; };
+		405F805A2CFAEF7B00764B5D /* ShieldConfigurationBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F80592CFAEF7B00764B5D /* ShieldConfigurationBlock.swift */; };
+		405F805C2CFAF37900764B5D /* ShieldConfigurationLimit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F805B2CFAF37900764B5D /* ShieldConfigurationLimit.swift */; };
+		405F805E2CFAF62D00764B5D /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405F805D2CFAF62D00764B5D /* UIColorExtension.swift */; };
 		4096DD9D2CB91D040070F6D3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */; };
 		4096DDA02CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */; };
 		4096DDA52CB91D040070F6D3 /* monitorExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -151,6 +154,9 @@
 		40511BEC2CCCBDD200A1D6CA /* LimitModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitModel.swift; sourceTree = "<group>"; };
 		40511BF02CCCE9DA00A1D6CA /* AppEventModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEventModel.swift; sourceTree = "<group>"; };
 		405F80562CFADB8D00764B5D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		405F80592CFAEF7B00764B5D /* ShieldConfigurationBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationBlock.swift; sourceTree = "<group>"; };
+		405F805B2CFAF37900764B5D /* ShieldConfigurationLimit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldConfigurationLimit.swift; sourceTree = "<group>"; };
+		405F805D2CFAF62D00764B5D /* UIColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtension.swift; sourceTree = "<group>"; };
 		4096DD8B2CB906D80070F6D3 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		4096DD9C2CB91D040070F6D3 /* monitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = monitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4096DD9F2CB91D040070F6D3 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
@@ -265,6 +271,9 @@
 				4009EC172CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift */,
 				4009EC192CB6E7D7002A0FB4 /* Info.plist */,
 				4009EC1A2CB6E7D7002A0FB4 /* shieldConfigurator.entitlements */,
+				405F80592CFAEF7B00764B5D /* ShieldConfigurationBlock.swift */,
+				405F805B2CFAF37900764B5D /* ShieldConfigurationLimit.swift */,
+				405F805D2CFAF62D00764B5D /* UIColorExtension.swift */,
 			);
 			path = shieldConfigurator;
 			sourceTree = "<group>";
@@ -675,6 +684,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4009EC182CB6E7D7002A0FB4 /* ShieldConfigurationExtension.swift in Sources */,
+				405F805A2CFAEF7B00764B5D /* ShieldConfigurationBlock.swift in Sources */,
 				40C91CFF2CDACAF100021668 /* BlockModel.swift in Sources */,
 				40AFAED72CF91C1500EF6488 /* EventStatus.swift in Sources */,
 				40AFAEDC2CF9230700EF6488 /* ModelConfigurationManager.swift in Sources */,
@@ -682,7 +692,9 @@
 				40C91D062CDACB5000021668 /* AppEventModel.swift in Sources */,
 				40AFAED22CF91BF300EF6488 /* WebEventHistoryModel.swift in Sources */,
 				40C91D032CDACB3D00021668 /* AppEventHistoryModel.swift in Sources */,
+				405F805C2CFAF37900764B5D /* ShieldConfigurationLimit.swift in Sources */,
 				40AFAECD2CF91AD500EF6488 /* WebEventModel.swift in Sources */,
+				405F805E2CFAF62D00764B5D /* UIColorExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
