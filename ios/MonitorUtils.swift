@@ -20,7 +20,7 @@ class MonitorUtils {
           
           do {
             let activitySchedule = createWeekSchedule(weekday: weekday, duration: duration)
-            let name = "\(activityName)-day-\(weekday)"
+            let name = Constants.blockMonitorNameWithFrequency(blockId: activityName, weekday: weekday)
             let newActivityName = DeviceActivityName(rawValue: name)
             
             try deviceActivityCenter.startMonitoring(
