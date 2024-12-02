@@ -21,6 +21,7 @@ class ShieldActionExtension: ShieldActionDelegate {
   private var logger = Logger()
   private var eventModel: AppEvent?
   private var container: ModelContainer
+  private var sharedDefaultsManager = SharedDefaultsManager()
   
   override init() {
     do {
@@ -62,9 +63,7 @@ class ShieldActionExtension: ShieldActionDelegate {
             
             let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
             
-            // Check if is block
-            // Validate if shareDefaultData is for block
-            if (sharedDefaults?.data(forKey:  "\(tokenString ?? "")-block")) != nil {
+            if (try sharedDefaultsManager.readSharedDefaultsByToken(token: .application(application), type: .block)) != nil {
               logger.info("Impulse: resolve action for block")
               completionHandler(.close)
               return
@@ -96,9 +95,7 @@ class ShieldActionExtension: ShieldActionDelegate {
                 let storeName = startBlocking ? "limit-start-block" : "event-\(eventId)"
                 
                 // TO-DO
-                
-                
-                
+
                 let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: storeName))
                 
                 if impulseTime > 0 {
@@ -126,6 +123,7 @@ class ShieldActionExtension: ShieldActionDelegate {
                 
                 // Create again the usage warning
                 
+                /*
                 var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
                 
                 let threshold = DateComponents(minute: usageWarning)
@@ -145,7 +143,7 @@ class ShieldActionExtension: ShieldActionDelegate {
                   ),
                   events: eventsArray
                 )
-                
+                */
               }
               return
             }

@@ -268,8 +268,13 @@ class LimitModule: NSObject {
       
       limit?.appsEvents.forEach{event in
         // Remove restrictions for every app
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id)"))
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
         store.shield.applications = nil
+        
+        // Remove usage warning
+        let eventId = event.id.uuidString
+        // deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(eventId)-usage-warning")])
+        
       }
       
       // Stop monitoring

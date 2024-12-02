@@ -176,24 +176,20 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         "blockName": block?.name
       ]
       
-      let encoder = JSONEncoder()
+      let sharedDefaultManager = SharedDefaultsManager()
       
       // Save share defaults for each app
       try block?.appsTokens.forEach{ appToken in
-        let tokenData = try encoder.encode(appToken)
-        let tokenString = String(data: tokenData, encoding: .utf8)
-        let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
-        sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block")
+        let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(appToken), type: .block)
+        try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+        logger.info("Impulse: save shared defaults for app \(sharedDefaultKey, privacy: .public)")
       }
-          
+
       // Save share defaults for each web domain
       try block?.webDomainTokens.forEach{ webToken in
-        let tokenData = try JSONEncoder().encode(webToken.self)
-        
-        let tokenString = String(data: tokenData, encoding: .utf8)
-        let shareData = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
-        logger.info("Impulse: set data for web site block \(tokenString ?? "", privacy: .public)")
-        sharedDefaults?.set(shareData, forKey: "\(tokenString ?? "")-block-web")
+        let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(webToken), type: .block)
+        try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+        logger.info("Impulse: save shared default for web \(sharedDefaultKey, privacy: .public)")
 
       }
       

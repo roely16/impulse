@@ -9,7 +9,7 @@ import SwiftData
 @objc(ScreenTimeModule)
 class ScreenTimeModule: NSObject {
   
-  let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
+  let sharedDefaults = UserDefaults(suiteName: Constants.SHARED_DEFAULT_GROUP)
 
   var appsSelected: Set<ApplicationToken> = []
   var websDomainSelected: Set<WebDomainToken> = []
