@@ -96,4 +96,16 @@ class SharedDefaultsManager {
     
     return nil
   }
+  
+  func deleteSharedDefaultsByToken(token: TokenType, type: TokenActionType){
+    let sharedDefaultKey: String
+    
+    switch token {
+    case .application(let appToken):
+      sharedDefaultKey = createTokenKeyString(token: .application(appToken), type: type)
+    case .webDomain(let webToken):
+      sharedDefaultKey = createTokenKeyString(token: .webDomain(webToken), type: type)
+    }
+    sharedDefaults?.removeObject(forKey: sharedDefaultKey)
+  }
 }
