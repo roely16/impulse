@@ -172,14 +172,14 @@ class LimitModule: NSObject {
     }
   }
   
-  func getLimitTime(time: String = "") -> Int? {
+  func getLimitTime(time: String = "") -> Int {
     let components = time.split(separator: ":")
     if let hours = Int(components[0]), let minutes = Int(components[1]) {
       let totalMinutes = (hours * 60) + minutes
       return totalMinutes
     } else {
-      print("Invalid format")
-      return nil
+      logger.info("Impulse: time wrong format \(time, privacy: .public)")
+      return 0
     }
   }
   
