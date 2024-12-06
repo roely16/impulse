@@ -178,16 +178,14 @@ class ScreenTimeModule: NSObject {
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
       let monitorUtils = MonitorUtils()
-      
-      let activityName = block.id.uuidString
-      
+            
       let activitySchedule = DeviceActivitySchedule(
         intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
         intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
         repeats: false
       )
       
-      monitorUtils.startMonitoring(activityName: activityName, duration: activitySchedule, weekdays: weekdays)
+      monitorUtils.startMonitoring(id: block.id.uuidString, duration: activitySchedule, weekdays: weekdays)
       
       resolve(["status": "success", "appsBlocked": self.appsSelected.count])
 
@@ -264,6 +262,7 @@ class ScreenTimeModule: NSObject {
         
         logger.info("Impulse: create shared default with key \(sharedDefaultKey)")
         
+        /*
         let shieldConfigurationData = [
           "limitName": limit.name,
           "impulseTime": limit.impulseTime,
@@ -277,6 +276,7 @@ class ScreenTimeModule: NSObject {
         
         let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
         sharedDefaults?.set(data, forKey: sharedDefaultKey)
+         */
         
       }
       
@@ -293,12 +293,17 @@ class ScreenTimeModule: NSObject {
       if weekdays.count > 0 {
         logger.info("Create frecuency")
         for weekday in weekdays {
-          let monitoringName = "\(limit.id.uuidString)-limit-day-\(weekday)"
 
-          logger.info("Impulse: Create limit with weekday: \(monitoringName)")
+          let monitorName = Constants.monitorNameWithFrequency(id: limit.id.uuidString, weekday: weekday, type: .limit)
+          
+          logger.info("Impulse: Create limit with weekday: \(monitorName)")
+          
+          let warningTime = minutesToBlock - usageWarning.intValue
+          
+          logger.info("Impulse: warning time \(warningTime, privacy: .public) with minutes to block \(minutesToBlock, privacy: .public) and usage warning \(usageWarning, privacy: .public)")
           
           try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: monitoringName),
+            DeviceActivityName(rawValue: monitorName),
             during: DeviceActivitySchedule(
               intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
@@ -306,6 +311,7 @@ class ScreenTimeModule: NSObject {
             ),
             events: eventsArray
           )
+          
         }
       } else {
         // Start monitoring

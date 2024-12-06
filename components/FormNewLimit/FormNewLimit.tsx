@@ -306,12 +306,10 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         warningTime
       };
 
-      console.log('Create limit data', data);
-
       const response = await ScreenTimeModule.createLimit(
         data.name,
         data.timeLimit,
-        openLimitRef.current,
+        openLimit,
         data.weekDays,
         data.enableImpulseMode,
         impulseTime,

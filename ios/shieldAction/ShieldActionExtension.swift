@@ -1,10 +1,3 @@
-//
-//  ShieldActionExtension.swift
-//  shieldAction
-//
-//  Created by Chur Herson on 9/10/24.
-//
-
 import ManagedSettings
 import Foundation
 import OSLog
@@ -56,97 +49,78 @@ class ShieldActionExtension: ShieldActionDelegate {
         Task {
           do {
             logger.info("Impulse: pulse primary button")
-            // Convert token to String
-            let encoder = JSONEncoder()
-            let tokenData = try encoder.encode(application)
-            let tokenString = String(data: tokenData, encoding: .utf8)
             
-            let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
-            
+            /* Block */
             if (try sharedDefaultsManager.readSharedDefaultsByToken(token: .application(application), type: .block)) != nil {
               logger.info("Impulse: resolve action for block")
               completionHandler(.close)
               return
             }
             
-            // Find data for limit
-            if let data = sharedDefaults?.data(forKey: "\(tokenString ?? "")-limit") {
-              if var shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                logger.info("Impulse: resolve action for limit")
+            /* Limit */
+            if var shieldConfigurationData = try? sharedDefaultsManager.readSharedDefaultsByToken(token: .application(application), type: .limit) {
+              do {
+                let sharedDefaultManager = SharedDefaultsManager()
                 
-                shieldConfigurationData["shieldButtonEnable"] = false
-                shieldConfigurationData["opens"] = shieldConfigurationData["opens"] as! Int + 1
-                let data = try JSONSerialization.data(withJSONObject: shieldConfigurationData, options: [])
-                if let tokenString = String(data: tokenData, encoding: .utf8) {
-                  let sharedDefaultKey = "\(tokenString)-limit"
-                  sharedDefaults?.set(data, forKey: sharedDefaultKey)
-                }
-                
-                completionHandler(.defer)
-                
+                let shieldButtonEnable = shieldConfigurationData["shieldButtonEnable"] as? Bool ?? true
                 let eventId = shieldConfigurationData["eventId"] as? String ?? ""
                 let impulseTime = shieldConfigurationData["impulseTime"] as? Int ?? 0
-                let startBlocking = shieldConfigurationData["startBlocking"] as? Bool ?? false
-                let usageWarning = shieldConfigurationData["usageWarning"] as? Int ?? 0
                 
-                self.logger.info("Impulse: Event id \(eventId, privacy: .public)")
-                self.logger.info("Impulse: impulse time \(impulseTime, privacy: .public)")
-                
-                let storeName = startBlocking ? "limit-start-block" : "event-\(eventId)"
-                
-                // TO-DO
-
-                let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: storeName))
-                
-                if impulseTime > 0 {
-                  DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(impulseTime)) {
-                    store.shield.applications = nil
-                    self.logger.info("Impulse: Aplicaciones desbloqueadas después de \(impulseTime) segundos")
-                    completionHandler(.close)
-                  }
+                if shieldButtonEnable {
                   
-                } else {
-                  store.shield.applications = nil
-                  self.logger.info("Without impulse time")
-                }
-                
-                // Add 1 open to event if is limit-start-block
-                
-                self.logger.info("Impulse: shield action add one to event")
-                do {
+                  // Update event
                   try await getEvent(eventId: eventId)
                   eventModel?.opens += 1
                   try eventModel?.modelContext?.save()
-                } catch {
-                  self.logger.info("Impulse: error trying to add one to event \(error.localizedDescription)")
+                  
+                  // Update shared defaults for app
+                  shieldConfigurationData["opens"] = eventModel?.opens
+                  shieldConfigurationData["shieldButtonEnable"] = false
+                  let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(application), type: .limit)
+                  try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+                  completionHandler(.defer)
+                  
+                  // Create new monitor for app event
+                  let usageWarning = self.eventModel?.limit?.usageWarning
+                  
+                  let monitorName = Constants.managedSettingsName(eventId: self.eventModel?.id.uuidString ?? "")
+                  logger.info("Impulse: create new monitor for event \(monitorName, privacy: .public)")
+                  let deviceActivityCenter = DeviceActivityCenter();
+                  try deviceActivityCenter.startMonitoring(
+                    DeviceActivityName(rawValue: monitorName),
+                    during: DeviceActivitySchedule(
+                      intervalStart: DateComponents(hour: 0, minute: 0),
+                      intervalEnd: DateComponents(hour: 23, minute: 59),
+                      repeats: false
+                    ),
+                    events: [DeviceActivityEvent.Name(rawValue: monitorName): DeviceActivityEvent(applications: [application], threshold: DateComponents(minute: usageWarning))]
+                  )
+                  
+                  let managedSettingsName = Constants.managedSettingsName(eventId: eventId)
+                  let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+                  
+                  // Wait for unlock the app
+                  if impulseTime > 0 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(impulseTime)) {
+                      store.shield.applications = nil
+                      self.logger.info("Impulse: Aplicaciones desbloqueadas después de \(impulseTime) segundos")
+                      completionHandler(.close)
+                    }
+                  }
+                  
+                  let limitName = shieldConfigurationData["limitName"] as? String ?? ""
+                  logger.info("Impulse: resolve action for limit with name: \(limitName, privacy: .public)")
+                  
+                } else {
+                  logger.info("Impulse: shield button is disabled")
+                  completionHandler(.defer)
                 }
-                
-                // Create again the usage warning
-                
-                /*
-                var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
-                
-                let threshold = DateComponents(minute: usageWarning)
-                let eventName = DeviceActivityEvent.Name(rawValue: "\(eventId)-usage-warning")
-                let activityEvent = DeviceActivityEvent(applications: [application], threshold: threshold)
-                
-                eventsArray[eventName] = activityEvent
-                
-                let deviceActivityCenter = DeviceActivityCenter();
-                
-                try deviceActivityCenter.startMonitoring(
-                  DeviceActivityName(rawValue: "\(eventId)-usage-warning"),
-                  during: DeviceActivitySchedule(
-                    intervalStart: DateComponents(hour: 0, minute: 0),
-                    intervalEnd: DateComponents(hour: 23, minute: 59),
-                    repeats: false
-                  ),
-                  events: eventsArray
-                )
-                */
+              } catch {
+                logger.error("Impulse: error when user clic shield primary button \(error.localizedDescription, privacy: .public)")
               }
               return
             }
+            
             logger.info("Impulse: shield action without block or limit")
             completionHandler(.close)
           } catch {

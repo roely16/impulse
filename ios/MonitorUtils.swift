@@ -6,12 +6,11 @@ class MonitorUtils {
   private let deviceActivityCenter = DeviceActivityCenter()
   
   func startMonitoring(
-    activityName: String = "",
+    id: String = "",
     duration: DeviceActivitySchedule,
     weekdays: [Int] = []
   ){
     do {
-      let activiyName = DeviceActivityName(rawValue: activityName)
       
       let requireRepeat = weekdays.count > 0
       
@@ -20,7 +19,7 @@ class MonitorUtils {
           
           do {
             let activitySchedule = createWeekSchedule(weekday: weekday, duration: duration)
-            let name = Constants.blockMonitorNameWithFrequency(blockId: activityName, weekday: weekday)
+            let name = Constants.monitorNameWithFrequency(id: id, weekday: weekday, type: .block)
             let newActivityName = DeviceActivityName(rawValue: name)
             
             try deviceActivityCenter.startMonitoring(
@@ -44,8 +43,11 @@ class MonitorUtils {
         repeats: false
       )
       
+      let activityId = Constants.monitorName(id: id, type: .block)
+      let activityName = DeviceActivityName(rawValue: activityId)
+      
       try deviceActivityCenter.startMonitoring(
-        activiyName,
+        activityName,
         during: activitySchedule
       )
     } catch  {
