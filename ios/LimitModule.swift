@@ -262,39 +262,45 @@ class LimitModule: NSObject {
         return
       }
       
+      let sharedDefaultsManager = SharedDefaultsManager()
+      
       // Get events
       let limit = findLimit(limitId: uuid)
       let context = try getContext()
       
-      limit?.appsEvents.forEach{event in
-        // Remove restrictions for every app
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
-        store.shield.applications = nil
-        
-        // Remove usage warning
-        let eventId = event.id.uuidString
-        // deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(eventId)-usage-warning")])
-        
-      }
-      
-      // Stop monitoring
       let deviceActivityCenter = DeviceActivityCenter();
 
-      // Validate if weekdays is upper 0
+      limit?.appsEvents.forEach{event in
+        
+        // Clear managed settings
+        let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+        store.clearAllSettings()
+        
+        // Delete shared defaults for each app
+        sharedDefaultsManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .limit)
+        sharedDefaultsManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .block)
+        
+        // Stop monitor for warning time
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: managedSettingsName)])
+      }
+      
       if (limit?.weekdays.count)! > 0 {
-        // Remove for each day
         limit?.weekdays.forEach { weekday in
-          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit-day-\(weekday)")])
+          let monitorName = Constants.monitorNameWithFrequency(id: limit?.id.uuidString ?? "", weekday: weekday, type: .limit)
+
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
         }
       } else {
-        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(uuid)-limit")])
+        let monitorName = Constants.monitorName(id: limit?.id.uuidString ?? "", type: .limit)
+        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
       }
             
       // Delete limit and events
       try context.delete(model: Limit.self, where: #Predicate { $0.id == uuid })
       resolve(["status": "success"])
     } catch {
-      print("Error trying to delete limit")
+      logger.error("Impulse: error trying to delete limit")
     }
   }
   

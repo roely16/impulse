@@ -104,14 +104,20 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   }
   
   func extractEventId(from eventRawValue: String) -> String {
-    // Verifica si el string contiene el identificador
-    if let range = eventRawValue.range(of: Constants.EVENT_MANAGED_SETTINGS_STORE_IDENTIFIER) {
-      // Si se encuentra, extrae la parte anterior
+    let identifiers = [
+      Constants.EVENT_MANAGED_SETTINGS_STORE_IDENTIFIER,
+      Constants.LIMIT_TIME_EVENT_NAME
+    ]
+    
+    if let range = identifiers.compactMap({ eventRawValue.range(of: $0) }).sorted(by: { $0.lowerBound < $1.lowerBound }).first {
       return String(eventRawValue[..<range.lowerBound])
     }
     
-    // Si no se encuentra, devolver el string original
     return eventRawValue
+  }
+  
+  func checkIfIsLimitTime(string: String) -> Bool {
+      return string.contains(Constants.LIMIT_TIME_EVENT_NAME)
   }
   
   func findLimitByActiviyId(activiyId: String = "") async {
@@ -271,27 +277,30 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
   }
   
-  func shieldAppAndUpdateEvent(event: AppEvent) async {
+  func shieldAppAndUpdateEvent(event: AppEvent, isLimitTime: Bool) async {
     do {
       let sharedDefaultManager = SharedDefaultsManager()
-      var shieldConfigurationData = [:] as [String : Any]
+      var shieldConfigurationData: [String: Any] = [:]
+      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: Constants.managedSettingsName(eventId: event.id.uuidString)))
       var sharedDefaultKey = ""
       
       let openLimit = Int(event.limit?.openLimit ?? "") ?? 0
-      logger.info("Impulse: open limit \(event.limit?.openLimit ?? "", privacy: .public)")
       let opens = event.opens
       
-      if openLimit > 0 && opens >= openLimit {
-        logger.info("Impulse: shield app with block configuration, openLimit: \(openLimit, privacy: .public) and opens: \(opens, privacy: .public)")
-        // Set shield type block
+      logger.info("Impulse: open limit \(event.limit?.openLimit ?? "", privacy: .public)")
+
+      if isLimitTime {
         shieldConfigurationData = [
-          "type": "block",
           "blockName": event.limit?.name ?? ""
         ]
         sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(event.appToken), type: .block)
-      }
-      
-      if openLimit == 0 || opens < openLimit {
+      } else if openLimit > 0 && opens >= openLimit {
+        logger.info("Impulse: shield app with block configuration, openLimit: \(openLimit, privacy: .public) and opens: \(opens, privacy: .public)")
+        shieldConfigurationData = [
+          "blockName": event.limit?.name ?? ""
+        ]
+        sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(event.appToken), type: .block)
+      } else {
         logger.info("Impulse: shield app with limit configuration, openLimit: \(openLimit, privacy: .public) and opens: \(opens, privacy: .public)")
         // Set shield type limit
         shieldConfigurationData = [
@@ -307,8 +316,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       
       try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
       
-      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: Constants.managedSettingsName(eventId: event.id.uuidString)))
       store.shield.applications = [event.appToken]
+      
     } catch {
       logger.error("Impulse: error trying to shield app and update event")
     }
@@ -322,6 +331,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         logger.info("Impulse: event did reach threshold with event id \(event.rawValue, privacy: .public)")
         
         let eventId = self.extractEventId(from: event.rawValue)
+        let isLimitTime = self.checkIfIsLimitTime(string: event.rawValue)
+        
         logger.info("Impulse: event id \(eventId, privacy: .public)")
                 
         // Check identifier
@@ -329,7 +340,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         logger.info("Impulse: shield application for event \(self.eventModel?.id.uuidString ?? "no id", privacy: .public)")
         
-        await shieldAppAndUpdateEvent(event: self.eventModel!)
+        await shieldAppAndUpdateEvent(event: self.eventModel!, isLimitTime: isLimitTime)
         
         logger.info("Impulse: shield application")
         

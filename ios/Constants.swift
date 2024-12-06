@@ -14,6 +14,7 @@ enum Constants {
   
   static let LIMIT_MONITOR_NAME = "-limit"
   static let LIMIT_MONITOR_NAME_WITH_FREQUENCY = "\(LIMIT_MONITOR_NAME)-day-"
+  static let LIMIT_TIME_EVENT_NAME = "-limit-time"
   
   static let EVENT_MANAGED_SETTINGS_STORE_IDENTIFIER = "-event"
   
@@ -41,6 +42,10 @@ enum Constants {
   
   static func managedSettingsName(eventId: String) -> String {
     return "\(eventId)\(EVENT_MANAGED_SETTINGS_STORE_IDENTIFIER)"
+  }
+  
+  static func eventNameForLimitTime(eventId: String) -> String {
+    return "\(eventId)\(LIMIT_TIME_EVENT_NAME)"
   }
   
   static func extractIdForBlock(from activityRawValue: String) -> String {
