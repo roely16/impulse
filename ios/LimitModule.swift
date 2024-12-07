@@ -65,23 +65,27 @@ class LimitModule: NSObject {
     do {
       // Remove shields
       let limit = findLimit(limitId: limitId)
+      
+      let limitUtils = LimitUtils()
+      let monitorUitls = MonitorUtils()
+      
       limit?.appsEvents.forEach{event in
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
-        store.shield.applications = nil
+        let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+        limitUtils.clearManagedSettingsByEvent(event: event)
+        monitorUitls.stopMonitoring(monitorName: managedSettingsName)
       }
       
-      // Stop monitoring
-      let deviceActivityCenter = DeviceActivityCenter();
 
       // Validate if weekdays is upper 0
       if limit?.weekdays.count ?? 0 > 0 {
         // Remove for each day
         limit?.weekdays.forEach { weekday in
-          let deviceActivityCenter = DeviceActivityCenter();
-          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(limitId.uuidString)-limit-day-\(weekday)")])
+          let monitorName = Constants.monitorNameWithFrequency(id: limit?.id.uuidString ?? "", weekday: weekday, type: .limit)
+          monitorUitls.stopMonitoring(monitorName: monitorName)
         }
       } else {
-        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: "\(String(describing: limitId.uuidString))-limit")])
+        let monitorName = Constants.monitorName(id: limit?.id.uuidString ?? "", type: .limit)
+        monitorUitls.stopMonitoring(monitorName: monitorName)
       }
       
       // Update limit status
@@ -107,21 +111,14 @@ class LimitModule: NSObject {
       
       var eventsArray: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
       limit?.appsEvents.forEach{event in
-        if minutesToBlock != nil {
+        if minutesToBlock > 0 {
+          let eventRawName = Constants.eventNameForLimitTime(eventId: event.id.uuidString)
+          
           let threshold = DateComponents(minute: minutesToBlock)
-          let eventName = DeviceActivityEvent.Name(rawValue: "\(event.id.uuidString)-event")
+          let eventName = DeviceActivityEvent.Name(rawValue: eventRawName)
           let activityEvent = DeviceActivityEvent(applications: [event.appToken], threshold: threshold)
                     
           eventsArray[eventName] = activityEvent
-          
-          // Find if the event has history
-          let numberOfEvents = findLimitHistory(event: event)
-
-          if numberOfEvents! > 0 {
-            // Block app if the event has history
-            let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: "event-\(event.id.uuidString)"))
-            store.shield.applications = [event.appToken]
-          }
           
         }
       }
@@ -130,18 +127,16 @@ class LimitModule: NSObject {
       let deviceActivityCenter = DeviceActivityCenter();
       
       let activities = deviceActivityCenter.activities
-      
-      print("current activities \(activities)")
-      
+            
       let weekdays: [Int] = limit?.weekdays ?? []
       
       // Validate if weekdays is upper 0
       if weekdays.count > 0 {
-        logger.info("Enable frecuency")
         try weekdays.forEach { weekday in
-          logger.info("Create monitoring with weekday: \(weekday)")
+          let monitorName = Constants.monitorNameWithFrequency(id: limit?.id.uuidString ?? "", weekday: weekday, type: .limit)
+          
           try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: "\(limit?.id.uuidString ?? "")-limit-day-\(weekday)"),
+            DeviceActivityName(rawValue: monitorName),
             during: DeviceActivitySchedule(
               intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
@@ -151,8 +146,10 @@ class LimitModule: NSObject {
           )
         }
       } else {
+        let monitorName = Constants.monitorName(id: limit?.id.uuidString ?? "", type: .limit)
+        
         try deviceActivityCenter.startMonitoring(
-          DeviceActivityName(rawValue: "\(limitId.uuidString)-limit"),
+          DeviceActivityName(rawValue: monitorName),
           during: DeviceActivitySchedule(
             intervalStart: DateComponents(hour: 0, minute: 0),
             intervalEnd: DateComponents(hour: 23, minute: 59),
@@ -261,39 +258,36 @@ class LimitModule: NSObject {
         reject("invalid_uuid", "The limit id is not a valid UUID", nil)
         return
       }
-      
-      let sharedDefaultsManager = SharedDefaultsManager()
-      
+            
       // Get events
       let limit = findLimit(limitId: uuid)
       let context = try getContext()
       
-      let deviceActivityCenter = DeviceActivityCenter();
-
+      let limitUtils = LimitUtils()
+      let monitorUitls = MonitorUtils()
+      
       limit?.appsEvents.forEach{event in
         
-        // Clear managed settings
         let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
-        store.clearAllSettings()
+
+        // Clear managed settings
+        limitUtils.clearManagedSettingsByEvent(event: event)
         
         // Delete shared defaults for each app
-        sharedDefaultsManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .limit)
-        sharedDefaultsManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .block)
+        limitUtils.deleteAllSharedDefaults(event: event)
         
         // Stop monitor for warning time
-        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: managedSettingsName)])
+        monitorUitls.stopMonitoring(monitorName: managedSettingsName)
       }
       
       if (limit?.weekdays.count)! > 0 {
         limit?.weekdays.forEach { weekday in
           let monitorName = Constants.monitorNameWithFrequency(id: limit?.id.uuidString ?? "", weekday: weekday, type: .limit)
-
-          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
+          monitorUitls.stopMonitoring(monitorName: monitorName)
         }
       } else {
         let monitorName = Constants.monitorName(id: limit?.id.uuidString ?? "", type: .limit)
-        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
+        monitorUitls.stopMonitoring(monitorName: monitorName)
       }
             
       // Delete limit and events
@@ -318,11 +312,9 @@ class LimitModule: NSObject {
     
     if !enable {
       // Disable limint and remove events shield
-      print("Disable limit")
       disableLimit(limitId: uuid, updateStore: true)
     } else {
       // Enable limit and events again
-      print("Enable limit")
       enableLimit(limitId: uuid, updateStore: true)
     }
     

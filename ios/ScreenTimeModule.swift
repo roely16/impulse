@@ -238,7 +238,8 @@ class ScreenTimeModule: NSObject {
         let event = AppEvent(
           limit: limit,
           appToken: appSelected,
-          opens: 0
+          opens: 0,
+          status: .warning
         )
         context.insert(event)
         try context.save()
@@ -355,7 +356,8 @@ class ScreenTimeModule: NSObject {
         try self.appsSelected.forEach{appSelected in
           let event = AppEvent(
             limit: limit!,
-            appToken: appSelected
+            appToken: appSelected,
+            status: .warning
           )
           context.insert(event)
           try context.save()

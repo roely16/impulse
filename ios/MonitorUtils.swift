@@ -55,6 +55,10 @@ class MonitorUtils {
     }
   }
   
+  func stopMonitoring(monitorName: String){
+    deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
+  }
+  
   func createWeekSchedule(weekday: Int = 0, duration: DeviceActivitySchedule) -> DeviceActivitySchedule{
     
     let intervalStart = DateComponents(
