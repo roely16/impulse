@@ -316,59 +316,141 @@ class ScreenTimeModule: NSObject {
     openLimit: String,
     weekdays: [Int],
     changeApps: Bool,
-    enableImpulseMode: Bool = false,
     impulseTime: NSNumber = 0,
     usageWarning: NSNumber = 0,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
-  ){
+  ) {
     do {
       guard let uuid = UUID(uuidString: limitId) else {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
         return
       }
-      // Call disable limit without change status
-      LimitModule.shared.disableLimit(limitId: uuid, updateStore: false)
-
+      
+      logger.info("Impulse: start edit limit")
+      
+      let sharedDefaultManager = SharedDefaultsManager()
+      let limitUtils = LimitUtils()
+      let monitorUitls = MonitorUtils()
+            
       // Save changes on store
       let limit = LimitModule.shared.findLimit(limitId: uuid)
-      limit?.name = name
-      limit?.timeLimit = timeLimit
-      limit?.openLimit = openLimit
-      if changeApps {
-        limit?.appsTokens = self.appsSelected
-        limit?.familySelection = self.familySelection
+      
+      guard let limit = limit else {
+          print("Error: limit es nil")
+          return
       }
-      limit?.weekdays = weekdays
-      limit?.impulseTime = Int(truncating: impulseTime)
-      limit?.usageWarning = Int(truncating: usageWarning)
       
-      try limit?.modelContext?.save()
+      let changeOpenLimit = limit.openLimit != openLimit
+      let requireUpdateSharedDefaults = changeOpenLimit
       
-      // Delete an recreate events for limit with new apps
-      if changeApps {
-        let context = try getContext()
+      let openLimitValue = Int(openLimit) ?? 0
+      let openLimitSavedValue = Int(limit.openLimit) ?? 0
+      
+      let openLimitIncrease = openLimitValue > openLimitSavedValue
+      // let openLimitDecrease = openLimitValue < openLimitSavedValue
+      
+      limit.name = name
+      limit.timeLimit = timeLimit
+      limit.openLimit = openLimit
+            
+      let addedApps = self.appsSelected.subtracting(limit.appsTokens)
+      let removedApps = limit.appsTokens.subtracting(self.appsSelected)
+      
+      logger.info("Impulse: apps added: \(addedApps.count, privacy: .public) and apps deleted \(removedApps.count, privacy: .public)")
 
-        limit?.appsEvents.forEach{event in
-          context.delete(event)
+      let context = try LimitModule.shared.getContext()
+      
+      logger.info("Impulse: context \(String(describing: context))")
+      
+      addedApps.forEach{app in
+        let event = AppEvent(
+          limit: limit,
+          appToken: app,
+          opens: 0,
+          status: .warning
+        )
+        context.insert(event)
+      }
+      
+      try context.save()
+      context.processPendingChanges()
+      
+      removedApps.forEach{app in
+        
+        limit.appsEvents.forEach{event in
+          if event.appToken == app {
+            let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+            limitUtils.clearManagedSettingsByEvent(event: event)
+            monitorUitls.stopMonitoring(monitorName: managedSettingsName)
+            
+            context.delete(event)
+          }
         }
-        // Create events
-        try self.appsSelected.forEach{appSelected in
-          let event = AppEvent(
-            limit: limit!,
-            appToken: appSelected,
-            status: .warning
-          )
-          context.insert(event)
-          try context.save()
+                
+      }
+            
+      if changeApps {
+        limit.appsTokens = self.appsSelected
+        limit.familySelection = self.familySelection
+      }
+      limit.weekdays = weekdays
+      limit.impulseTime = Int(truncating: impulseTime)
+      limit.usageWarning = Int(truncating: usageWarning)
+      
+      try limit.modelContext?.save()
+      
+      // Find if apps have been changed
+      
+      if requireUpdateSharedDefaults {
+        logger.info("Impulse: requiere update shared defaults")
+        
+        try limit.appsEvents.forEach{event in
+          let shieldData = [
+            "limitName": limit.name,
+            "impulseTime": limit.impulseTime,
+            "openLimit": limit.openLimit,
+            "shieldButtonEnable": true,
+            "opens": event.opens,
+            "eventId": event.id.uuidString
+          ]
+          
+          let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(event.appToken), type: .limit)
+          try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldData)
+          
+          logger.info("Impulse: app event status \(event.status.rawValue, privacy: .public)")
+          
+          let hasReachedOpenLimit = openLimitValue <= event.opens
+          
+          if event.status == .block && openLimitIncrease {
+            logger.info("Impulse: remove lock app status and update to warning")
+            
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .block)
+            event.status = .warning
+            try event.modelContext?.save()
+          } else if event.status == .warning && hasReachedOpenLimit {
+            logger.info("Impulse: block apps because the new open limit is less than the current open limit.")
+            
+            let shieldBlock = [
+              "blockName": limit.name
+            ]
+            
+            let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(event.appToken), type: .block)
+            try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldBlock)
+            
+            event.status = .block
+            try event.modelContext?.save()
+          }
+          
         }
       }
       
-      // Enable limit again with the last changes
-      LimitModule.shared.enableLimit(limitId: uuid, updateStore: false)
+      let limitModule = LimitModule.shared
+      limitModule.enableLimit(limitId: uuid, updateStore: false)
+      
       resolve(["status": "success"])
-    } catch {
-      logger.error("Error trying to update limit")
+    } catch let error as NSError {
+      logger.error("Impulse: error trying to update limit \(error.debugDescription, privacy: .public)")
     }
   }
   

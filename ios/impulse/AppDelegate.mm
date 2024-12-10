@@ -109,7 +109,6 @@ RCT_EXTERN_METHOD(updateLimit:(NSString *)limitId
                   openLimit:(NSString *)openLimit
                   weekdays:(NSArray<NSNumber *> *)weekdays
                   changeApps:(BOOL)changeApps
-                  enableImpulseMode:(BOOL)enableImpulseMode
                   impulseTime:(nonnull NSNumber *)impulseTime
                   usageWarning:(nonnull NSNumber *)usageWarning
                   resolve:(RCTPromiseResolveBlock)resolve
