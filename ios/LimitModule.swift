@@ -20,7 +20,7 @@ class LimitModule: NSObject {
   }
   
   @MainActor
-  private func getContext() throws -> ModelContext {
+  func getContext() throws -> ModelContext {
     guard let container = container else {
       throw NSError(domain: "container_uninitialized", code: 500, userInfo: [NSLocalizedDescriptionKey: "ModelContainer is not initialized"])
     }
@@ -125,9 +125,7 @@ class LimitModule: NSObject {
       
       // Start monitoring
       let deviceActivityCenter = DeviceActivityCenter();
-      
-      let activities = deviceActivityCenter.activities
-            
+                  
       let weekdays: [Int] = limit?.weekdays ?? []
       
       // Validate if weekdays is upper 0

@@ -93,6 +93,9 @@ class BlockModule: NSObject {
       
       // Delete from store
       try context.delete(model: Block.self, where: #Predicate { $0.id == uuid })
+      
+      // TODO
+      // - Delete shared defaults
       resolve("Block deleted")
     } catch {
       reject("Error", "Could not delete block", nil)

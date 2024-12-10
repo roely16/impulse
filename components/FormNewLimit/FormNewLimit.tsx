@@ -353,10 +353,9 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         data.id,
         data.name,
         data.timeLimit,
-        openLimitRef.current,
+        openLimit,
         data.weekDays,
         !isEmptyLimit,
-        enableImpulseConfig,
         impulseTime,
         warningTime
       );
