@@ -71,10 +71,15 @@ class LimitModule: NSObject {
       
       limit?.appsEvents.forEach{event in
         let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
-        limitUtils.clearManagedSettingsByEvent(event: event)
+        limitUtils.clearManagedSettingsByEvent(eventId: event.id.uuidString)
         monitorUitls.stopMonitoring(monitorName: managedSettingsName)
       }
       
+      limit?.websEvents.forEach{event in
+        let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+        limitUtils.clearManagedSettingsByEvent(eventId: event.id.uuidString)
+        monitorUitls.stopMonitoring(monitorName: managedSettingsName)
+      }
 
       // Validate if weekdays is upper 0
       if limit?.weekdays.count ?? 0 > 0 {
@@ -117,6 +122,19 @@ class LimitModule: NSObject {
           let threshold = DateComponents(minute: minutesToBlock)
           let eventName = DeviceActivityEvent.Name(rawValue: eventRawName)
           let activityEvent = DeviceActivityEvent(applications: [event.appToken], threshold: threshold)
+                    
+          eventsArray[eventName] = activityEvent
+          
+        }
+      }
+      
+      limit?.websEvents.forEach{event in
+        if minutesToBlock > 0 {
+          let eventRawName = Constants.eventNameForLimitTime(eventId: event.id.uuidString)
+          
+          let threshold = DateComponents(minute: minutesToBlock)
+          let eventName = DeviceActivityEvent.Name(rawValue: eventRawName)
+          let activityEvent = DeviceActivityEvent(webDomains: [event.webToken], threshold: threshold)
                     
           eventsArray[eventName] = activityEvent
           
@@ -211,6 +229,7 @@ class LimitModule: NSObject {
           "timeLimit": limit.timeLimit,
           "openLimit": limit.openLimit,
           "apps": limit.appsTokens.count,
+          "sites": limit.webDomainTokens.count,
           "weekdays": limit.weekdays,
           "enable": limit.enable
       ]
@@ -269,10 +288,23 @@ class LimitModule: NSObject {
         let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
 
         // Clear managed settings
-        limitUtils.clearManagedSettingsByEvent(event: event)
+        limitUtils.clearManagedSettingsByEvent(eventId: event.id.uuidString)
         
         // Delete shared defaults for each app
         limitUtils.deleteAllSharedDefaults(event: event)
+        
+        // Stop monitor for warning time
+        monitorUitls.stopMonitoring(monitorName: managedSettingsName)
+      }
+      
+      limit?.websEvents.forEach{event in
+        let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+
+        // Clear managed settings
+        limitUtils.clearManagedSettingsByEvent(eventId: event.id.uuidString)
+        
+        // Delete shared defaults for each app
+        limitUtils.deleteAllSharedDefaultsWeb(event: event)
         
         // Stop monitor for warning time
         monitorUitls.stopMonitoring(monitorName: managedSettingsName)

@@ -276,6 +276,10 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       selectedItems.push(`${appsSelected} apps`);
     }
 
+    if (sitesSelected > 0) {
+      selectedItems.push(`${sitesSelected} ${t('formNewLimit.sitesLabel')}`);
+    }
+
     return <Text style={styles.selectLabel}>{selectedItems.join(', ')}</Text>;
   };
 

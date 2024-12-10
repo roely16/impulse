@@ -217,6 +217,7 @@ class ScreenTimeModule: NSObject {
       let limit = Limit(
         name: name,
         appsTokens: self.appsSelected,
+        webDomainTokens: self.websDomainSelected,
         familySelection: self.familySelection,
         timeLimit: timeLimit,
         openLimit: openLimit,
@@ -254,6 +255,33 @@ class ScreenTimeModule: NSObject {
         
         // This limite represent the principal limit time
         let activityEvent = DeviceActivityEvent(applications: [appSelected.self], threshold: threshold)
+        
+        eventsArray[eventName] = activityEvent
+        
+      }
+      
+      // Create evets for webs
+      try self.websDomainSelected.forEach{web in
+        let event = WebEvent(
+          limit: limit,
+          webToken: web,
+          opens: 0,
+          status: .warning
+        )
+        
+        context.insert(event)
+        try context.save()
+        
+        let eventRawName = Constants.eventNameForLimitTime(eventId: event.id.uuidString)
+        
+        logger.info("Impulse: create event \(eventRawName)")
+        
+        // Create array with events for monitoring
+        let threshold = DateComponents(minute: minutesToBlock)
+        let eventName = DeviceActivityEvent.Name(rawValue: eventRawName)
+        
+        // This limite represent the principal limit time
+        let activityEvent = DeviceActivityEvent(webDomains: [web.self], threshold: threshold)
         
         eventsArray[eventName] = activityEvent
         
@@ -381,7 +409,7 @@ class ScreenTimeModule: NSObject {
         limit.appsEvents.forEach{event in
           if event.appToken == app {
             let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
-            limitUtils.clearManagedSettingsByEvent(event: event)
+            limitUtils.clearManagedSettingsByEvent(eventId: event.id.uuidString)
             monitorUitls.stopMonitoring(monitorName: managedSettingsName)
             
             context.delete(event)
