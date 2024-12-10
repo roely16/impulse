@@ -10,6 +10,7 @@ interface LimitCardProps {
   timeLimit: string;
   openLimit: string;
   apps: number;
+  sites: number;
   enable: boolean;
   weekdays: number[];
   refreshLimits: () => void;
@@ -36,6 +37,7 @@ export const LimitCard = (props: LimitCardProps) => {
     timeLimit,
     openLimit,
     apps,
+    sites,
     enable,
     refreshLimits,
     editLimit,
@@ -86,6 +88,14 @@ export const LimitCard = (props: LimitCardProps) => {
     return `• ${openLimit} ${t('cardLimit.maxOpenLabel')}`;
   }
 
+  const SitesAndWebsText = () => {
+    const AppsText = apps > 0 ? `${t('cardBlock.appsLabel')}: ${apps}` : null;
+    const SitesText = sites > 0 ? `${t('cardBlock.sitesLabel')}: ${sites}` : null;
+    return (
+      <Text style={styles.subtitle}>{AppsText} {SitesText}</Text>
+    )
+  }
+
   return (
     <Card style={styles.card} mode="elevated" elevation={1}>
       <Card.Content style={styles.cardContent}>
@@ -101,9 +111,7 @@ export const LimitCard = (props: LimitCardProps) => {
           )} ${openLimitText()}`}</Text>
         </View>
         <View style={styles.rowContainer}>
-          <Text style={styles.subtitle}>
-            {t('cardBlock.appsLabel')}: {apps}
-          </Text>
+          <SitesAndWebsText />
           <Switch
             onValueChange={value => updateLimitStatus(value)}
             value={enable}

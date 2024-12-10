@@ -76,65 +76,47 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     }
     
     override func configuration(shielding webDomain: WebDomain) -> ShieldConfiguration {
-
-      let sharedDefaults = UserDefaults(suiteName: "group.com.impulsecontrolapp.impulse.share")
-      
       do {
-        // Conver token to String
-        let encoder = JSONEncoder()
-        let tokenData = try encoder.encode(webDomain.token)
-        let tokenString = String(data: tokenData, encoding: .utf8)
-        
-        logger.info("Impulse: Token string for web domain \(webDomain.domain ?? "", privacy: .public) and token \(tokenString ?? "", privacy: .public)")
-        
-        // Validate if shareDefaultData is for block
-        if let data = sharedDefaults?.data(forKey: "\(tokenString ?? "")-block-web") {
-          logger.info("Exist share data for web block")
-          // If block data exists
-          if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-            let type = shieldConfigurationData["type"] as? String ?? ""
+        logger.info("Impulse: start shield configuration for app")
+
+        if let webToken = webDomain.token {
+          
+          // Validate if exists a configuration for a block
+          if let shieldConfigurationData = try sharedDefaultsManager.readSharedDefaultsByToken(token: .webDomain(webToken), type: .block) {
+            
+            logger.info("Impulse: find shield configuration for block")
+            
             let blockName = shieldConfigurationData["blockName"] as? String ?? ""
             
-            if type == "block" {
-              logger.info("Shield for block  \(type, privacy: .public)")
-              return ShieldConfigurationBlock.blockShield(applicationName: webDomain.domain ?? "", eventName: blockName)
-            }
+            return ShieldConfigurationBlock.blockShield(applicationName: webDomain.domain ?? "", eventName: blockName)
           }
-        }
-        
-        if let data = sharedDefaults?.data(forKey: tokenString ?? "") {
-          if let shieldConfigurationData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+          
+          // Validate if exists a configuration for a limit
+          if let shieldConfigurationData = try sharedDefaultsManager.readSharedDefaultsByToken(token: .webDomain(webToken), type: .limit) {
             
-            logger.info("Shield for impulse mode")
+            logger.info("Impulse: find shield configuration for limit")
 
             let limitName = shieldConfigurationData["limitName"] as? String ?? ""
             let impulseTime = shieldConfigurationData["impulseTime"] as? Int ?? 0
-            let type = shieldConfigurationData["type"] as? String ?? "block"
-            let blockIdentifier = shieldConfigurationData["blockIdentifier"] as? String ?? "block"
             let openLimit = shieldConfigurationData["openLimit"] as? String ?? ""
             let shieldButtonEnable = shieldConfigurationData["shieldButtonEnable"] as? Bool ?? true
+            let opens = shieldConfigurationData["opens"] as? Int ?? 0
             
-            let isUsageWarning = blockIdentifier == "usage-warning"
-            
-            if type == "limit" && isUsageWarning {
-              // Show limit shield
-              return ShieldConfigurationLimit.limitShield(
-                applicationName: webDomain.domain ?? "",
-                eventName: limitName,
-                impulseTime: impulseTime,
-                openLimite: openLimit,
-                shieldButtonEnable: shieldButtonEnable
-              )
-            }
-            
+            return ShieldConfigurationLimit.limitShield(
+              applicationName: webDomain.domain ?? "",
+              eventName: limitName,
+              impulseTime: impulseTime,
+              openLimite: openLimit,
+              opens: opens,
+              shieldButtonEnable: shieldButtonEnable
+            )
           }
         }
-        
       } catch {
-        logger.error("Error making shield \(error.localizedDescription)")
+        logger.error("Impulse: error configuring shield \(error.localizedDescription)")
       }
       
-      // Default shield
+      logger.info("Impulse: render default shield")
       return ShieldConfiguration()
     }
     

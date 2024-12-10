@@ -12,6 +12,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   private var block: Block?
   private var limit: Limit?
   private var eventModel: AppEvent?
+  private var webEventModel: WebEvent?
+  
+  private enum EventType {
+    case app
+    case web
+  }
+  private var typeOfEvent: EventType = .app
   private var logger: Logger = Logger()
   private var container: ModelContainer
   
@@ -68,8 +75,21 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       let fetchDescriptor = FetchDescriptor<AppEvent>(
         predicate: #Predicate{ $0.id == uuid }
       )
-      let result = try context.fetch(fetchDescriptor)
-      eventModel = result.first
+      if let appEvent = try context.fetch(fetchDescriptor).first {
+        eventModel = appEvent
+        self.typeOfEvent = .app
+        return
+      }
+      
+      let webFetchDescriptor = FetchDescriptor<WebEvent>(
+        predicate: #Predicate{ $0.id == uuid }
+      )
+      if let webEvent = try context.fetch(webFetchDescriptor).first {
+        webEventModel = webEvent
+        self.typeOfEvent = .web
+        return
+      }
+      
     } catch {
       throw error
     }
@@ -158,6 +178,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         
         do {
           try await getLimit(limitId: limitId)
+          
+          // Apps
           try limit?.appsEvents.forEach{event in
             logger.info("Impulse: create managed settings store for app event \(event.id, privacy: .public)")
             
@@ -185,6 +207,35 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
             let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
             store.shield.applications = [event.appToken]
           }
+          
+          // Webs
+          try limit?.websEvents.forEach{event in
+            logger.info("Impulse: create managed settings store for app event \(event.id, privacy: .public)")
+            
+            if event.status == .block {
+              shieldConfigurationData = [
+                "blockName": event.limit?.name ?? ""
+              ]
+              sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .block)
+            } else {
+              shieldConfigurationData = [
+                "limitName": limit?.name ?? "",
+                "impulseTime": limit?.impulseTime ?? "",
+                "openLimit": limit?.openLimit ?? "",
+                "shieldButtonEnable": true,
+                "opens": event.opens,
+                "eventId": event.id.uuidString
+              ]
+              
+              sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .limit)
+              
+              try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+              
+              let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+              let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+              store.shield.webDomains = [event.webToken]
+            }
+          }
         } catch {
           logger.error("Impulse: error trying to find limit \(error.localizedDescription, privacy: .public)")
         }
@@ -198,8 +249,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
       
       shieldConfigurationData = [
-        "type": "block",
-        "blockName": self.block?.name
+        "blockName": self.block?.name ?? ""
       ]
             
       // Save share defaults for each app
@@ -219,6 +269,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       
       store.shield.applications = block?.appsTokens
       store.shield.webDomains = block?.webDomainTokens
+      
     }
   }
   
@@ -337,6 +388,56 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     }
   }
 
+  func shieldAppAndUpdateWebEvent(event: WebEvent, isLimitTime: Bool) async {
+    do {
+      let sharedDefaultManager = SharedDefaultsManager()
+      var shieldConfigurationData: [String: Any] = [:]
+      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: Constants.managedSettingsName(eventId: event.id.uuidString)))
+      var sharedDefaultKey = ""
+      
+      let openLimit = Int(event.limit?.openLimit ?? "") ?? 0
+      let opens = event.opens
+      
+      logger.info("Impulse: open limit \(event.limit?.openLimit ?? "", privacy: .public)")
+
+      if isLimitTime {
+        shieldConfigurationData = [
+          "blockName": event.limit?.name ?? ""
+        ]
+        sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .block)
+        event.status = .block
+        try event.modelContext?.save()
+      } else if openLimit > 0 && opens >= openLimit {
+        logger.info("Impulse: shield web with block configuration, openLimit: \(openLimit, privacy: .public) and opens: \(opens, privacy: .public)")
+        shieldConfigurationData = [
+          "blockName": event.limit?.name ?? ""
+        ]
+        sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .block)
+        event.status = .block
+        try event.modelContext?.save()
+      } else {
+        logger.info("Impulse: shield web with limit configuration, openLimit: \(openLimit, privacy: .public) and opens: \(opens, privacy: .public)")
+        // Set shield type limit
+        shieldConfigurationData = [
+          "limitName": event.limit?.name ?? "",
+          "impulseTime": event.limit?.impulseTime ?? "",
+          "openLimit": event.limit?.openLimit ?? "",
+          "shieldButtonEnable": true,
+          "opens": event.opens,
+          "eventId": event.id.uuidString
+        ]
+        sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .limit)
+      }
+      
+      try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+      
+      store.shield.webDomains = [event.webToken]
+      
+    } catch {
+      logger.error("Impulse: error trying to shield app and update event")
+    }
+  }
+
   override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
     super.eventDidReachThreshold(event, activity: activity)
         
@@ -352,13 +453,24 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         // Check identifier
         try await getEvent(eventId: eventId)
         
-        logger.info("Impulse: shield application for event \(self.eventModel?.id.uuidString ?? "no id", privacy: .public)")
-        
-        if eventModel?.status != .block {
-          await shieldAppAndUpdateEvent(event: self.eventModel!, isLimitTime: isLimitTime)
-          logger.info("Impulse: shield application")
+        if self.typeOfEvent == .app {
+          logger.info("Impulse: shield application for event \(self.eventModel?.id.uuidString ?? "no id", privacy: .public)")
+          
+          if eventModel?.status != .block {
+            await shieldAppAndUpdateEvent(event: self.eventModel!, isLimitTime: isLimitTime)
+            logger.info("Impulse: shield application")
+          } else {
+            logger.info("Impulse: app is already blocked")
+          }
         } else {
-          logger.info("Impulse: app is already blocked")
+          logger.info("Impulse: shield web for event \(self.webEventModel?.id.uuidString ?? "no id", privacy: .public)")
+          
+          if webEventModel?.status != .block {
+            await shieldAppAndUpdateWebEvent(event: self.webEventModel!, isLimitTime: isLimitTime)
+            logger.info("Impulse: shield web")
+          } else {
+            logger.info("Impulse: web is already blocked")
+          }
         }
         
       } catch {
