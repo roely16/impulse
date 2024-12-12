@@ -16,6 +16,8 @@ struct ModelConfigurationManager {
       Limit.self,
       AppEvent.self,
       AppEventHistory.self,
+      WebEvent.self,
+      WebEventHistory.self,
       configurations: configuration
     )
     return container

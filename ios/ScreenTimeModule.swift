@@ -365,8 +365,8 @@ class ScreenTimeModule: NSObject {
       let limit = LimitModule.shared.findLimit(limitId: uuid)
       
       guard let limit = limit else {
-          print("Error: limit es nil")
-          return
+        print("Error: limit es nil")
+        return
       }
       
       let changeOpenLimit = limit.openLimit != openLimit
@@ -376,21 +376,28 @@ class ScreenTimeModule: NSObject {
       let openLimitSavedValue = Int(limit.openLimit) ?? 0
       
       let openLimitIncrease = openLimitValue > openLimitSavedValue
-      // let openLimitDecrease = openLimitValue < openLimitSavedValue
       
       limit.name = name
       limit.timeLimit = timeLimit
       limit.openLimit = openLimit
-            
+      
+      // Apps
       let addedApps = self.appsSelected.subtracting(limit.appsTokens)
       let removedApps = limit.appsTokens.subtracting(self.appsSelected)
       
       logger.info("Impulse: apps added: \(addedApps.count, privacy: .public) and apps deleted \(removedApps.count, privacy: .public)")
 
+      // Sites
+      let addedSites = self.websDomainSelected.subtracting(limit.webDomainTokens)
+      let removedSites = limit.webDomainTokens.subtracting(self.websDomainSelected)
+      
+      logger.info("Impulse: sites added: \(addedSites.count, privacy: .public) and sites deleted \(removedSites.count, privacy: .public)")
+      
       let context = try LimitModule.shared.getContext()
       
       logger.info("Impulse: context \(String(describing: context))")
       
+      // Create events for each new app or remove data for each deleted app
       addedApps.forEach{app in
         let event = AppEvent(
           limit: limit,
@@ -400,12 +407,8 @@ class ScreenTimeModule: NSObject {
         )
         context.insert(event)
       }
-      
-      try context.save()
-      context.processPendingChanges()
-      
+            
       removedApps.forEach{app in
-        
         limit.appsEvents.forEach{event in
           if event.appToken == app {
             let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
@@ -415,11 +418,38 @@ class ScreenTimeModule: NSObject {
             context.delete(event)
           }
         }
-                
+      }
+      
+      try context.save()
+
+      // Create events for each new site or remove data for each deleted site
+      addedSites.forEach{site in
+        let event = WebEvent(
+          limit: limit,
+          webToken: site,
+          opens: 0,
+          status: .warning
+        )
+        context.insert(event)
       }
             
+      removedSites.forEach{site in
+        limit.websEvents.forEach{event in
+          if event.webToken == site {
+            let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+            limitUtils.clearManagedSettingsByEvent(eventId: event.id.uuidString)
+            monitorUitls.stopMonitoring(monitorName: managedSettingsName)
+            
+            context.delete(event)
+          }
+        }
+      }
+      
+      try context.save()
+      
       if changeApps {
         limit.appsTokens = self.appsSelected
+        limit.webDomainTokens = self.websDomainSelected
         limit.familySelection = self.familySelection
       }
       limit.weekdays = weekdays
@@ -433,6 +463,7 @@ class ScreenTimeModule: NSObject {
       if requireUpdateSharedDefaults {
         logger.info("Impulse: requiere update shared defaults")
         
+        // Update shared defaults by apps
         try limit.appsEvents.forEach{event in
           let shieldData = [
             "limitName": limit.name,
@@ -464,6 +495,46 @@ class ScreenTimeModule: NSObject {
             ]
             
             let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(event.appToken), type: .block)
+            try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldBlock)
+            
+            event.status = .block
+            try event.modelContext?.save()
+          }
+          
+        }
+        
+        // Update shared defaults by webs
+        try limit.websEvents.forEach{event in
+          let shieldData = [
+            "limitName": limit.name,
+            "impulseTime": limit.impulseTime,
+            "openLimit": limit.openLimit,
+            "shieldButtonEnable": true,
+            "opens": event.opens,
+            "eventId": event.id.uuidString
+          ]
+          
+          let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .limit)
+          try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldData)
+          
+          logger.info("Impulse: web event status \(event.status.rawValue, privacy: .public)")
+          
+          let hasReachedOpenLimit = openLimitValue <= event.opens
+          
+          if event.status == .block && openLimitIncrease {
+            logger.info("Impulse: remove lock web status and update to warning")
+            
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(event.webToken), type: .block)
+            event.status = .warning
+            try event.modelContext?.save()
+          } else if event.status == .warning && hasReachedOpenLimit {
+            logger.info("Impulse: block webs because the new open limit is less than the current open limit.")
+            
+            let shieldBlock = [
+              "blockName": limit.name
+            ]
+            
+            let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(event.webToken), type: .block)
             try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldBlock)
             
             event.status = .block
