@@ -294,7 +294,6 @@ class ScreenTimeModule: NSObject {
         create monitoring with format limitId-limit
       */
       
-      // Validate if frecuency exist
       if weekdays.count > 0 {
         for weekday in weekdays {
 
@@ -318,6 +317,42 @@ class ScreenTimeModule: NSObject {
       } else {
         // Start monitoring
         let monitorName = Constants.monitorName(id: limit.id.uuidString, type: .limit)
+        
+        try deviceActivityCenter.startMonitoring(
+          DeviceActivityName(rawValue: monitorName),
+          during: DeviceActivitySchedule(
+            intervalStart: DateComponents(hour: 0, minute: 0),
+            intervalEnd: DateComponents(hour: 23, minute: 59),
+            repeats: false
+          ),
+          events: eventsArray
+        )
+      }
+      
+      // Control day
+      if weekdays.count > 0 {
+        for weekday in weekdays {
+
+          let monitorName = Constants.monitorNameForControlDayWithFrequency(id: limit.id.uuidString, weekday: weekday)
+          
+          logger.info("Impulse: Create limit with weekday: \(monitorName)")
+                    
+          logger.info("Impulse: minutes to block \(minutesToBlock, privacy: .public) and usage warning \(usageWarning, privacy: .public)")
+          
+          try deviceActivityCenter.startMonitoring(
+            DeviceActivityName(rawValue: monitorName),
+            during: DeviceActivitySchedule(
+              intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
+              intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
+              repeats: true
+            ),
+            events: eventsArray
+          )
+          
+        }
+      } else {
+        // Start monitoring
+        let monitorName = Constants.monitorNameForControlDay(id: limit.id.uuidString)
         
         try deviceActivityCenter.startMonitoring(
           DeviceActivityName(rawValue: monitorName),

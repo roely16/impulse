@@ -15,6 +15,7 @@ enum Constants {
   static let LIMIT_MONITOR_NAME = "-limit"
   static let LIMIT_MONITOR_NAME_WITH_FREQUENCY = "\(LIMIT_MONITOR_NAME)-day-"
   static let LIMIT_TIME_EVENT_NAME = "-limit-time"
+  static let MONITOR_LIMIT_CONTROL_DAY = "-control-day-"
   
   static let EVENT_MANAGED_SETTINGS_STORE_IDENTIFIER = "-event"
   
@@ -34,6 +35,14 @@ enum Constants {
     case .limit:
       return "\(id)\(LIMIT_MONITOR_NAME_WITH_FREQUENCY)\(weekday)"
     }
+  }
+  
+  static func monitorNameForControlDayWithFrequency(id: String, weekday: Int) -> String {
+    return "\(id)\(MONITOR_LIMIT_CONTROL_DAY)\(weekday)"
+  }
+  
+  static func monitorNameForControlDay(id: String) -> String {
+    return "\(id)\(MONITOR_LIMIT_CONTROL_DAY)"
   }
   
   static func blockSharedDefaultsName(tokenString: String) -> String {
