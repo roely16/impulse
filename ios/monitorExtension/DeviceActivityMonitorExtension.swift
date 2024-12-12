@@ -264,7 +264,6 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(webToken), type: .block)
           try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
           logger.info("Impulse: save shared default for web \(sharedDefaultKey, privacy: .public)")
-
         }
         
         if block?.appsTokens.count ?? 0 > 0 {
@@ -288,29 +287,36 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       logger.info("Impulse: interval did end for activity \(activity.rawValue, privacy: .public)")
       let sharedDefaultManager = SharedDefaultsManager()
       
-      if activity.rawValue.lowercased().contains("limit") {
+      if activity.rawValue.lowercased().contains(Constants.LIMIT_MONITOR_NAME) {
         let activityId = activity.rawValue
-
-        let activityLimitIdentifier = getLimitIdentifier(activiyId: activityId)
-                        
+        
         await findLimitByActiviyId(activiyId: activityId)
-        let limitId = self.limit?.id.uuidString
         
-        let managedStoreName = "\(limitId ?? "")\(activityLimitIdentifier ?? "")"
-        
-        logger.info("Impulse: managed stored name \(managedStoreName)")
-        
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedStoreName))
-        store.shield.applications = nil
-        
-        let events = self.limit?.appsEvents
-        events?.forEach{event in
-          let eventStoreName = "event-\(event.id.uuidString)"
-          let eventStore = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: eventStoreName))
-          eventStore.shield.applications = nil
-          logger.info("Impulse: remove shield for event \(eventStoreName)")
+        // Delete shared defaults and reset opens
+        try limit?.appsEvents.forEach{appEvent in
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(appEvent.appToken), type: .block)
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(appEvent.appToken), type: .limit)
+          appEvent.opens = 0
+          appEvent.status = .warning
+          try appEvent.modelContext?.save()
+          
+          let managedSettingsName = Constants.managedSettingsName(eventId: appEvent.id.uuidString)
+          let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+          store.clearAllSettings()
         }
         
+        try limit?.websEvents.forEach{webEvent in
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(webEvent.webToken), type: .block)
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(webEvent.webToken), type: .limit)
+          webEvent.opens = 0
+          webEvent.status = .warning
+          try webEvent.modelContext?.save()
+          
+          let managedSettingsName = Constants.managedSettingsName(eventId: webEvent.id.uuidString)
+          let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+          store.clearAllSettings()
+        }
+                
         logger.info("Impulse: apps in limit are unlocked when interval did end")
 
       } else if activity.rawValue.lowercased().contains(Constants.BLOCK_MONITOR_NAME) {
