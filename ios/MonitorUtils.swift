@@ -19,8 +19,9 @@ class MonitorUtils {
           
           do {
             let activitySchedule = createWeekSchedule(weekday: weekday, duration: duration)
-            let name = Constants.monitorNameWithFrequency(id: id, weekday: weekday, type: .block)
-            let newActivityName = DeviceActivityName(rawValue: name)
+            let monitorName = Constants.monitorNameWithFrequency(id: id, weekday: weekday, type: .block)
+            
+            let newActivityName = DeviceActivityName(rawValue: monitorName)
             
             try deviceActivityCenter.startMonitoring(
               newActivityName,
@@ -43,8 +44,11 @@ class MonitorUtils {
         repeats: false
       )
       
-      let activityId = Constants.monitorName(id: id, type: .block)
-      let activityName = DeviceActivityName(rawValue: activityId)
+      let monitorName = Constants.monitorName(id: id, type: .block)
+      
+      print("Impulse: create monitor with name \(monitorName)")
+      
+      let activityName = DeviceActivityName(rawValue: monitorName)
       
       try deviceActivityCenter.startMonitoring(
         activityName,

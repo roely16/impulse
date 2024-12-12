@@ -172,7 +172,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       var shieldConfigurationData: [String: Any] = [:]
       var sharedDefaultKey = ""
       
-      if activity.rawValue.lowercased().contains("limit") {
+      if activity.rawValue.lowercased().contains(Constants.LIMIT_MONITOR_NAME) {
         let limitId = Constants.extractIdForLimit(from: activity.rawValue)
         logger.info("Impulse: limit id \(limitId, privacy: .public)")
         
@@ -240,13 +240,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           logger.error("Impulse: error trying to find limit \(error.localizedDescription, privacy: .public)")
         }
         return;
-      } else if activity.rawValue.lowercased().contains("block") {
+      } else if activity.rawValue.lowercased().contains(Constants.BLOCK_MONITOR_NAME) {
         
         logger.info("Impulse: interval did start for activity \(activity.rawValue, privacy: .public)")
 
-        let activityId = Constants.extractIdForBlock(from: activity.rawValue)
-        await getBlock(blockId: activityId)
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
+        let blockId = Constants.extractIdForBlock(from: activity.rawValue)
+        await getBlock(blockId: blockId)
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
         
         shieldConfigurationData = [
           "blockName": self.block?.name ?? ""
@@ -267,8 +267,13 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
         }
         
-        store.shield.applications = block?.appsTokens
-        store.shield.webDomains = block?.webDomainTokens
+        if block?.appsTokens.count ?? 0 > 0 {
+          store.shield.applications = block?.appsTokens
+        }
+        
+        if block?.webDomainTokens.count ?? 0 > 0 {
+          store.shield.webDomains = block?.webDomainTokens
+        }
 
       }
       
@@ -281,8 +286,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       
       // Validate if activity is for a limit type
       logger.info("Impulse: interval did end for activity \(activity.rawValue, privacy: .public)")
+      let sharedDefaultManager = SharedDefaultsManager()
       
-      /*
       if activity.rawValue.lowercased().contains("limit") {
         let activityId = activity.rawValue
 
@@ -307,37 +312,25 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         }
         
         logger.info("Impulse: apps in limit are unlocked when interval did end")
-        return;
-      }
-      
-      // When block end
-      let activityId = Constants.extractIdForBlock(from: activity.rawValue)
-      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
-      store.shield.applications = nil
-      store.shield.webDomains = nil
-      store.clearAllSettings()
-      
-      await getBlock(blockId: activityId)
-      block?.appsTokens.forEach{appToken in
-        do {
-          let tokenData = try JSONEncoder().encode(appToken.self)
-          let tokenString = String(data: tokenData, encoding: .utf8)
-          sharedDefaults?.removeObject(forKey: "\(tokenString ?? "")-block")
-        } catch {
-          logger.error("Impulse: error trying to remove shared default for app")
+
+      } else if activity.rawValue.lowercased().contains(Constants.BLOCK_MONITOR_NAME) {
+        
+        logger.info("Impulse: interval did end for \(activity.rawValue, privacy: .public)")
+        
+        let blockId = Constants.extractIdForBlock(from: activity.rawValue)
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
+        store.shield.applications = nil
+        store.shield.webDomains = nil
+        store.clearAllSettings()
+        
+        block?.appsTokens.forEach{app in
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(app), type: .block)
+        }
+        
+        block?.webDomainTokens.forEach{web in
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(web), type: .block)
         }
       }
-      
-      block?.webDomainTokens.forEach{webToken in
-        do {
-          let tokenData = try JSONEncoder().encode(webToken.self)
-          let tokenString = String(data: tokenData, encoding: .utf8)
-          sharedDefaults?.removeObject(forKey: "\(tokenString ?? "")-block-web")
-        } catch {
-          logger.error("Impulse: error trying to remove shared default for web")
-        }
-      }
-      */
       
     }
   }

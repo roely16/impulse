@@ -256,6 +256,7 @@ class LimitModule: NSObject {
       "timeLimit": limit?.timeLimit,
       "openTime": limit?.openLimit,
       "apps": limit?.appsTokens.count,
+      "sites": limit?.webDomainTokens.count,
       "weekdays": limit?.weekdays,
       "impulseTime": limit?.impulseTime,
       "usageWarning": limit?.usageWarning
