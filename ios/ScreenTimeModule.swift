@@ -579,60 +579,54 @@ class ScreenTimeModule: NSObject {
       let result = try context.fetch(fetchDescriptor)
       let block = result.first
       
+      let oldWeekDays = block?.weekdays
+      
+      block?.name = name
+      
+      logger.info("Impulse: change apps \(changeApps)")
+      
+      if changeApps {
+        block?.appsTokens = self.appsSelected
+        block?.webDomainTokens = self.websDomainSelected
+        block?.familySelection = self.familySelection
+      }
+      block?.startTime = startTime
+      block?.endTime = endTime
+      block?.weekdays = weekdays
+
+      try block?.modelContext?.save()
+
       let deviceActivityCenter = DeviceActivityCenter();
       
-      if block?.weekdays.count == 0 {
-        deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
-      } else {
-        let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
-        deviceActivityCenter.stopMonitoring(deviceActivityNames)
-      }
+      let monitorName = Constants.monitorName(id: blockId, type: .block)
+      deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
       
-      // Remove shield from apps
-      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
-      store.shield.applications = nil
-      store.shield.webDomains = nil
+      if oldWeekDays?.count ?? 0 > 0 {
+
+        oldWeekDays?.forEach{weekday in
+          let monitorName = Constants.monitorNameWithFrequency(id: blockId, weekday: weekday, type: .block)
+          
+          logger.info("Impulse: monitor name \(monitorName)")
+          
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
+        }
+        
+      }
       
       // Create again monitoring
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
       
-      if weekdays.count == 0 {
-        try deviceActivityCenter.startMonitoring(
-          DeviceActivityName(rawValue: blockId),
-          during: DeviceActivitySchedule(
-            intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
-            intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
-            repeats: false
-          )
-        )
-        print("Only one time \(blockId)")
-      } else {
-        for weekday in weekdays {
-          try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)"),
-            during: DeviceActivitySchedule(
-              intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1]), weekday: weekday),
-              intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1]), weekday: weekday),
-              repeats: true
-            )
-          )
-          print("Repeat on \(weekday) \(blockId)")
-        }
-      }
+      let monitorUtils = MonitorUtils()
       
-      // Saves changes
-      block?.name = name
-      if changeApps {
-        block?.appsTokens = self.appsSelected
-        block?.familySelection = self.familySelection
-        block?.webDomainTokens = self.websDomainSelected
-      }
-      block?.startTime = startTime
-      block?.endTime = endTime
-      block?.weekdays = weekdays
+      let activitySchedule = DeviceActivitySchedule(
+        intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
+        intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
+        repeats: false
+      )
       
-      try context.save()
+      monitorUtils.startMonitoring(id: blockId, duration: activitySchedule, weekdays: weekdays)
+      
       resolve(["status": "success"])
     } catch {
       reject("Error", "Could not update block", nil)

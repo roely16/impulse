@@ -166,24 +166,24 @@ class BlockModule: NSObject {
       if !isEnable {
         // Stop monitoring
         if block?.weekdays.count == 0 {
-          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: blockId)])
+          let monitorName = Constants.monitorName(id: blockId, type: .block)
+          deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
         } else {
-          let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)") } ?? []
+          let deviceActivityNames: [DeviceActivityName] = block?.weekdays.map { weekday in DeviceActivityName(rawValue: Constants.monitorNameWithFrequency(id: blockId, weekday: weekday, type: .block)) } ?? []
           deviceActivityCenter.stopMonitoring(deviceActivityNames)
           print(deviceActivityNames)
         }
-        
-        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
-        store.shield.applications = nil
-        store.shield.webDomains = nil
+
       } else {
         let startTimeComponents = block?.startTime.split(separator: ":") ?? []
         let endTimeComponents = block?.endTime.split(separator: ":") ?? []
         let weekdays = block?.weekdays ?? []
         
         if weekdays.count == 0 {
+          let monitorName = Constants.monitorName(id: blockId, type: .block)
+          
           try deviceActivityCenter.startMonitoring(
-            DeviceActivityName(rawValue: blockId),
+            DeviceActivityName(rawValue: monitorName),
             during: DeviceActivitySchedule(
               intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1])),
               intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1])),
@@ -193,8 +193,11 @@ class BlockModule: NSObject {
           print("Only one time \(blockId)")
         } else {
           for weekday in weekdays {
+            
+            let monitorName = Constants.monitorNameWithFrequency(id: blockId, weekday: weekday, type: .block)
+            
             try deviceActivityCenter.startMonitoring(
-              DeviceActivityName(rawValue: "\(blockId)-day-\(weekday)"),
+              DeviceActivityName(rawValue: monitorName),
               during: DeviceActivitySchedule(
                 intervalStart: DateComponents(hour: Int(startTimeComponents[0]), minute: Int(startTimeComponents[1]), weekday: weekday),
                 intervalEnd: DateComponents(hour: Int(endTimeComponents[0]), minute: Int(endTimeComponents[1]), weekday: weekday),
