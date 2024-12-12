@@ -240,35 +240,37 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           logger.error("Impulse: error trying to find limit \(error.localizedDescription, privacy: .public)")
         }
         return;
-      }
-      
-      logger.info("Impulse: interval did start for activity \(activity.rawValue, privacy: .public)")
+      } else if activity.rawValue.lowercased().contains("block") {
+        
+        logger.info("Impulse: interval did start for activity \(activity.rawValue, privacy: .public)")
 
-      let activityId = Constants.extractIdForBlock(from: activity.rawValue)
-      await getBlock(blockId: activityId)
-      let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
-      
-      shieldConfigurationData = [
-        "blockName": self.block?.name ?? ""
-      ]
-            
-      // Save share defaults for each app
-      try block?.appsTokens.forEach{ appToken in
-        let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(appToken), type: .block)
-        try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
-        logger.info("Impulse: save shared defaults for app \(sharedDefaultKey, privacy: .public)")
-      }
+        let activityId = Constants.extractIdForBlock(from: activity.rawValue)
+        await getBlock(blockId: activityId)
+        let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: activityId))
+        
+        shieldConfigurationData = [
+          "blockName": self.block?.name ?? ""
+        ]
+              
+        // Save share defaults for each app
+        try block?.appsTokens.forEach{ appToken in
+          let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .application(appToken), type: .block)
+          try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+          logger.info("Impulse: save shared defaults for app \(sharedDefaultKey, privacy: .public)")
+        }
 
-      // Save share defaults for each web domain
-      try block?.webDomainTokens.forEach{ webToken in
-        let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(webToken), type: .block)
-        try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
-        logger.info("Impulse: save shared default for web \(sharedDefaultKey, privacy: .public)")
+        // Save share defaults for each web domain
+        try block?.webDomainTokens.forEach{ webToken in
+          let sharedDefaultKey = sharedDefaultManager.createTokenKeyString(token: .webDomain(webToken), type: .block)
+          try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldConfigurationData)
+          logger.info("Impulse: save shared default for web \(sharedDefaultKey, privacy: .public)")
+
+        }
+        
+        store.shield.applications = block?.appsTokens
+        store.shield.webDomains = block?.webDomainTokens
 
       }
-      
-      store.shield.applications = block?.appsTokens
-      store.shield.webDomains = block?.webDomainTokens
       
     }
   }
@@ -280,6 +282,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       // Validate if activity is for a limit type
       logger.info("Impulse: interval did end for activity \(activity.rawValue, privacy: .public)")
       
+      /*
       if activity.rawValue.lowercased().contains("limit") {
         let activityId = activity.rawValue
 
@@ -334,6 +337,7 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
           logger.error("Impulse: error trying to remove shared default for web")
         }
       }
+      */
       
     }
   }

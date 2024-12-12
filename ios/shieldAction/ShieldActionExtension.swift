@@ -59,7 +59,7 @@ class ShieldActionExtension: ShieldActionDelegate {
       throw error
     }
   }
-  
+    
   override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
       switch action {
       case .primaryButtonPressed:
@@ -101,7 +101,9 @@ class ShieldActionExtension: ShieldActionDelegate {
                   let usageWarning = self.eventModel?.limit?.usageWarning
                   
                   let monitorName = Constants.managedSettingsName(eventId: self.eventModel?.id.uuidString ?? "")
+                  
                   logger.info("Impulse: create new monitor for event \(monitorName, privacy: .public)")
+                  
                   let deviceActivityCenter = DeviceActivityCenter();
                   try deviceActivityCenter.startMonitoring(
                     DeviceActivityName(rawValue: monitorName),
@@ -115,7 +117,7 @@ class ShieldActionExtension: ShieldActionDelegate {
                   
                   let managedSettingsName = Constants.managedSettingsName(eventId: eventId)
                   let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
-                  
+                                    
                   // Wait for unlock the app
                   if impulseTime > 0 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(impulseTime)) {
