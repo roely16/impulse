@@ -65,7 +65,8 @@ class BlockModule: NSObject {
         reject("invalid_uuid", "El blockId proporcionado no es un UUID válido.", nil)
         return
       }
-  
+      
+      let sharedDefaultManager = SharedDefaultsManager()
       let context = try getContext()
       
       // Stop monitoring
@@ -86,6 +87,15 @@ class BlockModule: NSObject {
         print(deviceActivityNames)
       }
       
+      // Delete shared defaults
+      block?.appsTokens.forEach{appToken in
+        sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(appToken), type: .block)
+      }
+      
+      block?.webDomainTokens.forEach{webToken in
+        sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(webToken), type: .block)
+      }
+      
       // Remove restriction
       let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: blockId))
       store.shield.applications = nil
@@ -94,8 +104,6 @@ class BlockModule: NSObject {
       // Delete from store
       try context.delete(model: Block.self, where: #Predicate { $0.id == uuid })
       
-      // TODO
-      // - Delete shared defaults
       resolve("Block deleted")
     } catch {
       reject("Error", "Could not delete block", nil)

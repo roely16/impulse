@@ -137,7 +137,7 @@ class ShieldActionExtension: ShieldActionDelegate {
               return
             }
             
-            logger.info("Impulse: shield action without block or limit")
+            logger.info("Impulse: shield action default close")
             completionHandler(.close)
           } catch {
             self.logger.error("Error in secondary action \(error.localizedDescription)")
