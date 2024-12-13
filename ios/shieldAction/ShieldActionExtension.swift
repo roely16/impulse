@@ -102,7 +102,7 @@ class ShieldActionExtension: ShieldActionDelegate {
                   
                   let monitorName = Constants.managedSettingsName(eventId: self.eventModel?.id.uuidString ?? "")
                   
-                  logger.info("Impulse: create new monitor for event \(monitorName, privacy: .public)")
+                  logger.info("Impulse: create new monitor for event \(monitorName, privacy: .public) with usage warning \(usageWarning ?? 0, privacy: .public)")
                   
                   let deviceActivityCenter = DeviceActivityCenter();
                   try deviceActivityCenter.startMonitoring(
@@ -135,12 +135,14 @@ class ShieldActionExtension: ShieldActionDelegate {
                 logger.error("Impulse: error when user clic shield primary button \(error.localizedDescription, privacy: .public)")
               }
               return
+            } else {
+              logger.info("Impulse: not find shared defaults data")
             }
             
             logger.info("Impulse: shield action default close")
             completionHandler(.close)
           } catch {
-            self.logger.error("Error in secondary action \(error.localizedDescription)")
+            self.logger.error("Impulse: error in primary action \(error.localizedDescription)")
           }
         }
       case .secondaryButtonPressed:

@@ -1,5 +1,5 @@
 import { useState, useRef, useLayoutEffect, forwardRef, useImperativeHandle } from 'react';
-import { View, TouchableOpacity, NativeModules, TextInput, Alert } from 'react-native';
+import { View, TouchableOpacity, NativeModules, TextInput, Alert, Switch } from 'react-native';
 import { Button, Icon, Text } from 'react-native-paper';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTranslation } from 'react-i18next';
@@ -71,6 +71,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const [openLimit, setOpenLimit] = useState<string>('');
   const [impulseDuration, setImpulseDuration] = useState<string>('5');
   const [usageWarning, setUsageWarning] = useState<string>('5');
+  const [enableTimeConfiguration, setEnableTimeConfiguration] = useState(true);
 
   const limitTimeRef = useRef(currentTime);
   const limitTimeString = useRef<string>('');
@@ -172,9 +173,13 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   };
 
   const TimeConfigurationForm = (): React.ReactElement => {
+
     return (
       <View style={styles.timeFormContainer}>
-        <Text style={styles.timeLabel}>{t('formNewLimit.selectTime')}</Text>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <Text style={styles.timeLabel}>{t('formNewLimit.selectTime')}</Text>
+          <Switch value={enableTimeConfiguration} onValueChange={setEnableTimeConfiguration}></Switch>
+        </View>
         <View style={[styles.formOption, { paddingVertical: 0 }]}>
           <View style={styles.timeOption}>
             <Text style={styles.label}>{t('formNewLimit.selectTimeTitle')}</Text>
@@ -187,6 +192,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
                 onChange={onChangeLimitTime}
                 display="spinner"
                 style={{ height: 120, width: wp('60%') }}
+                disabled={!enableTimeConfiguration}
               />
             )}
           </View>
@@ -317,7 +323,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         data.weekDays,
         data.enableImpulseMode,
         impulseTime,
-        warningTime
+        warningTime,
+        enableTimeConfiguration
       );
       if (response.status === 'success') {
         refreshLimits();
@@ -361,7 +368,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         data.weekDays,
         !isEmptyLimit,
         impulseTime,
-        warningTime
+        warningTime,
+        enableTimeConfiguration
       );
       refreshLimits();
       closeBottomSheet();
@@ -435,7 +443,9 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
     limitTimeRef.current = new Date(guatemalaTime);
     setAppsSelected(limit.apps);
+    setSitesSelected(limit.sites);
     setOpenLimit(limit.openTime);
+    setEnableTimeConfiguration(limit.enableTimeConfiguration);
     limitTimeString.current = limit.timeLimit;
     const updatedDays = initialDays.map(day => {
       if (limit.weekdays.includes(day.value)) {

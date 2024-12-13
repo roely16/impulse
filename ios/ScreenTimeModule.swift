@@ -203,6 +203,7 @@ class ScreenTimeModule: NSObject {
     enableImpulseMode: Bool = false,
     impulseTime: NSNumber = 0,
     usageWarning: NSNumber = 0,
+    enableTimeConfiguration: Bool = true,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) {
@@ -224,7 +225,8 @@ class ScreenTimeModule: NSObject {
         enable: true,
         weekdays: weekdays,
         impulseTime: Int(truncating: impulseTime),
-        usageWarning: Int(truncating: usageWarning)
+        usageWarning: Int(truncating: usageWarning),
+        enableTimeConfiguration: enableTimeConfiguration
       )
       context.insert(limit)
       try context.save()
@@ -294,6 +296,9 @@ class ScreenTimeModule: NSObject {
         create monitoring with format limitId-limit
       */
       
+      logger.info("Impulse: enable time configuration \(enableTimeConfiguration)")
+      let listEvents = enableTimeConfiguration ? eventsArray : [:]
+      
       if weekdays.count > 0 {
         for weekday in weekdays {
 
@@ -310,7 +315,7 @@ class ScreenTimeModule: NSObject {
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
               repeats: true
             ),
-            events: eventsArray
+            events: listEvents
           )
           
         }
@@ -325,7 +330,7 @@ class ScreenTimeModule: NSObject {
             intervalEnd: DateComponents(hour: 23, minute: 59),
             repeats: false
           ),
-          events: eventsArray
+          events: listEvents
         )
       }
       
@@ -345,8 +350,7 @@ class ScreenTimeModule: NSObject {
               intervalStart: DateComponents(hour: 0, minute: 0, weekday: weekday),
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
               repeats: true
-            ),
-            events: eventsArray
+            )
           )
           
         }
@@ -360,14 +364,13 @@ class ScreenTimeModule: NSObject {
             intervalStart: DateComponents(hour: 0, minute: 0),
             intervalEnd: DateComponents(hour: 23, minute: 59),
             repeats: false
-          ),
-          events: eventsArray
+          )
         )
       }
       
       resolve(["status": "success", "appsWithLimit": self.appsSelected.count])
     } catch {
-      print("Error trying to create limit")
+      print("Error trying to create limit \(error.localizedDescription)")
     }
   }
   
@@ -381,6 +384,7 @@ class ScreenTimeModule: NSObject {
     changeApps: Bool,
     impulseTime: NSNumber = 0,
     usageWarning: NSNumber = 0,
+    enableTimeConfiguration: Bool,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) {
@@ -404,6 +408,14 @@ class ScreenTimeModule: NSObject {
         return
       }
       
+      let oldTimeLimit = limit.timeLimit
+      
+      let oldMinutesToBlock = LimitModule.shared.getLimitTime(time: oldTimeLimit);
+      let newMinutesToBlock = LimitModule.shared.getLimitTime(time: timeLimit);
+      let timeLimitIncrease = newMinutesToBlock > oldMinutesToBlock
+      
+      logger.info("Impulse: old time limit \(oldMinutesToBlock), new time limit \(newMinutesToBlock) and is time limit increase \(timeLimitIncrease)")
+      
       let changeOpenLimit = limit.openLimit != openLimit
       let requireUpdateSharedDefaults = changeOpenLimit
       
@@ -415,6 +427,7 @@ class ScreenTimeModule: NSObject {
       limit.name = name
       limit.timeLimit = timeLimit
       limit.openLimit = openLimit
+      limit.enableTimeConfiguration = enableTimeConfiguration
       
       // Apps
       let addedApps = self.appsSelected.subtracting(limit.appsTokens)
@@ -495,7 +508,7 @@ class ScreenTimeModule: NSObject {
       
       // Find if apps have been changed
       
-      if requireUpdateSharedDefaults {
+      if requireUpdateSharedDefaults || timeLimitIncrease {
         logger.info("Impulse: requiere update shared defaults")
         
         // Update shared defaults by apps
@@ -516,7 +529,7 @@ class ScreenTimeModule: NSObject {
           
           let hasReachedOpenLimit = openLimitValue <= event.opens
           
-          if event.status == .block && openLimitIncrease {
+          if event.status == .block && (openLimitIncrease || timeLimitIncrease) && !hasReachedOpenLimit {
             logger.info("Impulse: remove lock app status and update to warning")
             
             sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .block)
@@ -533,6 +546,12 @@ class ScreenTimeModule: NSObject {
             try sharedDefaultManager.writeSharedDefaults(forKey: sharedDefaultKey, data: shieldBlock)
             
             event.status = .block
+            try event.modelContext?.save()
+          } else if event.status == .block && !enableTimeConfiguration {
+            logger.info("Impulse: remove lock app status and update to warning")
+            
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .block)
+            event.status = .warning
             try event.modelContext?.save()
           }
           
@@ -556,7 +575,7 @@ class ScreenTimeModule: NSObject {
           
           let hasReachedOpenLimit = openLimitValue <= event.opens
           
-          if event.status == .block && openLimitIncrease {
+          if event.status == .block && (openLimitIncrease || timeLimitIncrease) && !hasReachedOpenLimit {
             logger.info("Impulse: remove lock web status and update to warning")
             
             sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(event.webToken), type: .block)
