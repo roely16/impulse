@@ -146,6 +146,8 @@ class LimitModule: NSObject {
                   
       let weekdays: [Int] = limit?.weekdays ?? []
       
+      let listEvents = limit?.enableTimeConfiguration ?? false ? eventsArray : [:]
+      
       // Validate if weekdays is upper 0
       if weekdays.count > 0 {
         try weekdays.forEach { weekday in
@@ -158,7 +160,7 @@ class LimitModule: NSObject {
               intervalEnd: DateComponents(hour: 23, minute: 59, weekday: weekday),
               repeats: true
             ),
-            events: eventsArray
+            events: listEvents
           )
         }
       } else {
@@ -171,7 +173,7 @@ class LimitModule: NSObject {
             intervalEnd: DateComponents(hour: 23, minute: 59),
             repeats: false
           ),
-          events: eventsArray
+          events: listEvents
         )
       }
 
@@ -259,7 +261,8 @@ class LimitModule: NSObject {
       "sites": limit?.webDomainTokens.count,
       "weekdays": limit?.weekdays,
       "impulseTime": limit?.impulseTime,
-      "usageWarning": limit?.usageWarning
+      "usageWarning": limit?.usageWarning,
+      "enableTimeConfiguration": limit?.enableTimeConfiguration
     ] as [String : Any]
     
     resolve(["status": "success", "limit" : limitData])

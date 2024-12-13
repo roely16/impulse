@@ -100,6 +100,7 @@ RCT_EXTERN_METHOD(createLimit:(NSString *)name
                   enableImpulseMode:(BOOL)enableImpulseMode
                   impulseTime:(nonnull NSNumber *)impulseTime
                   usageWarning:(nonnull NSNumber *)usageWarning
+                  enableTimeConfiguration:(BOOL)enableTimeConfiguration
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
@@ -111,6 +112,7 @@ RCT_EXTERN_METHOD(updateLimit:(NSString *)limitId
                   changeApps:(BOOL)changeApps
                   impulseTime:(nonnull NSNumber *)impulseTime
                   usageWarning:(nonnull NSNumber *)usageWarning
+                  enableTimeConfiguration:(BOOL)enableTimeConfiguration
                   resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
