@@ -123,6 +123,19 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       return activityRawValue
   }
   
+  func extractLimitIdByControlDay(from activityRawValue: String) -> String {
+    let limitIdentifier = Constants.MONITOR_LIMIT_CONTROL_DAY
+
+      // Verifica si el string contiene el identificador
+      if let range = activityRawValue.range(of: limitIdentifier) {
+        // Si se encuentra, extrae la parte anterior
+        return String(activityRawValue[..<range.lowerBound])
+      }
+      
+      // Si no se encuentra, devolver el string original
+      return activityRawValue
+  }
+  
   func extractEventId(from eventRawValue: String) -> String {
     let identifiers = [
       Constants.EVENT_MANAGED_SETTINGS_STORE_IDENTIFIER,
@@ -143,6 +156,18 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
   func findLimitByActiviyId(activiyId: String = "") async {
     logger.info("Impulse: interval did start, find limit info")
     let limitId = extractLimitId(from: activiyId)
+    logger.info("Impulse: limit id \(limitId, privacy: .public)")
+    
+    do {
+      try await getLimit(limitId: limitId)
+    } catch {
+      logger.error("Impulse: error trying to find limit by activity id")
+    }
+  }
+  
+  func findLimitByActiviyInControlDay(activiyId: String = "") async {
+    logger.info("Impulse: interval did start, find limit info")
+    let limitId = extractLimitIdByControlDay(from: activiyId)
     logger.info("Impulse: limit id \(limitId, privacy: .public)")
     
     do {
@@ -287,10 +312,10 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
       logger.info("Impulse: interval did end for activity \(activity.rawValue, privacy: .public)")
       let sharedDefaultManager = SharedDefaultsManager()
       
-      if activity.rawValue.lowercased().contains(Constants.LIMIT_MONITOR_NAME) {
+      if activity.rawValue.lowercased().contains(Constants.MONITOR_LIMIT_CONTROL_DAY) {
         let activityId = activity.rawValue
         
-        await findLimitByActiviyId(activiyId: activityId)
+        await findLimitByActiviyInControlDay(activiyId: activityId)
         
         // Delete shared defaults and reset opens
         try limit?.appsEvents.forEach{appEvent in
