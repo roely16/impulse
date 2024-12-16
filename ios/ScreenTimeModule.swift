@@ -442,9 +442,7 @@ class ScreenTimeModule: NSObject {
       logger.info("Impulse: sites added: \(addedSites.count, privacy: .public) and sites deleted \(removedSites.count, privacy: .public)")
       
       let context = try LimitModule.shared.getContext()
-      
-      logger.info("Impulse: context \(String(describing: context))")
-      
+            
       // Create events for each new app or remove data for each deleted app
       addedApps.forEach{app in
         let event = AppEvent(
@@ -527,7 +525,7 @@ class ScreenTimeModule: NSObject {
           
           logger.info("Impulse: app event status \(event.status.rawValue, privacy: .public)")
           
-          let hasReachedOpenLimit = openLimitValue <= event.opens
+          let hasReachedOpenLimit = openLimitValue > 0 && openLimitValue <= event.opens
           
           if event.status == .block && (openLimitIncrease || timeLimitIncrease) && !hasReachedOpenLimit {
             logger.info("Impulse: remove lock app status and update to warning")
@@ -574,6 +572,8 @@ class ScreenTimeModule: NSObject {
           logger.info("Impulse: web event status \(event.status.rawValue, privacy: .public)")
           
           let hasReachedOpenLimit = openLimitValue <= event.opens
+          
+          logger.info("Impulse: event status: \(event.status.rawValue), open limit increase: \(openLimitIncrease), time limit increase \(timeLimitIncrease) and has reached open limit \(hasReachedOpenLimit)")
           
           if event.status == .block && (openLimitIncrease || timeLimitIncrease) && !hasReachedOpenLimit {
             logger.info("Impulse: remove lock web status and update to warning")
