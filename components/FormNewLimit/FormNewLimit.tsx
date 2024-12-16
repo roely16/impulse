@@ -176,13 +176,13 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
     return (
       <View style={styles.timeFormContainer}>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <Text style={styles.timeLabel}>{t('formNewLimit.selectTime')}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={[styles.timeLabel, !enableTimeConfiguration && { color: 'gray' }]}>{t('formNewLimit.selectTime')}</Text>
           <Switch value={enableTimeConfiguration} onValueChange={setEnableTimeConfiguration}></Switch>
         </View>
-        <View style={[styles.formOption, { paddingVertical: 0 }]}>
+        <View style={[styles.formOption, { paddingVertical: 0 }, !enableTimeConfiguration && styles.timeConfigurationDisable]}>
           <View style={styles.timeOption}>
-            <Text style={styles.label}>{t('formNewLimit.selectTimeTitle')}</Text>
+            <Text style={[styles.label, !enableTimeConfiguration && { color: 'gray' }]}>{t('formNewLimit.selectTimeTitle')}</Text>
             {isLoading ? (
               <></>
             ) : (

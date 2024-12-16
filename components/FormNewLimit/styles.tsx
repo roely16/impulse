@@ -146,5 +146,8 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#E9ECEF',
     paddingVertical: 5
+  },
+  timeConfigurationDisable: {
+    backgroundColor: '#E6CB76'
   }
 });
