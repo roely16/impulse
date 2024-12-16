@@ -191,11 +191,11 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
     const selectedItems = [];
 
     if (appsSelected > 0) {
-      selectedItems.push(`${appsSelected} apps`);
+      selectedItems.push(`${appsSelected} app${appsSelected > 1 ? 's' : ''}`);
     } 
     
     if (sitesSelected > 0) {
-      selectedItems.push(`${sitesSelected} sites`);
+      selectedItems.push(`${sitesSelected} ${t('formNewBlock.sitesLabel')}${sitesSelected > 1 ? 's' : ''}`);
     }
 
     return (
