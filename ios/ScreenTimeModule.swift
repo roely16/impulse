@@ -424,6 +424,15 @@ class ScreenTimeModule: NSObject {
       
       let openLimitIncrease = openLimitValue > openLimitSavedValue
       
+      let oldWeekdays = limit.weekdays
+      let today = Date() // Fecha actual
+      let calendar = Calendar.current
+      let dayOfWeekToday = calendar.component(.weekday, from: today)
+      
+      let isCurrentDayOnWeekday = weekdays.contains(dayOfWeekToday)
+      
+      logger.info("Impulse: is current day on weekdays \(isCurrentDayOnWeekday) \(dayOfWeekToday) \(weekdays)")
+      
       limit.name = name
       limit.timeLimit = timeLimit
       limit.openLimit = openLimit
@@ -506,7 +515,7 @@ class ScreenTimeModule: NSObject {
       
       // Find if apps have been changed
       
-      if requireUpdateSharedDefaults || timeLimitIncrease {
+      if requireUpdateSharedDefaults || timeLimitIncrease || !isCurrentDayOnWeekday {
         logger.info("Impulse: requiere update shared defaults")
         
         // Update shared defaults by apps
@@ -526,6 +535,20 @@ class ScreenTimeModule: NSObject {
           logger.info("Impulse: app event status \(event.status.rawValue, privacy: .public)")
           
           let hasReachedOpenLimit = openLimitValue > 0 && openLimitValue <= event.opens
+          
+          guard isCurrentDayOnWeekday else {
+            logger.info("Impulse: remove shield and delete shared defaults")
+            let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+            let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+            store.shield.applications = nil
+            
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .block)
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(event.appToken), type: .limit)
+            
+            event.status = .warning
+            try event.modelContext?.save()
+            return
+          }
           
           if event.status == .block && (openLimitIncrease || timeLimitIncrease) && !hasReachedOpenLimit {
             logger.info("Impulse: remove lock app status and update to warning")
@@ -593,9 +616,26 @@ class ScreenTimeModule: NSObject {
             
             event.status = .block
             try event.modelContext?.save()
+          } else if !isCurrentDayOnWeekday {
+            logger.info("Impulse: remove shield and delete shared defaults")
+            let managedSettingsName = Constants.managedSettingsName(eventId: event.id.uuidString)
+            let store = ManagedSettingsStore(named: ManagedSettingsStore.Name(rawValue: managedSettingsName))
+            store.shield.applications = nil
+            
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(event.webToken), type: .block)
+            sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(event.webToken), type: .limit)
+            
+            event.status = .warning
+            try event.modelContext?.save()
           }
           
         }
+      }
+      
+      if !isCurrentDayOnWeekday {
+        let monitorName = Constants.monitorNameWithFrequency(id: limit.id.uuidString, weekday: dayOfWeekToday, type: .limit)
+        let monitorUtils = MonitorUtils()
+        monitorUitls.stopMonitoring(monitorName: monitorName)
       }
       
       let limitModule = LimitModule.shared
@@ -625,6 +665,7 @@ class ScreenTimeModule: NSObject {
       }
       
       let context = try getContext()
+      let sharedDefaultManager = SharedDefaultsManager()
       
       var fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate{ $0.id == uuid }
@@ -665,6 +706,15 @@ class ScreenTimeModule: NSObject {
           deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
         }
         
+      }
+      
+      // Delete shared defaults
+      block?.appsTokens.forEach{app in
+        sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(app), type: .block)
+      }
+      
+      block?.webDomainTokens.forEach{web in
+        sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(web), type: .block)
       }
       
       // Create again monitoring

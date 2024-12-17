@@ -181,6 +181,17 @@ class BlockModule: NSObject {
           deviceActivityCenter.stopMonitoring(deviceActivityNames)
           print(deviceActivityNames)
         }
+        
+        // Delete shared defaults
+        let sharedDefaultManager = SharedDefaultsManager()
+        
+        block?.appsTokens.forEach{app in
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(app), type: .block)
+        }
+        
+        block?.webDomainTokens.forEach{web in
+          sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(web), type: .block)
+        }
 
       } else {
         let startTimeComponents = block?.startTime.split(separator: ":") ?? []
