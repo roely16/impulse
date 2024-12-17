@@ -1,18 +1,16 @@
 import { View, SafeAreaView, StyleSheet } from 'react-native';
-import { Text, IconButton } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
+import { getVersion, getBuildNumber } from 'react-native-device-info';
 
 export const Header = () => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <Text style={styles.appName} variant="headlineSmall">impulse.</Text>
-        {/* <IconButton
-          icon="account"
-          iconColor={'black'}
-          size={20}
-          mode="contained"
-        /> */}
+        <View>
+          <Text style={styles.appName} variant="headlineSmall">impulse.</Text>
+          <Text style={{ fontSize: 12, color: 'gray' }}>{`${getVersion()} (${getBuildNumber()})`}</Text>
+        </View>
         <View style={styles.iconWrapper}>
           <Feather name='user' size={20} color='black' />
         </View>

@@ -78,7 +78,7 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const inputRef = useRef<TextInput>(null);
   const openLimitRef = useRef<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const isSavingRef = useRef<boolean>(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { t } = useTranslation();
   const getTimeOnScreen = useTimeOnScreen();
@@ -176,13 +176,13 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
 
     return (
       <View style={styles.timeFormContainer}>
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <Text style={styles.timeLabel}>{t('formNewLimit.selectTime')}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={[styles.timeLabel, !enableTimeConfiguration && { color: 'gray' }]}>{t('formNewLimit.selectTime')}</Text>
           <Switch value={enableTimeConfiguration} onValueChange={setEnableTimeConfiguration}></Switch>
         </View>
-        <View style={[styles.formOption, { paddingVertical: 0 }]}>
+        <View style={[styles.formOption, { paddingVertical: 0 }, !enableTimeConfiguration && styles.timeConfigurationDisable]}>
           <View style={styles.timeOption}>
-            <Text style={styles.label}>{t('formNewLimit.selectTimeTitle')}</Text>
+            <Text style={[styles.label, !enableTimeConfiguration && { color: 'gray' }]}>{t('formNewLimit.selectTimeTitle')}</Text>
             {isLoading ? (
               <></>
             ) : (
@@ -279,11 +279,11 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     const selectedItems = [];
 
     if (appsSelected > 0) {
-      selectedItems.push(`${appsSelected} apps`);
+      selectedItems.push(`${appsSelected} app${appsSelected > 1 ? 's' : ''}`);
     }
 
     if (sitesSelected > 0) {
-      selectedItems.push(`${sitesSelected} ${t('formNewLimit.sitesLabel')}`);
+      selectedItems.push(`${sitesSelected} ${t('formNewLimit.sitesLabel')}${sitesSelected > 1 ? 's' : ''}`);
     }
 
     return <Text style={styles.selectLabel}>{selectedItems.join(', ')}</Text>;
@@ -292,7 +292,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
   const handleSaveLimit = async () => {
     try {
 
-      isSavingRef.current = true;
+      //isSavingRef.current = true;
+      setIsSaving(true);
       const haveLimitTitle = limitTitle.length > 0;
       const newLimitTitle = haveLimitTitle
         ? limitTitle
@@ -331,15 +332,18 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
         closeBottomSheet();
         changeForm('');
       }
-      isSavingRef.current = false;
+      //isSavingRef.current = false;
+      setIsSaving(false);
     } catch (error) {
-      isSavingRef.current = false;
+      //isSavingRef.current = false;
+      setIsSaving(false);
     }
   };
 
   const handleEditBlock = async () => {
     try {
-      isSavingRef.current = true;
+      //isSavingRef.current = true;
+      setIsSaving(true);
       const haveLimitTitle = limitTitle.length > 0;
       const newLimitTitle = haveLimitTitle
         ? limitTitle
@@ -374,9 +378,11 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       refreshLimits();
       closeBottomSheet();
       changeForm('');
-      isSavingRef.current = false;
+      //isSavingRef.current = false;
+      setIsSaving(false);
     } catch (error) {
-      isSavingRef.current = false;
+      setIsSaving(false);
+      //isSavingRef.current = false;
     }
   };
 
@@ -578,8 +584,8 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
           {t('formNewLimit.cancelButton')}
         </Button>
         <Button
-          loading={isSavingRef.current}
-          disabled={!formFilled || isSavingRef.current}
+          loading={isSaving}
+          disabled={!formFilled || isSaving}
           onPress={handleSaveButton}
           icon="check"
           labelStyle={styles.buttonLabel}
