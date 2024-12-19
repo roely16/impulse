@@ -129,7 +129,6 @@ export const BlockCard = (props: BlockCardProps) => {
     const isConsecutive = values.every((val, idx) => idx === 0 || val === values[idx - 1] + 1);
     
     if (isConsecutive) {
-      console.log('isConsecutive', values);
       const firstDay = WEEKDAYS.find(day => day.value === values[0]);
       const lastDay = WEEKDAYS.find(day => day.value === values[values.length - 1]);
       if (firstDay && lastDay) {
