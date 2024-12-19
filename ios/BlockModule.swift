@@ -8,6 +8,7 @@ import React
 class BlockModule: NSObject {
   
   private var container: ModelContainer?
+  static let shared = BlockModule()
   
   override init() {
     super.init()

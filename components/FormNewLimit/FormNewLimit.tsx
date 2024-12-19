@@ -178,7 +178,12 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
       <View style={styles.timeFormContainer}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={[styles.timeLabel, !enableTimeConfiguration && { color: 'gray' }]}>{t('formNewLimit.selectTime')}</Text>
-          <Switch value={enableTimeConfiguration} onValueChange={setEnableTimeConfiguration}></Switch>
+          <Switch
+            thumbColor={enableTimeConfiguration ? '#203B52' : '#f4f3f4'}
+            trackColor={{false: '#767577', true: '#FDE047'}} 
+            value={enableTimeConfiguration} 
+            onValueChange={setEnableTimeConfiguration}
+          ></Switch>
         </View>
         <View style={[styles.formOption, { paddingVertical: 0 }, !enableTimeConfiguration && styles.timeConfigurationDisable]}>
           <View style={styles.timeOption}>
@@ -518,7 +523,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     const localLimitData = async () => {
       setIsLoading(true);
       const result = await LimitModule.getLimitDetail(limitId);
-      console.log('result', result);
       if (result.status === 'success') {
         setLimitData(result.limit);
       }

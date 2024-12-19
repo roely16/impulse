@@ -28,10 +28,10 @@ class MonitorUtils {
               during: activitySchedule
             )
             
-            print("Impulse: create monitor with name \(newActivityName.rawValue)")
+            print("Impulse: create repeat monitor with name \(newActivityName.rawValue)")
          
           } catch {
-            print("Impulse: error trying to create monitoring for block")
+            print("Impulse: error trying to create monitoring for block \(error.localizedDescription)")
           }
           
         }
@@ -65,6 +65,21 @@ class MonitorUtils {
   
   func createWeekSchedule(weekday: Int = 0, duration: DeviceActivitySchedule) -> DeviceActivitySchedule{
     
+    print("Impulse: week schedule weekday \(weekday)")
+    
+    let startHour = duration.intervalStart.hour ?? 0
+    let startMinute = duration.intervalStart.minute ?? 0
+    let endHour = duration.intervalEnd.hour ?? 0
+    let endMinute = duration.intervalEnd.minute ?? 0
+    
+    // Determinar si intervalEnd cruza al día siguiente
+    var adjustedWeekday = weekday
+    if endHour < startHour || (endHour == startHour && endMinute < startMinute) {
+        adjustedWeekday = (weekday % 7) + 1 // Incrementar y ajustar al rango 1-7
+    }
+    
+    print("Impulse: adjusted weekday \(adjustedWeekday)")
+    
     let intervalStart = DateComponents(
       hour: duration.intervalStart.hour,
       minute: duration.intervalStart.minute,
@@ -74,7 +89,7 @@ class MonitorUtils {
     let intervalEnd = DateComponents(
       hour: duration.intervalEnd.hour,
       minute: duration.intervalEnd.minute,
-      weekday: weekday
+      weekday: adjustedWeekday
     )
     
     let activitySchedule = DeviceActivitySchedule(
