@@ -518,7 +518,6 @@ export const FormNewLimit = forwardRef<FormNewLimitRef, FormNewLimitProps>((prop
     const localLimitData = async () => {
       setIsLoading(true);
       const result = await LimitModule.getLimitDetail(limitId);
-      console.log('result', result);
       if (result.status === 'success') {
         setLimitData(result.limit);
       }

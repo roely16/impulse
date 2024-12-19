@@ -259,7 +259,12 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
     }
   };
 
-  const formFilled = !emptySelected && startTimeRef && endTimeRef;
+  const daysSelected = days
+    .filter(day => day.selected)
+    .map(day => day.value)
+    .sort((a, b) => a - b);
+
+  const formFilled = !emptySelected && startTimeRef && endTimeRef && daysSelected.length > 0;;
 
   const buttonBackground = formFilled ? '#FDE047' : '#C6D3DF';
 
@@ -361,6 +366,11 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
     });
   }
 
+  const getCustomDayNumber = (date: Date) => {
+    const day = date.getDay();
+    return day === 0 ? 1 : day + 1;
+  }
+
   const handleSaveButton = () => {
     if (isEdit) {
       handleEditBlock();
@@ -392,6 +402,15 @@ export const FormNewBlock = forwardRef<FormNewBlockRef, FormNewBlockProps>((prop
     } else {
       if (isEmptyBlock) {
         clearData();
+        const today = new Date();
+        const customDay = getCustomDayNumber(today);
+        const updatedDays = initialDays.map(day => {
+          if (day.value === customDay) {
+            return { ...day, selected: true };
+          }
+          return day;
+        });
+        setDays(updatedDays);
       }
     }
   }, [isEdit, isEmptyBlock]);
