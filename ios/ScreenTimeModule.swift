@@ -160,6 +160,8 @@ class ScreenTimeModule: NSObject {
   ) {    
     do {
       
+      logger.info("Impulse: create block")
+      
       let context = try getContext()
 
       let block = Block(
@@ -177,6 +179,9 @@ class ScreenTimeModule: NSObject {
       
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
+      
+      logger.info("Impulse: start time \(startTimeComponents) and end time \(endTimeComponents)")
+      
       let monitorUtils = MonitorUtils()
             
       let activitySchedule = DeviceActivitySchedule(
@@ -190,6 +195,7 @@ class ScreenTimeModule: NSObject {
       resolve(["status": "success", "appsBlocked": self.appsSelected.count])
 
     } catch {
+      logger.error("Impulse: error trying to create block \(error.localizedDescription)")
       reject("Error", "Error trying to create block: \(error.localizedDescription)", error)
     }
   }
@@ -665,7 +671,6 @@ class ScreenTimeModule: NSObject {
       }
       
       let context = try getContext()
-      let sharedDefaultManager = SharedDefaultsManager()
       
       var fetchDescriptor = FetchDescriptor<Block>(
         predicate: #Predicate{ $0.id == uuid }
@@ -696,6 +701,10 @@ class ScreenTimeModule: NSObject {
       let monitorName = Constants.monitorName(id: blockId, type: .block)
       deviceActivityCenter.stopMonitoring([DeviceActivityName(rawValue: monitorName)])
       
+      let removedDays = block?.weekdays.filter{!weekdays.contains($0)}
+      
+      logger.info("Impulse: removed days \(removedDays?.count ?? 0)")
+      
       if oldWeekDays?.count ?? 0 > 0 {
 
         oldWeekDays?.forEach{weekday in
@@ -708,18 +717,11 @@ class ScreenTimeModule: NSObject {
         
       }
       
-      // Delete shared defaults
-      block?.appsTokens.forEach{app in
-        sharedDefaultManager.deleteSharedDefaultsByToken(token: .application(app), type: .block)
-      }
-      
-      block?.webDomainTokens.forEach{web in
-        sharedDefaultManager.deleteSharedDefaultsByToken(token: .webDomain(web), type: .block)
-      }
-      
       // Create again monitoring
       let startTimeComponents = startTime.split(separator: ":")
       let endTimeComponents = endTime.split(separator: ":")
+      
+      logger.info("Impulse: start time \(startTimeComponents) and end time \(endTimeComponents)")
       
       let monitorUtils = MonitorUtils()
       
