@@ -21,19 +21,22 @@ export const styles = StyleSheet.create({
   },
   cardContentContainer: {
     flexDirection: 'row',
-    gap: 20
+    gap: 20,
+    alignItems: 'center'
   },
   infoContainer: {
     flexDirection: 'row',
-    gap: 10
+    gap: 10,
   },
   useTimeContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
+    marginRight: 20
   },
   percentageContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginRight: 10
   },
   useTimeText: {
     color: '#203B52',

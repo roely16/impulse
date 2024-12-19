@@ -158,3 +158,10 @@ RCT_EXTERN_METHOD(updateLimitStatus:(NSString *)limitId
                   rejecter:(RCTPromiseRejectBlock)reject)
 
 @end
+
+@interface RCT_EXTERN_MODULE(ChartModule, NSObject)
+
+RCT_EXTERN_METHOD(fetchOpenAttemptsData:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+@end
