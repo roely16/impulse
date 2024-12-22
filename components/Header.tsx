@@ -1,9 +1,15 @@
-import { View, SafeAreaView, StyleSheet } from 'react-native';
+import { View, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
 import { getVersion, getBuildNumber } from 'react-native-device-info';
+import { router } from "expo-router";
 
 export const Header = () => {
+
+  const goSettings = () => {
+    router.push('/settings')
+  } 
+
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -11,9 +17,9 @@ export const Header = () => {
           <Text style={styles.appName} variant="headlineSmall">impulse.</Text>
           <Text style={{ fontSize: 12, color: 'gray' }}>{`${getVersion()} (${getBuildNumber()})`}</Text>
         </View>
-        <View style={styles.iconWrapper}>
-          <Feather name='user' size={20} color='black' />
-        </View>
+        <TouchableOpacity onPress={goSettings} style={styles.iconWrapper}>
+          <Feather name='settings' size={20} color='black' />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   )

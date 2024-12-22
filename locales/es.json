@@ -188,5 +188,24 @@
       "buttonLabel": "Aviso",
       "buttonPlaceholder": "Seleccionar"
     }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "share": {
+      "title": "Compartir App con familia/amigos",
+      "button": "Compatir app",
+      "shareMessage": "¿Las distracciones están acabando con tu productividad? Impulse está diseñado para ayudarte a bloquear aplicaciones/sitios web específicos durante ciertos períodos de tiempo, para que puedas mantenerte enfocado y ser más productivo. \n\nDescárgalo ahora: https://impulsecontrolapp.com"
+    },
+    "feedback": {
+      "title": "Feedback",
+      "sendFeedback": "Enviar Feedback",
+      "recommendImprovement": "Recomendar una mejora"
+    },
+    "about": {
+      "title": "Sobre la app",
+      "faq": "Ayuda / Preguntas frecuentes",
+      "contact": "Contactar con el equipo"
+    },
+    "version": "Versión"
   }
 }

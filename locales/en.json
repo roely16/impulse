@@ -187,5 +187,24 @@
       "buttonLabel": "Alert",
       "buttonPlaceholder": "Select"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "share": {
+      "title": "Share App with Family/Friends",
+      "button": "Share App",
+      "shareMessage": "Are distractions killing your productivity? Impulse is designed to help you to block specified apps/websites during time slots to maintain focus and productivity. \n\nDownload now: https://impulsecontrolapp.com"
+    },
+    "feedback": {
+      "title": "Feedback",
+      "sendFeedback": "Send Feedback",
+      "recommendImprovement": "Recommend an Improvement"
+    },
+    "about": {
+      "title": "About the App",
+      "faq": "Help / Frequently Asked Questions",
+      "contact": "Contact the Team"
+    },
+    "version": "Version"
   }
 }
