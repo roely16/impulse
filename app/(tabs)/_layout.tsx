@@ -1,6 +1,7 @@
-import { Tabs } from 'expo-router';
+import { Stack, Tabs } from 'expo-router';
 import React from 'react';
 import { Feather, Fontisto } from '@expo/vector-icons';
+import { Header } from '@/components/Header';
 
 export default function TabLayout() {
 
@@ -10,14 +11,15 @@ export default function TabLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: '#95a5a6'
+        tabBarInactiveTintColor: '#95a5a6',
       }}>
       <Tabs.Screen
         name="index"
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="unlock" size={30} color={color} />
-          )
+          ),
+          header: () => <Header />
         }}
       />
       <Tabs.Screen

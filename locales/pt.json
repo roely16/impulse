@@ -187,5 +187,24 @@
       "buttonLabel": "Aviso",
       "buttonPlaceholder": "Selecionar"
     }
+  },
+  "settings": {
+    "title": "Configurações",
+    "share": {
+      "title": "Compartilhar o app com família/amigos",
+      "button": "Compartilhar app",
+      "shareMessage": "As distrações estão acabando com a sua produtividade? O Impulse foi criado para ajudá-lo a bloquear aplicativos/sites específicos durante determinados intervalos de tempo, permitindo que você mantenha o foco e a produtividade.\n\nBaixe agora: https://impulsecontrolapp.com"
+    },
+    "feedback": {
+      "title": "Feedback",
+      "sendFeedback": "Enviar feedback",
+      "recommendImprovement": "Sugerir uma melhoria"
+    },
+    "about": {
+      "title": "Sobre o app",
+      "faq": "Ajuda / Perguntas frequentes",
+      "contact": "Entrar em contato com a equipe"
+    },
+    "version": "Versão"
   }
 }

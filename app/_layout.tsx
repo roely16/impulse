@@ -32,6 +32,14 @@ export default function RootLayout() {
             animation: 'none'
           }}
         />
+         <Stack.Screen
+          name="settings"
+          options={{
+            title: 'Settings',
+            presentation: 'modal',
+            headerShown: false
+          }}
+        />
       </Stack>
     </I18nextProvider>
   );

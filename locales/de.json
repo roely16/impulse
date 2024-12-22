@@ -187,5 +187,24 @@
       "buttonLabel": "Warnung",
       "buttonPlaceholder": "Auswählen"
     }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "share": {
+      "title": "App mit Familie/Freunden teilen",
+      "button": "App teilen",
+      "shareMessage": "Zerstören Ablenkungen deine Produktivität? Impulse wurde entwickelt, um dir zu helfen, bestimmte Apps/Websites während festgelegter Zeitfenster zu blockieren, damit du dich konzentrieren und produktiv bleiben kannst.\n\nJetzt herunterladen: https://impulsecontrolapp.com"
+    },
+    "feedback": {
+      "title": "Feedback",
+      "sendFeedback": "Feedback senden",
+      "recommendImprovement": "Verbesserung vorschlagen"
+    },
+    "about": {
+      "title": "Über die App",
+      "faq": "Hilfe / Häufig gestellte Fragen",
+      "contact": "Das Team kontaktieren"
+    },
+    "version": "Version"
   }
 }

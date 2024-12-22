@@ -45,6 +45,7 @@
     "react-native-awesome-slider": "^2.5.5",
     "react-native-device-info": "^13.1.0",
     "react-native-element-dropdown": "^2.12.2",
+    "react-native-email-link": "^1.16.1",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-gifted-charts": "^1.4.47",
     "react-native-linear-gradient": "^2.8.3",
