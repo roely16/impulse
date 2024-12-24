@@ -5,7 +5,6 @@ import { BottomSheetBlockAndLimit } from '@/components/BottomSheet';
 import { BlockType } from '@/components/ListBlocks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { CardTimeHome } from '@/components/CardTimeHome';
 import { useTranslation } from 'react-i18next';
 import { MixpanelService } from '@/SDK/Mixpanel';
 import useTimeOnScreen from '@/hooks/useTimeOnScreen';
@@ -218,7 +217,6 @@ export default function HomeScreen() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <CardTimeHome />
       <BottomSheetModalProvider>
         <BlockSection />
         <BottomSheetBlockAndLimit
