@@ -1260,6 +1260,8 @@ PODS:
     - React-utils (= 0.74.5)
   - RNCAsyncStorage (2.0.0):
     - React-Core
+  - RNCClipboard (1.16.1):
+    - React-Core
   - RNCPicker (2.9.0):
     - React-Core
   - RNDateTimePicker (8.2.0):
@@ -1335,9 +1337,6 @@ PODS:
   - RNSVG (15.10.1):
     - React-Core
   - SocketRocket (0.7.0)
-  - SQLite.swift (0.15.3):
-    - SQLite.swift/standard (= 0.15.3)
-  - SQLite.swift/standard (0.15.3)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1412,6 +1411,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -1420,14 +1420,12 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
-  - SQLite.swift (~> 0.15.3)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
     - Mixpanel-swift
     - SocketRocket
-    - SQLite.swift
 
 EXTERNAL SOURCES:
   boost:
@@ -1569,6 +1567,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
   RNDateTimePicker:
@@ -1659,6 +1659,7 @@ SPEC CHECKSUMS:
   React-utils: f242eb7e7889419d979ca0e1c02ccc0ea6e43b29
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
   RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
+  RNCClipboard: d7a8903d32692b0a1e71738c3825465a9acae10e
   RNCPicker: f963e01f78e546a93b98aa201501713dbda14e94
   RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
   RNDeviceInfo: e13b7d68878fba693c9fbb13ca4d56ad57d95917
@@ -1668,9 +1669,8 @@ SPEC CHECKSUMS:
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
   RNSVG: 7ff26379b2d1871b8571e6f9bc9630de6baf9bdf
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
-  SQLite.swift: 8d054987f02728cc912b0eb5a9659650573a65a2
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
-PODFILE CHECKSUM: 0e2667d913a16c328ba20f892f86f57b9b8cfbd3
+PODFILE CHECKSUM: 2d34af9e73e20e5d37ac5bf794d3f0f158e9658c
 
 COCOAPODS: 1.15.2

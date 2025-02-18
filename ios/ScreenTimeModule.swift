@@ -27,6 +27,7 @@ class ScreenTimeModule: NSObject {
   override init() {
     super.init()
     do {
+      print("ScreenTimeModule init")
       container = try ModelConfigurationManager.makeConfiguration()
     } catch {
       print("Error initializing ModelContainer: \(error)")

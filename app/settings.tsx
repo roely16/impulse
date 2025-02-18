@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity, Share, Linking } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Share, Linking, Alert } from "react-native";
 import { IconButton } from "react-native-paper";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -7,7 +8,8 @@ import { useTranslation } from "react-i18next";
 import { Feather } from '@expo/vector-icons';
 import { openComposer } from "react-native-email-link";
 import { router } from "expo-router";
-import { getVersion, getBuildNumber } from 'react-native-device-info';
+import { getVersion, getBuildNumber, getUniqueId } from 'react-native-device-info';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 interface OptionProps {
   text: string;
@@ -99,8 +101,30 @@ export default function Settings() {
   }
 
   const VersionNumber = () => {
+
+    const [uniqueId, setUniqueId] = useState('');
+
+    useEffect(() => {
+      async function init() {
+        const uniqueId = await getUniqueId();
+        setUniqueId(uniqueId);
+      }
+      init();
+    }, [])
+
+    const copyToClipboard = () => {
+      Clipboard.setString(uniqueId);
+    }
+
+    const showUniqueId = () => {
+      Alert.alert('User ID', `${uniqueId}`, [
+        { text: "Copy", onPress: copyToClipboard, style: "cancel" },
+        { text: "Close", onPress: () => console.log("Aceptado") }
+      ]);
+    }
+
     return (
-      <Text style={styles.version}>{`${t('settings.version')} ${getVersion()} (${getBuildNumber()})`}</Text>
+      <Text onPress={showUniqueId} style={styles.version}>{`${t('settings.version')} ${getVersion()} (${getBuildNumber()})`}</Text>
     )
   }
 
@@ -112,7 +136,7 @@ export default function Settings() {
         <Feedback />
         <About />
       </View>
-      <View style={{ alignItems: 'center' }}>
+      <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
         <VersionNumber />
       </View>
     </View>

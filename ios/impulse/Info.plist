@@ -5,22 +5,18 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mailto</string>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-			<string>mailto</string>
-			<string>message</string>
-			<string>readdle-spark</string>
-			<string>airmail</string>
-			<string>ms-outlook</string>
-			<string>googlegmail</string>
-			<string>inbox-gmail</string>
-			<string>ymail</string>
-			<string>superhuman</string>
-			<string>yandexmail</string>
-			<string>fastmail</string>
-			<string>protonmail</string>
-			<string>szn-email</string>
+		<string>message</string>
+		<string>readdle-spark</string>
+		<string>airmail</string>
+		<string>ms-outlook</string>
+		<string>googlegmail</string>
+		<string>inbox-gmail</string>
+		<string>ymail</string>
+		<string>superhuman</string>
+		<string>yandexmail</string>
+		<string>fastmail</string>
+		<string>protonmail</string>
+		<string>szn-email</string>
 	</array>
 	<key>UIAppFonts</key>
 	<array>
@@ -43,7 +39,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.0.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -57,7 +53,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>24</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
