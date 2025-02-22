@@ -4,17 +4,21 @@ import SwiftData
 struct ModelConfigurationManager {
   
   private static var container: ModelContainer?
-  
+
   static func makeConfiguration() throws -> ModelContainer {
+    if let existingContainer = container {
+      return existingContainer
+    }
+
     let configuration = ModelConfiguration("local",
       isStoredInMemoryOnly: false,
       allowsSave: true,
       groupContainer: .identifier("group.com.impulsecontrolapp.impulse.share"),
       cloudKitDatabase: .none
     )
-    
+
     print("Model container is initialized")
-    let container = try ModelContainer(
+    let newContainer = try ModelContainer(
       for: Block.self,
       Limit.self,
       AppEvent.self,
@@ -23,7 +27,9 @@ struct ModelConfigurationManager {
       WebEventHistory.self,
       configurations: configuration
     )
-    return container
+
+    container = newContainer // Guardar la instancia para reutilización
+    return newContainer
   }
   
   @MainActor
@@ -41,3 +47,4 @@ struct ModelConfigurationManager {
     return container
   }
 }
+
