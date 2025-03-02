@@ -66,6 +66,7 @@ class SharedDefaultsManager {
       
       let sharedData = try convertJsonToString(shareData: data)
       sharedDefaults?.set(sharedData, forKey: forKey)
+      sharedDefaults?.synchronize()
       
     } catch {
       logger.error("Impulse: Error trying to write on shared defaults \(error.localizedDescription)")
@@ -107,5 +108,6 @@ class SharedDefaultsManager {
       sharedDefaultKey = createTokenKeyString(token: .webDomain(webToken), type: type)
     }
     sharedDefaults?.removeObject(forKey: sharedDefaultKey)
+    sharedDefaults?.synchronize()
   }
 }
